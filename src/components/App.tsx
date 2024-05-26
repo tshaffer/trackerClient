@@ -11,10 +11,11 @@ import dayjs, { Dayjs } from 'dayjs';
 
 import { TrackerDispatch, setAppInitialized } from '../models';
 import { isNil } from 'lodash';
-import { uploadFile } from '../controllers/statements';
 import { FormControl } from '@mui/material';
+import { search, uploadFile } from '../controllers';
 
 export interface AppProps {
+  onSearch: (startDate: string, endDate: string) => any;
   onSetAppInitialized: () => any;
   onUploadFile: (formData: FormData) => any;
 }
@@ -65,6 +66,10 @@ const App = (props: AppProps) => {
       setEndDate(date.toISOString());}
   };
 
+  const handleSearch = (): void => {
+    props.onSearch(startDate, endDate);
+  }
+
   const renderStartDate = (): JSX.Element => {
     return (
       <React.Fragment>
@@ -112,7 +117,7 @@ const App = (props: AppProps) => {
       <br />
       {renderStartDate()}
       {renderEndDate()}
-      <button type="button" onClick={handleUploadFile}>Search</button>
+      <button type="button" onClick={handleSearch}>Search</button>
     </div>
   );
 };
@@ -126,6 +131,7 @@ const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
     onSetAppInitialized: setAppInitialized,
     onUploadFile: uploadFile,
+    onSearch: search,
   }, dispatch);
 };
 
