@@ -8,7 +8,7 @@ export const search = (startDate: string, endDate: string): TrackerVoidPromiseTh
 
     let path = serverUrl
       + apiUrlFragment
-      + 'transactions';
+      + 'categorizedTransactions';
 
     path += '?startDate=' + startDate;
     path += '&endDate=' + endDate;
