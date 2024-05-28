@@ -1,6 +1,6 @@
 import axios from "axios";
 import { apiUrlFragment, serverUrl, StringToTransactionsLUT, TransactionsDataResponseItem } from "../types";
-import { TrackerDispatch, TrackerVoidPromiseThunkAction } from "../models";
+import { setTransactionsByCategory, TrackerDispatch, TrackerVoidPromiseThunkAction } from "../models";
 
 export const search = (startDate: string, endDate: string): TrackerVoidPromiseThunkAction => {
 
@@ -25,6 +25,7 @@ export const search = (startDate: string, endDate: string): TrackerVoidPromiseTh
           transactionsByCategory[category].push(transactionData.transaction);
         });
         console.log(transactionsByCategory);
+        dispatch(setTransactionsByCategory(transactionsByCategory));
       });
   }
 }
