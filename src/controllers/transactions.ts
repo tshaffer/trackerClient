@@ -1,5 +1,5 @@
 import axios from "axios";
-import { apiUrlFragment, serverUrl } from "../types";
+import { apiUrlFragment, serverUrl, StringToTransactionsLUT, TransactionsDataResponseItem } from "../types";
 import { TrackerDispatch, TrackerVoidPromiseThunkAction } from "../models";
 
 export const search = (startDate: string, endDate: string): TrackerVoidPromiseThunkAction => {
@@ -15,8 +15,16 @@ export const search = (startDate: string, endDate: string): TrackerVoidPromiseTh
 
     return axios.get(path)
       .then((transactionsResponse: any) => {
-        const transactions = (transactionsResponse as any).data;
-        console.log(transactions);
+        const transactions: TransactionsDataResponseItem[] = (transactionsResponse as any).data;
+        const transactionsByCategory: StringToTransactionsLUT = {};
+        transactions.forEach((transactionData: TransactionsDataResponseItem) => {
+          const category = transactionData.category.keyword;
+          if (!transactionsByCategory[category]) {
+            transactionsByCategory[category] = [];
+          }
+          transactionsByCategory[category].push(transactionData.transaction);
+        });
+        console.log(transactionsByCategory);
       });
   }
 }
