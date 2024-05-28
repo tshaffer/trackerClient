@@ -13,6 +13,7 @@ import { TrackerDispatch, setAppInitialized } from '../models';
 import { isNil } from 'lodash';
 import { FormControl } from '@mui/material';
 import { search, uploadFile } from '../controllers';
+import TransactionsReport from './TransactionsReport';
 
 export interface AppProps {
   onSearch: (startDate: string, endDate: string) => any;
@@ -118,6 +119,9 @@ const App = (props: AppProps) => {
       {renderStartDate()}
       {renderEndDate()}
       <button type="button" onClick={handleSearch}>Search</button>
+      <br />
+      <br />
+      <TransactionsReport />
     </div>
   );
 };
