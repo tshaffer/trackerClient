@@ -122,7 +122,7 @@ const App = (props: AppProps) => {
       <button type="button" onClick={handleSearch}>Search</button>
       <br />
       <br />
-      {/* <TransactionsReport /> */}
+      <TransactionsReport />
       <ReportGrid />
     </div>
   );
