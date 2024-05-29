@@ -572,6 +572,18 @@ const columns: GridColDef<(typeof rows)[number]>[] = [
       );
       return subtotal;
     },
+  },
+  {
+    field: 'percentageOfTotal',
+    type: 'number',
+    headerName: 'Percentage of Total',
+    valueGetter: (value, row) => {
+      const subtotal = row.transactions.reduce(
+        (acc: number, transaction: any) => acc + transaction.amount,
+        0,
+      );
+      return subtotal;
+    },
   }
 ];
 

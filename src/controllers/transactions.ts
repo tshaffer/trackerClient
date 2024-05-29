@@ -1,6 +1,6 @@
 import axios from "axios";
-import { apiUrlFragment, serverUrl, StringToTransactionsLUT, TransactionsDataResponseItem } from "../types";
-import { setTransactionsByCategory, TrackerDispatch, TrackerVoidPromiseThunkAction } from "../models";
+import { apiUrlFragment, CategorizedStatementData, serverUrl, StringToTransactionsLUT, TransactionsDataResponseItem } from "../types";
+import { setStatementData, setTransactionsByCategory, TrackerDispatch, TrackerVoidPromiseThunkAction } from "../models";
 
 export const search = (startDate: string, endDate: string): TrackerVoidPromiseThunkAction => {
 
@@ -15,7 +15,8 @@ export const search = (startDate: string, endDate: string): TrackerVoidPromiseTh
 
     return axios.get(path)
       .then((transactionsResponse: any) => {
-        const transactions: TransactionsDataResponseItem[] = (transactionsResponse as any).data;
+        const categorizedStatementData: CategorizedStatementData = (transactionsResponse as any).data;
+        const transactions: TransactionsDataResponseItem[] = categorizedStatementData.transactions;
         const transactionsByCategory: StringToTransactionsLUT = {};
         transactions.forEach((transactionData: TransactionsDataResponseItem) => {
           const category = transactionData.category.keyword;
@@ -24,6 +25,10 @@ export const search = (startDate: string, endDate: string): TrackerVoidPromiseTh
           }
           transactionsByCategory[category].push(transactionData.transaction);
         });
+
+        const { startDate, endDate, total } = categorizedStatementData;
+        dispatch(setStatementData(startDate, endDate, total));
+        
         console.log(transactionsByCategory);
         dispatch(setTransactionsByCategory(transactionsByCategory));
       });

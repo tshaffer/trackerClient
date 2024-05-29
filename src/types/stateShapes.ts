@@ -10,6 +10,8 @@ export interface AppState {
 }
 
 export interface ReportDataState {
+  startDate: string;
+  endDate: string;
   transactionsByCategory: StringToTransactionsLUT;
-  
+  total: number;
 }
