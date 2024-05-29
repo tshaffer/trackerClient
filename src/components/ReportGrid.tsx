@@ -456,9 +456,34 @@ const rows = [
 type Customer = (typeof rows)[number];
 
 export default function ReportGrid() {
-  const getDetailPanelContent = React.useCallback<
-    NonNullable<DataGridProProps['getDetailPanelContent']>
-  >(({ row }) => <DetailPanelContent row={row} />, []);
+  // const getDetailPanelContent = React.useCallback<
+  //   NonNullable<DataGridProProps['getDetailPanelContent']>
+  // >(
+  //   (
+  //     { row }
+  //   ) => <DetailPanelContent row={row} />, []
+  // );
+
+  // const getDetailPanelContent = React.useCallback<
+  //   NonNullable<DataGridProProps['getDetailPanelContent']>
+  // >(
+  //   (
+  //     { row }
+  //   ) => {
+  //     console.log('getDetailedPanelContent row: ', row);
+  //     return (
+  //       <DetailPanelContent row={row} />
+  //     );
+  //   }, []
+  // );
+
+  const getDetailPanelContent = (rowData: any) => {
+    const row = rowData.row;
+    console.log('getDetailedPanelContent row: ', row);
+    return (
+      <DetailPanelContent row={row} />
+    );
+  }
 
   const getDetailPanelHeight = React.useCallback(() => 400, []);
 
