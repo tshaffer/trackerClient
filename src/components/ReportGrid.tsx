@@ -540,18 +540,12 @@ function DetailPanelContent({ row: rowProp }: { row: CategoryRow }) {
             density="compact"
             columns={[
               { field: 'description', headerName: 'Description', flex: 1 },
+              { field: 'date', headerName: 'Date', flex: 1 },
               {
                 field: 'amount',
                 headerName: 'Amount',
                 align: 'center',
                 type: 'number',
-              },
-              { field: 'unitPrice', headerName: 'Unit Price', type: 'number' },
-              {
-                field: 'total',
-                headerName: 'Total',
-                type: 'number',
-                valueGetter: (value, row) => row.quantity * row.unitPrice,
               },
             ]}
             rows={rowProp.transactions}
@@ -567,6 +561,18 @@ function DetailPanelContent({ row: rowProp }: { row: CategoryRow }) {
 const columns: GridColDef<(typeof rows)[number]>[] = [
   { field: 'categoryName', headerName: 'Category' },
   { field: 'transactionCount', headerName: 'Transaction Count' },
+  {
+    field: 'total',
+    type: 'number',
+    headerName: 'Total Amount',
+    valueGetter: (value, row) => {
+      const subtotal = row.transactions.reduce(
+        (acc: number, transaction: any) => acc + transaction.amount,
+        0,
+      );
+      return subtotal;
+    },
+  }
 ];
 
 const rows = [
