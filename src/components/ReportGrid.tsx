@@ -288,6 +288,7 @@ const mapDispatchToProps = (dispatch: TrackerDispatch) => {
 
 export default connect(mapStateToProps, mapDispatchToProps)(ReportGrid);
 */
+/*
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -476,6 +477,159 @@ export default function ReportGrid() {
   //     );
   //   }, []
   // );
+
+  const getDetailPanelContent = (rowData: any) => {
+    const row = rowData.row;
+    console.log('getDetailedPanelContent row: ', row);
+    return (
+      <DetailPanelContent row={row} />
+    );
+  }
+
+  const getDetailPanelHeight = React.useCallback(() => 400, []);
+
+  return (
+    <Box sx={{ width: '100%', height: 400 }}>
+      <DataGridPro
+        columns={columns}
+        rows={rows}
+        getDetailPanelHeight={getDetailPanelHeight}
+        getDetailPanelContent={getDetailPanelContent}
+      />
+    </Box>
+  );
+}
+*/
+
+/*
+  DetailPanelContent is a function that takes a single parameter, which is an object containing a row property.
+  The type of the row property is specified as Customer.
+    That is, the row property is the type of each element in the rows array.
+    and it appears that the row property contains ALL the information about a customer. That is, it contains the information displayed in the Master UI, as well as the Detail UI.
+  Inside the function, the row property is renamed to rowProp for usage.
+  This ensures that when you use rowProp within the function, it adheres to the Customer type structure.
+*/
+/*
+  Tracker analogy:
+  A row is of type CategoryData and contains
+    raw data  
+      categoryName
+      transactions
+    calculated data
+      totalAmount
+      transactionCount
+      percentage
+*/
+import * as React from 'react';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
+import Stack from '@mui/material/Stack';
+import { DataGridPro, GridColDef } from '@mui/x-data-grid-pro';
+
+function DetailPanelContent({ row: rowProp }: { row: CategoryRow }) {
+  return (
+    <Stack
+      sx={{ py: 2, height: '100%', boxSizing: 'border-box' }}
+      direction="column"
+    >
+      <Paper sx={{ flex: 1, mx: 'auto', width: '90%', p: 1 }}>
+        <Stack direction="column" spacing={1} sx={{ height: 1 }}>
+          <Typography variant="h6">{rowProp.categoryName}</Typography>
+          <DataGridPro
+            density="compact"
+            columns={[
+              { field: 'description', headerName: 'Description', flex: 1 },
+              {
+                field: 'amount',
+                headerName: 'Amount',
+                align: 'center',
+                type: 'number',
+              },
+              { field: 'unitPrice', headerName: 'Unit Price', type: 'number' },
+              {
+                field: 'total',
+                headerName: 'Total',
+                type: 'number',
+                valueGetter: (value, row) => row.quantity * row.unitPrice,
+              },
+            ]}
+            rows={rowProp.transactions}
+            sx={{ flex: 1 }}
+            hideFooter
+          />
+        </Stack>
+      </Paper>
+    </Stack>
+  );
+}
+
+const columns: GridColDef<(typeof rows)[number]>[] = [
+  { field: 'categoryName', headerName: 'Category' },
+  { field: 'transactionCount', headerName: 'Transaction Count' },
+];
+
+const rows = [
+  {
+    id: '1',
+    categoryName: 'Groceries',
+    transactions: [
+      {
+        id: '10',
+        description: 'Safeway',
+        date: '2021-10-01',
+        amount: 100,
+      },
+      {
+        id: '11',
+        description: 'Walmart',
+        date: '2021-10-02',
+        amount: 200,
+      }
+    ],
+    totalAmount: 300,
+    transactionCount: 2,
+    percentage: 50,
+  },
+  {
+    id: '2',
+    categoryName: 'Travel',
+    transactions: [
+      {
+        id: '12',
+        description: 'Hawaii',
+        date: '2021-02-01',
+        amount: 22,
+      },
+      {
+        id: '13',
+        description: 'Sedona',
+        date: '2023-02-01',
+        amount: 66,
+      },
+      {
+        id: '14',
+        description: 'Belize',
+        date: '2021-03-02',
+        amount: 33,
+      }
+    ],
+    totalAmount: 121,
+    transactionCount: 3,
+    percentage: 60,
+  }
+]
+
+type CategoryRow = {
+  id: string;
+  categoryName: string;
+  transactions: any[];
+  transactionCount: number,
+  totalAmount: number,
+  percentage: number,
+}
+
+export default function ReportGrid() {
 
   const getDetailPanelContent = (rowData: any) => {
     const row = rowData.row;
