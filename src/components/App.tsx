@@ -14,6 +14,7 @@ import { isNil } from 'lodash';
 import { FormControl } from '@mui/material';
 import { search, uploadFile } from '../controllers';
 import TransactionsReport from './TransactionsReport';
+import ReportGrid from './ReportGrid';
 
 export interface AppProps {
   onSearch: (startDate: string, endDate: string) => any;
@@ -121,7 +122,8 @@ const App = (props: AppProps) => {
       <button type="button" onClick={handleSearch}>Search</button>
       <br />
       <br />
-      <TransactionsReport />
+      {/* <TransactionsReport /> */}
+      <ReportGrid />
     </div>
   );
 };
