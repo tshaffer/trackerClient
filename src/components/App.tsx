@@ -14,6 +14,14 @@ import { isNil } from 'lodash';
 import { FormControl } from '@mui/material';
 import { search, uploadFile } from '../controllers';
 import Report from './Report';
+import CustomTable, { Row } from './CustomTable';
+
+export const sampleData: Row[] = [
+  { id: '1', category: 'Food', totalAmount: 150 },
+  { id: '2', category: 'Transport', totalAmount: 80 },
+  { id: '3', category: 'Utilities', totalAmount: 200 },
+];
+
 
 export interface AppProps {
   onSearch: (startDate: string, endDate: string) => any;
@@ -110,7 +118,8 @@ const App = (props: AppProps) => {
 
   return (
     <div>
-      <input type="file" name="file" onChange={handleFileChangeHandler} />
+      <CustomTable rows={sampleData}/>
+      {/* <input type="file" name="file" onChange={handleFileChangeHandler} />
       <br />
       <button type="button" onClick={handleUploadFile}>Upload</button>
       <br />
@@ -121,7 +130,7 @@ const App = (props: AppProps) => {
       <button type="button" onClick={handleSearch}>Search</button>
       <br />
       <br />
-      <Report />
+      <Report /> */}
     </div>
   );
 };
