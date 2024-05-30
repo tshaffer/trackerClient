@@ -73,7 +73,7 @@ const Report = (props: ReportProps) => {
     for (const categoryName in props.transactionsByCategory) {
       if (Object.prototype.hasOwnProperty.call(props.transactionsByCategory, categoryName)) {
         const transactions: CreditCardTransactionEntity[] = props.transactionsByCategory[categoryName];
-        const totalAmount = transactions.reduce((sum, transaction) => sum + transaction.amount, 0);
+        const totalAmount = -1 * (transactions.reduce((sum, transaction) => sum + transaction.amount, 0));
 
         const categoryRow: CategoryRow = {
           id: categoryRowIndex.toString(),
@@ -87,6 +87,11 @@ const Report = (props: ReportProps) => {
 
         categoryRowIndex += 1;
       }
+    }
+
+    const totalAmount = rows.reduce((sum, row) => sum + row.totalAmount, 0);
+    for (const row of rows) {
+      row.percentage = (row.totalAmount / totalAmount) * 100;
     }
     
     return rows;

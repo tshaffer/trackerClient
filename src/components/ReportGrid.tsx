@@ -79,11 +79,7 @@ const columns: GridColDef<any>[] = [
     type: 'number',
     headerName: 'Percentage of Total',
     valueGetter: (value, row) => {
-      const subtotal = row.transactions.reduce(
-        (acc: number, transaction: any) => acc + transaction.amount,
-        0,
-      );
-      return subtotal;
+      return row.percentage;
     },
   }
 ];
