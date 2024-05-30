@@ -13,7 +13,6 @@ import { TrackerDispatch, setAppInitialized } from '../models';
 import { isNil } from 'lodash';
 import { FormControl } from '@mui/material';
 import { search, uploadFile } from '../controllers';
-import TransactionsReport from './TransactionsReport';
 import Report from './Report';
 
 export interface AppProps {
@@ -122,7 +121,6 @@ const App = (props: AppProps) => {
       <button type="button" onClick={handleSearch}>Search</button>
       <br />
       <br />
-      <TransactionsReport />
       <Report />
     </div>
   );
