@@ -118,8 +118,8 @@ const App = (props: AppProps) => {
 
   return (
     <div>
-      <CustomTable rows={sampleData}/>
-      {/* <input type="file" name="file" onChange={handleFileChangeHandler} />
+      {/* <CustomTable rows={sampleData}/> */}
+      <input type="file" name="file" onChange={handleFileChangeHandler} />
       <br />
       <button type="button" onClick={handleUploadFile}>Upload</button>
       <br />
@@ -130,7 +130,7 @@ const App = (props: AppProps) => {
       <button type="button" onClick={handleSearch}>Search</button>
       <br />
       <br />
-      <Report /> */}
+      <Report />
     </div>
   );
 };

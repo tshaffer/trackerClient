@@ -26,9 +26,9 @@ import { DataGridPro, GridColDef } from '@mui/x-data-grid-pro';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { TrackerDispatch } from '../models';
-import { CategoryRow } from '../types';
+import { CategoryExpensesData } from '../types';
 
-function DetailPanelContent({ row: rowProp }: { row: CategoryRow }) {
+function DetailPanelContent({ row: rowProp }: { row: CategoryExpensesData }) {
   return (
     <Stack
       sx={{ py: 2, height: '100%', boxSizing: 'border-box' }}
@@ -107,7 +107,7 @@ const ReportGrid = (props: ReportGridProps) => {
       </Typography>
     );
   }
-  
+
   return (
     <Box sx={{ width: '100%', height: 400 }}>
       <DataGridPro

@@ -36,12 +36,12 @@ export interface CategoryEntity {
   keyword: string;
 }
 
-export type CategoryRow = {
+export type CategoryExpensesData = {
   id: string;
   categoryName: string;
   transactions: any[];
   transactionCount: number,
-  totalAmount: number,
-  percentage: number,
+  totalExpenses: number,
+  percentageOfTotal: number,
 }
 

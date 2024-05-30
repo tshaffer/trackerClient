@@ -3,9 +3,10 @@ import ReportGrid from './ReportGrid';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { TrackerDispatch } from '../models';
-import { CategoryRow, CreditCardTransactionEntity, StringToTransactionsLUT } from '../types';
+import { CategoryExpensesData, CreditCardTransactionEntity, StringToTransactionsLUT } from '../types';
 import { getTransactionsByCategory } from '../selectors';
 import { isEmpty } from 'lodash';
+import ExpensesReportTable from './ExpensesReportTable';
 
 // const rows = [
 //   {
@@ -64,24 +65,29 @@ export interface ReportProps {
 
 const Report = (props: ReportProps) => {
 
-  const getRows = (): CategoryRow[] => {
+  const roundTo = (num: number, precision: number): number => {
+    const factor = Math.pow(10, precision)
+    return Math.round(num * factor) / factor
+  }
+    
+  const getRows = (): CategoryExpensesData[] => {
 
-    const rows: CategoryRow[] = [];
+    const rows: CategoryExpensesData[] = [];
 
     let categoryRowIndex = 0;
 
     for (const categoryName in props.transactionsByCategory) {
       if (Object.prototype.hasOwnProperty.call(props.transactionsByCategory, categoryName)) {
         const transactions: CreditCardTransactionEntity[] = props.transactionsByCategory[categoryName];
-        const totalAmount = -1 * (transactions.reduce((sum, transaction) => sum + transaction.amount, 0));
+        const totalExpenses = -1 * roundTo((transactions.reduce((sum, transaction) => sum + transaction.amount, 0)), 2);
 
-        const categoryRow: CategoryRow = {
+        const categoryRow: CategoryExpensesData = {
           id: categoryRowIndex.toString(),
           categoryName,
           transactions,
-          totalAmount,
+          totalExpenses,
           transactionCount: transactions.length,
-          percentage: 0,
+          percentageOfTotal: 0,
         };
         rows.push(categoryRow);
 
@@ -89,11 +95,11 @@ const Report = (props: ReportProps) => {
       }
     }
 
-    const totalAmount = rows.reduce((sum, row) => sum + row.totalAmount, 0);
+    const totalAmount = rows.reduce((sum, row) => sum + row.totalExpenses, 0);
     for (const row of rows) {
-      row.percentage = (row.totalAmount / totalAmount) * 100;
+      row.percentageOfTotal = roundTo((row.totalExpenses / totalAmount) * 100, 2);
     }
-    
+
     return rows;
   }
 
@@ -104,7 +110,8 @@ const Report = (props: ReportProps) => {
   const rows = getRows();
 
   return (
-    <ReportGrid rows={rows} />
+    // <ReportGrid rows={rows} />
+    <ExpensesReportTable categoryExpenses={rows} />
   );
 };
 
