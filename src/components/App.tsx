@@ -14,7 +14,7 @@ import { isNil } from 'lodash';
 import { FormControl } from '@mui/material';
 import { search, uploadFile } from '../controllers';
 import TransactionsReport from './TransactionsReport';
-import ReportGrid from './ReportGrid';
+import Report from './Report';
 
 export interface AppProps {
   onSearch: (startDate: string, endDate: string) => any;
@@ -123,7 +123,7 @@ const App = (props: AppProps) => {
       <br />
       <br />
       <TransactionsReport />
-      <ReportGrid />
+      <Report />
     </div>
   );
 };
