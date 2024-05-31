@@ -28,7 +28,15 @@ const ExpensesReportTable: React.FC<ExpensesReportTableProps> = ({ categoryExpen
       day: '2-digit',
     }).format(date);
   };
-  
+
+  const formatPercentage = (value: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'percent',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(value / 100);
+  };
+
   const handleButtonClick = (rowId: string) => {
     setSelectedRowId(prevRowId => (prevRowId === rowId ? null : rowId));
   };
@@ -56,7 +64,7 @@ const ExpensesReportTable: React.FC<ExpensesReportTableProps> = ({ categoryExpen
               <div className="table-cell">{row.categoryName}</div>
               <div className="table-cell">{row.transactionCount}</div>
               <div className="table-cell">{formatCurrency(row.totalExpenses)}</div>
-              <div className="table-cell">{row.percentageOfTotal}</div>
+              <div className="table-cell">{formatPercentage(row.percentageOfTotal)}</div>
             </div>
             {selectedRowId === row.id && (
               <div className="details-table-container">
