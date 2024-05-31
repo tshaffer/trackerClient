@@ -24,30 +24,14 @@ const ExpensesReportTable: React.FC<ExpensesReportTableProps> = ({ categoryExpen
     const date = new Date(isoString);
     return new Intl.DateTimeFormat('en-US', {
       year: 'numeric',
-      month: 'long',
-      day: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
     }).format(date);
   };
-
+  
   const handleButtonClick = (rowId: string) => {
     setSelectedRowId(prevRowId => (prevRowId === rowId ? null : rowId));
   };
-
-  /*
-              <div className="detail-row">
-                <div className="detail-cell">
-                  Category: {row.categoryName}
-                </div>
-              </div>
-  */
-
-  /*
-      <div className="table-row">
-        <div className="table-cell">03/04/2023</div>
-        <div className="table-cell">$69.12</div>
-        <div className="table-cell">Pizza</div>
-      </div>
-  */
 
   return (
     <div className="table-container">
