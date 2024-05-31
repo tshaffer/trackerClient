@@ -20,6 +20,15 @@ const ExpensesReportTable: React.FC<ExpensesReportTableProps> = ({ categoryExpen
     }).format(amount);
   };
 
+  const formatDate = (isoString: string) => {
+    const date = new Date(isoString);
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }).format(date);
+  };
+
   const handleButtonClick = (rowId: string) => {
     setSelectedRowId(prevRowId => (prevRowId === rowId ? null : rowId));
   };
@@ -32,13 +41,13 @@ const ExpensesReportTable: React.FC<ExpensesReportTableProps> = ({ categoryExpen
               </div>
   */
 
-              /*
-                  <div className="table-row">
-                    <div className="table-cell">03/04/2023</div>
-                    <div className="table-cell">$69.12</div>
-                    <div className="table-cell">Pizza</div>
-                  </div>
-              */
+  /*
+      <div className="table-row">
+        <div className="table-cell">03/04/2023</div>
+        <div className="table-cell">$69.12</div>
+        <div className="table-cell">Pizza</div>
+      </div>
+  */
 
   return (
     <div className="table-container">
@@ -66,9 +75,10 @@ const ExpensesReportTable: React.FC<ExpensesReportTableProps> = ({ categoryExpen
               <div className="table-cell">{row.percentageOfTotal}</div>
             </div>
             {selectedRowId === row.id && (
-              <React.Fragment>
+              <div className="details-table-container">
                 <div className="table-header">
                   <div className="table-row">
+                    <div className="table-cell"></div>
                     <div className="table-cell">Date</div>
                     <div className="table-cell">Amount</div>
                     <div className="table-cell">Description</div>
@@ -77,13 +87,14 @@ const ExpensesReportTable: React.FC<ExpensesReportTableProps> = ({ categoryExpen
                 <div className="table-body">
                   {row.transactions.map(transaction => (
                     <div className="table-row" key={transaction.id}>
-                      <div className="table-cell">{transaction.transactionDate}</div>
+                      <div className="table-cell"></div>
+                      <div className="table-cell">{formatDate(transaction.transactionDate)}</div>
                       <div className="table-cell">{formatCurrency(-transaction.amount)}</div>
                       <div className="table-cell">{transaction.description}</div>
                     </div>
                   ))}
                 </div>
-              </React.Fragment>
+              </div>
             )}
           </React.Fragment>
         ))}
