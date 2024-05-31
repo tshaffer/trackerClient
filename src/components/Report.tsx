@@ -107,10 +107,9 @@ const Report = (props: ReportProps) => {
     return null;
   }
 
-  const rows = getRows();
+  const rows: CategoryExpensesData[] = getRows();
 
   return (
-    // <ReportGrid rows={rows} />
     <ExpensesReportTable categoryExpenses={rows} />
   );
 };

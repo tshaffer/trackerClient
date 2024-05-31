@@ -39,7 +39,7 @@ export interface CategoryEntity {
 export type CategoryExpensesData = {
   id: string;
   categoryName: string;
-  transactions: any[];
+  transactions: CreditCardTransactionEntity[];
   transactionCount: number,
   totalExpenses: number,
   percentageOfTotal: number,

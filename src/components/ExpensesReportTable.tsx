@@ -25,6 +25,14 @@ const ExpensesReportTable: React.FC<ExpensesReportTableProps> = ({ categoryExpen
               </div>
   */
 
+              /*
+                  <div className="table-row">
+                    <div className="table-cell">03/04/2023</div>
+                    <div className="table-cell">$69.12</div>
+                    <div className="table-cell">Pizza</div>
+                  </div>
+              */
+
   return (
     <div className="table-container">
       <div className="table-header">
@@ -37,7 +45,7 @@ const ExpensesReportTable: React.FC<ExpensesReportTableProps> = ({ categoryExpen
         </div>
       </div>
       <div className="table-body">
-        {rows.map((row) => (
+        {rows.map((row: CategoryExpensesData) => (
           <React.Fragment key={row.id}>
             <div className="table-row">
               <div className="table-cell">
@@ -60,11 +68,13 @@ const ExpensesReportTable: React.FC<ExpensesReportTableProps> = ({ categoryExpen
                   </div>
                 </div>
                 <div className="table-body">
-                  <div className="table-row">
-                    <div className="table-cell">03/04/2023</div>
-                    <div className="table-cell">$69.12</div>
-                    <div className="table-cell">Pizza</div>
-                  </div>
+                  {row.transactions.map(transaction => (
+                    <div className="table-row" key={transaction.id}>
+                      <div className="table-cell">{transaction.transactionDate}</div>
+                      <div className="table-cell">{transaction.amount}</div>
+                      <div className="table-cell">{transaction.description}</div>
+                    </div>
+                  ))}
                 </div>
               </React.Fragment>
             )}
