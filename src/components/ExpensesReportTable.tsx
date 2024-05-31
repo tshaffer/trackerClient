@@ -17,6 +17,14 @@ const ExpensesReportTable: React.FC<ExpensesReportTableProps> = ({ categoryExpen
     setSelectedRowId(prevRowId => (prevRowId === rowId ? null : rowId));
   };
 
+  /*
+              <div className="detail-row">
+                <div className="detail-cell">
+                  Category: {row.categoryName}
+                </div>
+              </div>
+  */
+
   return (
     <div className="table-container">
       <div className="table-header">
@@ -43,11 +51,22 @@ const ExpensesReportTable: React.FC<ExpensesReportTableProps> = ({ categoryExpen
               <div className="table-cell">{row.percentageOfTotal}</div>
             </div>
             {selectedRowId === row.id && (
-              <div className="detail-row">
-                <div className="detail-cell">
-                  Category: {row.categoryName}
+              <React.Fragment>
+                <div className="table-header">
+                  <div className="table-row">
+                    <div className="table-cell">Date</div>
+                    <div className="table-cell">Amount</div>
+                    <div className="table-cell">Description</div>
+                  </div>
                 </div>
-              </div>
+                <div className="table-body">
+                  <div className="table-row">
+                    <div className="table-cell">03/04/2023</div>
+                    <div className="table-cell">$69.12</div>
+                    <div className="table-cell">Pizza</div>
+                  </div>
+                </div>
+              </React.Fragment>
             )}
           </React.Fragment>
         ))}
