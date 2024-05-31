@@ -13,6 +13,13 @@ interface ExpensesReportTableProps {
 const ExpensesReportTable: React.FC<ExpensesReportTableProps> = ({ categoryExpenses: rows }) => {
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(amount);
+  };
+
   const handleButtonClick = (rowId: string) => {
     setSelectedRowId(prevRowId => (prevRowId === rowId ? null : rowId));
   };
@@ -55,7 +62,7 @@ const ExpensesReportTable: React.FC<ExpensesReportTableProps> = ({ categoryExpen
               </div>
               <div className="table-cell">{row.categoryName}</div>
               <div className="table-cell">{row.transactionCount}</div>
-              <div className="table-cell">{row.totalExpenses}</div>
+              <div className="table-cell">{formatCurrency(row.totalExpenses)}</div>
               <div className="table-cell">{row.percentageOfTotal}</div>
             </div>
             {selectedRowId === row.id && (
@@ -71,7 +78,7 @@ const ExpensesReportTable: React.FC<ExpensesReportTableProps> = ({ categoryExpen
                   {row.transactions.map(transaction => (
                     <div className="table-row" key={transaction.id}>
                       <div className="table-cell">{transaction.transactionDate}</div>
-                      <div className="table-cell">{transaction.amount}</div>
+                      <div className="table-cell">{formatCurrency(-transaction.amount)}</div>
                       <div className="table-cell">{transaction.description}</div>
                     </div>
                   ))}
