@@ -4,7 +4,8 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import IconButton from '@mui/material/IconButton';
 
 import '../styles/Tracker.css';
-import { CategoryExpensesData } from '../types';
+import { CategoryExpensesData, CheckingAccountTransactionEntity, CreditCardTransactionEntity, TransactionEntity } from '../types';
+import { isNil } from 'lodash';
 
 interface ExpensesReportTableProps {
   categoryExpenses: CategoryExpensesData[];
@@ -77,7 +78,7 @@ const ExpensesReportTable: React.FC<ExpensesReportTableProps> = ({ categoryExpen
                   </div>
                 </div>
                 <div className="table-body">
-                  {row.transactions.map(transaction => (
+                  {row.transactions.map((transaction: TransactionEntity) => (
                     <div className="table-row" key={transaction.id}>
                       <div className="table-cell"></div>
                       <div className="table-cell">{formatDate(transaction.transactionDate)}</div>

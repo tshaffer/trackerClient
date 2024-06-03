@@ -3,6 +3,17 @@ export interface Category {
   keyword: string;
 }
 
+export interface CheckingAccountTransactionEntity {
+  id: string;
+  statementId: string;
+  transactionDate: string;
+  transactionType: string;
+  name: string;
+  memo: string;
+  amount: number;
+}
+
+
 export interface CreditCardTransactionEntity {
   id: string;
   statementId: string;
@@ -14,15 +25,24 @@ export interface CreditCardTransactionEntity {
   amount: number;
 }
 
+export interface TransactionEntity {
+  id: string;
+  statementId: string;
+  transactionDate: string;
+  amount: number;
+  description: string;
+  category: string;
+}
+
 export interface TransactionsDataResponseItem {
   category: Category;
-  transaction: CreditCardTransactionEntity;
+  transaction: TransactionEntity;
 }
 
 export interface CategorizedStatementData {
   startDate: string;
   endDate: string;
-  transactions: CategorizedTransactionEntity[];
+  transactions: TransactionEntity[];
   total: number;
 }
 
@@ -39,7 +59,7 @@ export interface CategoryEntity {
 export type CategoryExpensesData = {
   id: string;
   categoryName: string;
-  transactions: CreditCardTransactionEntity[];
+  transactions: TransactionEntity[];
   transactionCount: number,
   totalExpenses: number,
   percentageOfTotal: number,

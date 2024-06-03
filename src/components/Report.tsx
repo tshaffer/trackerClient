@@ -1,9 +1,8 @@
 import * as React from 'react';
-import ReportGrid from './ReportGrid';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { TrackerDispatch } from '../models';
-import { CategoryExpensesData, CreditCardTransactionEntity, StringToTransactionsLUT } from '../types';
+import { CategoryExpensesData, CreditCardTransactionEntity, StringToTransactionsLUT, TransactionEntity } from '../types';
 import { getTransactionsByCategory } from '../selectors';
 import { isEmpty } from 'lodash';
 import ExpensesReportTable from './ExpensesReportTable';
@@ -78,7 +77,7 @@ const Report = (props: ReportProps) => {
 
     for (const categoryName in props.transactionsByCategory) {
       if (Object.prototype.hasOwnProperty.call(props.transactionsByCategory, categoryName)) {
-        const transactions: CreditCardTransactionEntity[] = props.transactionsByCategory[categoryName];
+        const transactions: TransactionEntity[] = props.transactionsByCategory[categoryName];
         const totalExpenses = -1 * roundTo((transactions.reduce((sum, transaction) => sum + transaction.amount, 0)), 2);
 
         const categoryRow: CategoryExpensesData = {

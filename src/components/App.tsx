@@ -35,8 +35,8 @@ const App = (props: AppProps) => {
   const [uploadError, setUploadError] = React.useState(false);
   const [errorList, setErrorList] = React.useState<string[]>([]);
 
-  const [startDate, setStartDate] = React.useState("2022-06-01");
-  const [endDate, setEndDate] = React.useState("2022-12-31");
+  const [startDate, setStartDate] = React.useState("2024-01-01");
+  const [endDate, setEndDate] = React.useState("2024-12-31");
 
   const handleFileChangeHandler = (e: any) => {
     setSelectedFile(e.target.files[0]);
