@@ -66,7 +66,7 @@ const Report = (props: ReportProps) => {
       <h4>
         Date Range: {formatDate(props.startDate)} to {formatDate(props.endDate)}
       </h4>
-      <ExpensesReportTable categoryExpenses={rows} />
+      <ExpensesReportTable categoryExpenses={rows} startDate={props.startDate} endDate={props.endDate} />
     </div>
   );
 };

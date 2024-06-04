@@ -5,23 +5,30 @@ import IconButton from '@mui/material/IconButton';
 
 import '../styles/Tracker.css';
 import { CategoryExpensesData, TransactionEntity } from '../types';
-import { formatCurrency, formatPercentage, formatDate } from '../utilities';
+import { formatCurrency, formatPercentage, formatDate, daysBetween, expensesPerMonth } from '../utilities';
 
 interface ExpensesReportTableProps {
   categoryExpenses: CategoryExpensesData[];
+  startDate: string;
+  endDate: string;
 }
 
-const ExpensesReportTable: React.FC<ExpensesReportTableProps> = ({ categoryExpenses: rows }) => {
+const ExpensesReportTable: React.FC<ExpensesReportTableProps> = ({ categoryExpenses: rows, startDate, endDate }) => {
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
   const handleButtonClick = (rowId: string) => {
     setSelectedRowId(prevRowId => (prevRowId === rowId ? null : rowId));
   };
 
+  let totalAmount = 0;
+  for (const row of rows) {
+    totalAmount += row.totalExpenses;
+  }
+
   return (
     <React.Fragment>
-      <h4>Total Amount: $69,696</h4>
-      <h4>Per Month: $23,332</h4>
+      <h4>Total Amount: {formatCurrency(totalAmount)}</h4>
+      <h4>Per Month: {expensesPerMonth(totalAmount, startDate, endDate)}</h4>
       <div className="table-container">
       <div className="table-header">
         <div className="table-row">
