@@ -2,64 +2,16 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { TrackerDispatch } from '../models';
-import { CategoryExpensesData, CreditCardTransactionEntity, StringToTransactionsLUT, TransactionEntity } from '../types';
-import { getTransactionsByCategory } from '../selectors';
+import { CategoryExpensesData, StringToTransactionsLUT, TransactionEntity } from '../types';
+import { getEndDate, getStartDate, getTransactionsByCategory } from '../selectors';
 import { isEmpty } from 'lodash';
 import ExpensesReportTable from './ExpensesReportTable';
-
-// const rows = [
-//   {
-//     id: '1',
-//     categoryName: 'Groceries',
-//     transactions: [
-//       {
-//         id: '10',
-//         description: 'Safeway',
-//         date: '2021-10-01',
-//         amount: 100,
-//       },
-//       {
-//         id: '11',
-//         description: 'Walmart',
-//         date: '2021-10-02',
-//         amount: 200,
-//       }
-//     ],
-//     totalAmount: 300,
-//     transactionCount: 2,
-//     percentage: 50,
-//   },
-//   {
-//     id: '2',
-//     categoryName: 'Travel',
-//     transactions: [
-//       {
-//         id: '12',
-//         description: 'Hawaii',
-//         date: '2021-02-01',
-//         amount: 22,
-//       },
-//       {
-//         id: '13',
-//         description: 'Sedona',
-//         date: '2023-02-01',
-//         amount: 66,
-//       },
-//       {
-//         id: '14',
-//         description: 'Belize',
-//         date: '2021-03-02',
-//         amount: 33,
-//       }
-//     ],
-//     totalAmount: 121,
-//     transactionCount: 3,
-//     percentage: 60,
-//   }
-// ]
+import { formatDate } from '../utilities';
 
 export interface ReportProps {
   transactionsByCategory: StringToTransactionsLUT,
+  startDate: string,
+  endDate: string,
 }
 
 const Report = (props: ReportProps) => {
@@ -68,7 +20,7 @@ const Report = (props: ReportProps) => {
     const factor = Math.pow(10, precision)
     return Math.round(num * factor) / factor
   }
-    
+
   const getRows = (): CategoryExpensesData[] => {
 
     const rows: CategoryExpensesData[] = [];
@@ -109,12 +61,20 @@ const Report = (props: ReportProps) => {
   const rows: CategoryExpensesData[] = getRows();
 
   return (
-    <ExpensesReportTable categoryExpenses={rows} />
+    <div>
+      <h1>Spending Report</h1>
+      <h4>
+        Date Range: {formatDate(props.startDate)} to {formatDate(props.endDate)}
+      </h4>
+      <ExpensesReportTable categoryExpenses={rows} />
+    </div>
   );
 };
 
 function mapStateToProps(state: any) {
   return {
+    startDate: getStartDate(state),
+    endDate: getEndDate(state),
     transactionsByCategory: getTransactionsByCategory(state),
   };
 }
