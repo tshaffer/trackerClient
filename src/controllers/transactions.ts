@@ -1,6 +1,17 @@
 import axios from "axios";
-import { apiUrlFragment, CategorizedStatementData, serverUrl, StringToTransactionsLUT, TransactionEntity } from "../types";
-import { setStatementData, setTransactionsByCategory, TrackerDispatch, TrackerVoidPromiseThunkAction } from "../models";
+import {
+  apiUrlFragment,
+  CategorizedStatementData,
+  serverUrl,
+  StringToTransactionsLUT,
+  TransactionEntity
+} from "../types";
+import {
+  setStatementData,
+  setTransactionsByCategory,
+  TrackerDispatch,
+  TrackerVoidPromiseThunkAction
+} from "../models";
 
 export const search = (startDate: string, endDate: string): TrackerVoidPromiseThunkAction => {
 
@@ -28,7 +39,7 @@ export const search = (startDate: string, endDate: string): TrackerVoidPromiseTh
 
         const { startDate, endDate, total } = categorizedStatementData;
         dispatch(setStatementData(startDate, endDate, total));
-        
+
         console.log(transactionsByCategory);
         dispatch(setTransactionsByCategory(transactionsByCategory));
       });

@@ -6,7 +6,7 @@ import { CategoryExpensesData, StringToTransactionsLUT, TransactionEntity } from
 import { getEndDate, getStartDate, getTransactionsByCategory } from '../selectors';
 import { isEmpty } from 'lodash';
 import ExpensesReportTable from './ExpensesReportTable';
-import { formatDate } from '../utilities';
+import { formatDate, roundTo } from '../utilities';
 
 export interface ReportProps {
   transactionsByCategory: StringToTransactionsLUT,
@@ -15,11 +15,6 @@ export interface ReportProps {
 }
 
 const Report = (props: ReportProps) => {
-
-  const roundTo = (num: number, precision: number): number => {
-    const factor = Math.pow(10, precision)
-    return Math.round(num * factor) / factor
-  }
 
   const getRows = (): CategoryExpensesData[] => {
 

@@ -4,24 +4,14 @@ import { connect } from 'react-redux';
 
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { FormControl } from '@mui/material';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import dayjs, { Dayjs } from 'dayjs';
 
-
-
 import { TrackerDispatch, setAppInitialized } from '../models';
 import { isNil } from 'lodash';
-import { FormControl } from '@mui/material';
 import { search, uploadFile } from '../controllers';
 import Report from './Report';
-import CustomTable, { Row } from './CustomTable';
-
-export const sampleData: Row[] = [
-  { id: '1', category: 'Food', totalAmount: 150 },
-  { id: '2', category: 'Transport', totalAmount: 80 },
-  { id: '3', category: 'Utilities', totalAmount: 200 },
-];
-
 
 export interface AppProps {
   onSearch: (startDate: string, endDate: string) => any;
@@ -32,8 +22,6 @@ export interface AppProps {
 const App = (props: AppProps) => {
 
   const [selectedFile, setSelectedFile] = React.useState(null);
-  const [uploadError, setUploadError] = React.useState(false);
-  const [errorList, setErrorList] = React.useState<string[]>([]);
 
   const [startDate, setStartDate] = React.useState("2024-01-01");
   const [endDate, setEndDate] = React.useState("2024-12-31");
@@ -54,11 +42,6 @@ const App = (props: AppProps) => {
         }).catch((err: any) => {
           console.log('uploadFile returned error');
           console.log(err);
-          // const errorList: string[] = err.response.data;
-          // console.log('errorList:');
-          // console.log(errorList);
-          setErrorList(err.response.data);
-          setUploadError(true);
         });
     }
   };
@@ -118,7 +101,6 @@ const App = (props: AppProps) => {
 
   return (
     <div>
-      {/* <CustomTable rows={sampleData}/> */}
       <input type="file" name="file" onChange={handleFileChangeHandler} />
       <br />
       <button type="button" onClick={handleUploadFile}>Upload</button>

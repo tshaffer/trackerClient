@@ -32,3 +32,9 @@ export const expensesPerMonth = (totalAmount: number, startDate: string, endDate
   const days = daysBetween(startDate, endDate);
   return formatCurrency(totalAmount / (days / 30));
 }
+
+export const roundTo = (num: number, precision: number): number => {
+  const factor = Math.pow(10, precision)
+  return Math.round(num * factor) / factor
+}
+

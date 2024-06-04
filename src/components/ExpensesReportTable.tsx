@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
+import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import IconButton from '@mui/material/IconButton';
 
 import '../styles/Tracker.css';
 import { CategoryExpensesData, TransactionEntity } from '../types';
-import { formatCurrency, formatPercentage, formatDate, daysBetween, expensesPerMonth } from '../utilities';
+import { formatCurrency, formatPercentage, formatDate, expensesPerMonth } from '../utilities';
 
 interface ExpensesReportTableProps {
   categoryExpenses: CategoryExpensesData[];
