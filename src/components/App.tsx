@@ -2,18 +2,23 @@ import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
+import { v4 as uuidv4 } from 'uuid';
+
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { FormControl } from '@mui/material';
+import { Button, FormControl } from '@mui/material';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import dayjs, { Dayjs } from 'dayjs';
 
-import { TrackerDispatch, setAppInitialized } from '../models';
+import { TrackerDispatch, addCategory, setAppInitialized } from '../models';
 import { isNil } from 'lodash';
 import { search, uploadFile } from '../controllers';
 import Report from './Report';
+import AddCategoryDialog from './AddCategoryDialog';
+import { CategoryEntity } from '../types';
 
 export interface AppProps {
+  onAddCategory: (categoryEntity: CategoryEntity) => any;
   onSearch: (startDate: string, endDate: string) => any;
   onSetAppInitialized: () => any;
   onUploadFile: (formData: FormData) => any;
@@ -22,9 +27,23 @@ export interface AppProps {
 const App = (props: AppProps) => {
 
   const [selectedFile, setSelectedFile] = React.useState(null);
+  const [showAddCategoryDialog, setShowAddCategoryDialog] = React.useState(false);
 
   const [startDate, setStartDate] = React.useState("2024-01-01");
   const [endDate, setEndDate] = React.useState("2024-12-31");
+
+  const handleCloseAddCategoryDialog = () => {
+    setShowAddCategoryDialog(false);
+  };
+
+  const handleAddCategory = (categoryLabel: string): void => {
+    const id: string = uuidv4();
+    const categoryEntity: CategoryEntity = {
+      id,
+      keyword: categoryLabel
+    };
+    props.onAddCategory(categoryEntity);
+  };
 
   const handleFileChangeHandler = (e: any) => {
     setSelectedFile(e.target.files[0]);
@@ -49,13 +68,15 @@ const App = (props: AppProps) => {
   const handleSetStartDate = (dateDayJs: Dayjs | null) => {
     if (!isNil(dateDayJs)) {
       const date: Date = dateDayJs.toDate();
-      setStartDate(date.toISOString());}
+      setStartDate(date.toISOString());
+    }
   };
 
   const handleSetEndDate = (dateDayJs: Dayjs | null) => {
     if (!isNil(dateDayJs)) {
       const date: Date = dateDayJs.toDate();
-      setEndDate(date.toISOString());}
+      setEndDate(date.toISOString());
+    }
   };
 
   const handleSearch = (): void => {
@@ -101,11 +122,18 @@ const App = (props: AppProps) => {
 
   return (
     <div>
+      <AddCategoryDialog
+        open={showAddCategoryDialog}
+        onAddCategory={handleAddCategory}
+        onClose={handleCloseAddCategoryDialog}
+      />
+
       <input type="file" name="file" onChange={handleFileChangeHandler} />
       <br />
       <button type="button" onClick={handleUploadFile}>Upload</button>
       <br />
       <br />
+      <Button onClick={() => setShowAddCategoryDialog(true)}>Add Category</Button>
       <br />
       {renderStartDate()}
       {renderEndDate()}
@@ -124,6 +152,7 @@ function mapStateToProps(state: any) {
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
+    onAddCategory: addCategory,
     onSetAppInitialized: setAppInitialized,
     onUploadFile: uploadFile,
     onSearch: search,

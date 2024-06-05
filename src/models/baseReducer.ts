@@ -5,6 +5,7 @@ import { TrackerState } from '../types';
 
 import { appStateReducer } from './appState';
 import { reportDataStateReducer } from './reportDataState';
+import { categoryStateReducer } from './categoryState';
 
 // -----------------------------------------------------------------------
 // Reducers
@@ -12,6 +13,7 @@ import { reportDataStateReducer } from './reportDataState';
 export const rootReducer = combineReducers<TrackerState>({
   appState: appStateReducer,
   reportDataState: reportDataStateReducer,
+  categoryState: categoryStateReducer,
 });
 
 // -----------------------------------------------------------------------
