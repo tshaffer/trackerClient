@@ -10,7 +10,8 @@ import { Button, FormControl } from '@mui/material';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import dayjs, { Dayjs } from 'dayjs';
 
-import { TrackerDispatch, addCategory, setAppInitialized } from '../models';
+import { TrackerDispatch, setAppInitialized } from '../models';
+import { addCategoryServerAndRedux } from '../controllers';
 import { isNil } from 'lodash';
 import { search, uploadFile } from '../controllers';
 import Report from './Report';
@@ -152,7 +153,7 @@ function mapStateToProps(state: any) {
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
-    onAddCategory: addCategory,
+    onAddCategory: addCategoryServerAndRedux,
     onSetAppInitialized: setAppInitialized,
     onUploadFile: uploadFile,
     onSearch: search,

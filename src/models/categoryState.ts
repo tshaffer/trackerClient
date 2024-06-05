@@ -14,7 +14,7 @@ interface AddCategoryPayload {
   categoryEntity: CategoryEntity,  
 }
 
-export const addCategory = (categoryEntity: CategoryEntity): any => {
+export const addCategoryRedux = (categoryEntity: CategoryEntity): any => {
   return {
     type: ADD_CATEGORY,
     payload: {
