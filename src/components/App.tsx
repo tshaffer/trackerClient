@@ -11,15 +11,17 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import dayjs, { Dayjs } from 'dayjs';
 
 import { TrackerDispatch, setAppInitialized } from '../models';
-import { addCategoryServerAndRedux, loadCategories } from '../controllers';
+import { addCategoryKeywordServerAndRedux, addCategoryServerAndRedux, loadCategories } from '../controllers';
 import { isNil } from 'lodash';
 import { search, uploadFile } from '../controllers';
 import Report from './Report';
 import AddCategoryDialog from './AddCategoryDialog';
-import { CategoryEntity } from '../types';
+import { CategoryEntity, CategoryKeywordEntity } from '../types';
+import AddCategoryKeywordDialog from './AddCategoryKeywordDialog';
 
 export interface AppProps {
   onAddCategory: (categoryEntity: CategoryEntity) => any;
+  onAddCategoryKeyword: (categoryKeywordEntity: CategoryKeywordEntity) => any;
   onLoadCategories: () => any;
   onSearch: (startDate: string, endDate: string) => any;
   onSetAppInitialized: () => any;
@@ -30,6 +32,7 @@ const App = (props: AppProps) => {
 
   const [selectedFile, setSelectedFile] = React.useState(null);
   const [showAddCategoryDialog, setShowAddCategoryDialog] = React.useState(false);
+  const [showAddCategoryKeywordDialog, setShowAddCategoryKeywordDialog] = React.useState(false);
 
   const [startDate, setStartDate] = React.useState("2024-01-01");
   const [endDate, setEndDate] = React.useState("2024-12-31");
@@ -45,6 +48,10 @@ const App = (props: AppProps) => {
     setShowAddCategoryDialog(false);
   };
 
+  const handleCloseAddCategoryKeywordDialog = () => {
+    setShowAddCategoryKeywordDialog(false);
+  };
+
   const handleAddCategory = (categoryLabel: string): void => {
     const id: string = uuidv4();
     const categoryEntity: CategoryEntity = {
@@ -53,6 +60,16 @@ const App = (props: AppProps) => {
     };
     props.onAddCategory(categoryEntity);
   };
+
+  const handleAddCategoryKeyword = (categoryKeyword: string, categoryId: string): void => {
+    const id: string = uuidv4();
+    const categoryKeywordEntity: CategoryKeywordEntity = {
+      id,
+      keyword: categoryKeyword,
+      categoryId
+    };
+    props.onAddCategoryKeyword(categoryKeywordEntity);
+  }
 
   const handleFileChangeHandler = (e: any) => {
     setSelectedFile(e.target.files[0]);
@@ -137,12 +154,19 @@ const App = (props: AppProps) => {
         onClose={handleCloseAddCategoryDialog}
       />
 
+      <AddCategoryKeywordDialog
+        open={showAddCategoryKeywordDialog}
+        onAddCategoryKeyword={handleAddCategoryKeyword}
+        onClose={handleCloseAddCategoryKeywordDialog}
+      />
+
       <input type="file" name="file" onChange={handleFileChangeHandler} />
       <br />
       <button type="button" onClick={handleUploadFile}>Upload</button>
       <br />
       <br />
       <Button onClick={() => setShowAddCategoryDialog(true)}>Add Category</Button>
+      <Button onClick={() => setShowAddCategoryKeywordDialog(true)}>Add Category Keyword</Button>
       <br />
       {renderStartDate()}
       {renderEndDate()}
@@ -162,6 +186,7 @@ function mapStateToProps(state: any) {
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
     onAddCategory: addCategoryServerAndRedux,
+    onAddCategoryKeyword: addCategoryKeywordServerAndRedux,
     onSetAppInitialized: setAppInitialized,
     onUploadFile: uploadFile,
     onSearch: search,

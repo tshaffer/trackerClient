@@ -1,11 +1,12 @@
 import { cloneDeep } from 'lodash';
-import { CategoryEntity, CategoryState } from '../types';
+import { CategoryEntity, CategoryKeywordEntity, CategoryState } from '../types';
 import { TrackerModelBaseAction } from './baseAction';
 
 // ------------------------------------
 // Constants
 // ------------------------------------
 export const ADD_CATEGORY = 'ADD_CATEGORY';
+export const ADD_CATEGORY_KEYWORD = 'ADD_CATEGORY_KEYWORD';
 export const ADD_CATEGORIES = 'ADD_CATEGORIES';
 
 // ------------------------------------
@@ -24,6 +25,19 @@ export const addCategoryRedux = (categoryEntity: CategoryEntity): any => {
     }
   };
 };
+
+interface AddCategoryKeywordPayload {
+  categoryKeywordEntity: CategoryKeywordEntity,  
+}
+
+export const addCategoryKeywordRedux = (categoryKeywordEntity: CategoryKeywordEntity): any => {
+  return {
+    type: ADD_CATEGORY_KEYWORD,
+    payload: {
+      categoryKeywordEntity
+    }
+  };
+}
 
 interface AddCategoriesPayload {
   categories: CategoryEntity[];
@@ -47,11 +61,12 @@ export const addCategories = (
 
 const initialState: CategoryState = {
   categories: [],
+  categoryKeywords: [],
 };
 
 export const categoryStateReducer = (
   state: CategoryState = initialState,
-  action: TrackerModelBaseAction<AddCategoryPayload & AddCategoriesPayload>
+  action: TrackerModelBaseAction<AddCategoryPayload & AddCategoryKeywordPayload & AddCategoriesPayload>
 ): CategoryState => {
   switch (action.type) {
     case ADD_CATEGORY: {
@@ -60,6 +75,15 @@ export const categoryStateReducer = (
         categories: [
           ...state.categories,
           action.payload.categoryEntity,
+        ],
+      };
+    }
+    case ADD_CATEGORY_KEYWORD: {
+      return {
+        ...state,
+        categoryKeywords: [
+          ...state.categoryKeywords,
+          action.payload.categoryKeywordEntity,
         ],
       };
     }

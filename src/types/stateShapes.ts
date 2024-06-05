@@ -1,5 +1,5 @@
 import { StringToTransactionsLUT } from "./base";
-import { CategoryEntity } from "./entities";
+import { CategoryEntity, CategoryKeywordEntity } from "./entities";
 
 export interface TrackerState {
   appState: AppState;
@@ -20,4 +20,5 @@ export interface ReportDataState {
 
 export interface CategoryState {
   categories: CategoryEntity[];
+  categoryKeywords: CategoryKeywordEntity[];
 }

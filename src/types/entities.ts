@@ -3,6 +3,12 @@ export interface CategoryEntity {
   keyword: string;
 }
 
+export interface CategoryKeywordEntity {
+  id: string;
+  keyword: string;
+  categoryId: string;
+}
+
 export interface TransactionEntity {
   id: string;
   statementId: string;
