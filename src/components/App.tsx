@@ -11,7 +11,7 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import dayjs, { Dayjs } from 'dayjs';
 
 import { TrackerDispatch, setAppInitialized } from '../models';
-import { addCategoryServerAndRedux } from '../controllers';
+import { addCategoryServerAndRedux, loadCategories } from '../controllers';
 import { isNil } from 'lodash';
 import { search, uploadFile } from '../controllers';
 import Report from './Report';
@@ -20,6 +20,7 @@ import { CategoryEntity } from '../types';
 
 export interface AppProps {
   onAddCategory: (categoryEntity: CategoryEntity) => any;
+  onLoadCategories: () => any;
   onSearch: (startDate: string, endDate: string) => any;
   onSetAppInitialized: () => any;
   onUploadFile: (formData: FormData) => any;
@@ -32,6 +33,13 @@ const App = (props: AppProps) => {
 
   const [startDate, setStartDate] = React.useState("2024-01-01");
   const [endDate, setEndDate] = React.useState("2024-12-31");
+
+  React.useEffect(() => {
+    props.onLoadCategories()
+      .then(() => {
+        return props.onSetAppInitialized();
+      })
+  });
 
   const handleCloseAddCategoryDialog = () => {
     setShowAddCategoryDialog(false);
@@ -157,6 +165,7 @@ const mapDispatchToProps = (dispatch: TrackerDispatch) => {
     onSetAppInitialized: setAppInitialized,
     onUploadFile: uploadFile,
     onSearch: search,
+    onLoadCategories: loadCategories,
   }, dispatch);
 };
 
