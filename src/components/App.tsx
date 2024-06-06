@@ -16,7 +16,7 @@ import { isNil } from 'lodash';
 import { search, uploadFile } from '../controllers';
 import Report from './Report';
 import AddCategoryDialog from './AddCategoryDialog';
-import { CategoryEntity, CategoryKeywordEntity } from '../types';
+import { CategoryEntity, CategoryKeywordEntity, DisregardLevel } from '../types';
 import AddCategoryKeywordDialog from './AddCategoryKeywordDialog';
 import { getAppInitialized } from '../selectors';
 
@@ -61,7 +61,8 @@ const App = (props: AppProps) => {
     const id: string = uuidv4();
     const categoryEntity: CategoryEntity = {
       id,
-      keyword: categoryLabel
+      keyword: categoryLabel,
+      disregardLevel: DisregardLevel.None,
     };
     props.onAddCategory(categoryEntity);
   };

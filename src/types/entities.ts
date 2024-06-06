@@ -1,6 +1,9 @@
+import { DisregardLevel } from "./enums";
+
 export interface CategoryEntity {
   id: string;
   keyword: string;
+  disregardLevel: DisregardLevel;
 }
 
 export interface CategoryKeywordEntity {
