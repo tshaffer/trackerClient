@@ -14,7 +14,21 @@ interface ExpensesReportTableProps {
 }
 
 const ExpensesReportTable: React.FC<ExpensesReportTableProps> = ({ categoryExpenses: rows, startDate, endDate }) => {
+  
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+
+  const sortCategoriesByTotalExpenses = (categoryExpenses: CategoryExpensesData[]): CategoryExpensesData[] => {
+    return categoryExpenses.sort((a, b) => {
+      if (a.totalExpenses < b.totalExpenses) {
+        return 1;
+      }
+      if (a.totalExpenses > b.totalExpenses) {
+        return -1;
+      }
+      return 0;
+    });
+  };
+
 
   const handleButtonClick = (rowId: string) => {
     setSelectedRowId(prevRowId => (prevRowId === rowId ? null : rowId));
@@ -24,6 +38,8 @@ const ExpensesReportTable: React.FC<ExpensesReportTableProps> = ({ categoryExpen
   for (const row of rows) {
     totalAmount += row.totalExpenses;
   }
+
+  const sortedRows = sortCategoriesByTotalExpenses(rows);
 
   return (
     <React.Fragment>
@@ -40,20 +56,20 @@ const ExpensesReportTable: React.FC<ExpensesReportTableProps> = ({ categoryExpen
         </div>
       </div>
       <div className="table-body">
-        {rows.map((row: CategoryExpensesData) => (
-          <React.Fragment key={row.id}>
+        {sortedRows.map((categoryExpenses: CategoryExpensesData) => (
+          <React.Fragment key={categoryExpenses.id}>
             <div className="table-row">
               <div className="table-cell">
-                <IconButton onClick={() => handleButtonClick(row.id)}>
-                  {selectedRowId === row.id ? <RemoveIcon /> : <AddIcon />}
+                <IconButton onClick={() => handleButtonClick(categoryExpenses.id)}>
+                  {selectedRowId === categoryExpenses.id ? <RemoveIcon /> : <AddIcon />}
                 </IconButton>
               </div>
-              <div className="table-cell">{row.categoryName}</div>
-              <div className="table-cell">{row.transactionCount}</div>
-              <div className="table-cell">{formatCurrency(row.totalExpenses)}</div>
-              <div className="table-cell">{formatPercentage(row.percentageOfTotal)}</div>
+              <div className="table-cell">{categoryExpenses.categoryName}</div>
+              <div className="table-cell">{categoryExpenses.transactionCount}</div>
+              <div className="table-cell">{formatCurrency(categoryExpenses.totalExpenses)}</div>
+              <div className="table-cell">{formatPercentage(categoryExpenses.percentageOfTotal)}</div>
             </div>
-            {selectedRowId === row.id && (
+            {selectedRowId === categoryExpenses.id && (
               <div className="details-table-container">
                 <div className="table-header">
                   <div className="table-row">
@@ -64,7 +80,7 @@ const ExpensesReportTable: React.FC<ExpensesReportTableProps> = ({ categoryExpen
                   </div>
                 </div>
                 <div className="table-body">
-                  {row.transactions.map((transaction: TransactionEntity) => (
+                  {categoryExpenses.transactions.map((transaction: TransactionEntity) => (
                     <div className="table-row" key={transaction.id}>
                       <div className="table-cell"></div>
                       <div className="table-cell">{formatDate(transaction.transactionDate)}</div>
