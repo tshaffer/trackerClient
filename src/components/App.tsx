@@ -18,8 +18,10 @@ import Report from './Report';
 import AddCategoryDialog from './AddCategoryDialog';
 import { CategoryEntity, CategoryKeywordEntity } from '../types';
 import AddCategoryKeywordDialog from './AddCategoryKeywordDialog';
+import { getAppInitialized } from '../selectors';
 
 export interface AppProps {
+  appInitialized: boolean;
   onAddCategory: (categoryEntity: CategoryEntity) => any;
   onAddCategoryKeyword: (categoryKeywordEntity: CategoryKeywordEntity) => any;
   onLoadCategories: () => any;
@@ -38,10 +40,13 @@ const App = (props: AppProps) => {
   const [endDate, setEndDate] = React.useState("2024-12-31");
 
   React.useEffect(() => {
-    props.onLoadCategories()
-      .then(() => {
-        return props.onSetAppInitialized();
-      })
+    if (!props.appInitialized) {
+      props.onLoadCategories()
+        .then(() => {
+          console.log('invoke onSetAppInitialized');
+          return props.onSetAppInitialized();
+        })
+    }
   });
 
   const handleCloseAddCategoryDialog = () => {
@@ -180,6 +185,7 @@ const App = (props: AppProps) => {
 
 function mapStateToProps(state: any) {
   return {
+    appInitialized: getAppInitialized(state),
   };
 }
 

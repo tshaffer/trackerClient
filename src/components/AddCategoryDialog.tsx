@@ -26,6 +26,10 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
 
   const [categoryLabel, setCategoryLabel] = React.useState('');
 
+  React.useEffect(() => {
+    setCategoryLabel('');
+  }, [props.open]);
+
   // if (!props.appInitialized) {
   //   return null;
   // }

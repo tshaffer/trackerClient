@@ -9,6 +9,7 @@ import { Button, DialogActions, DialogContent, FormControl, InputLabel, MenuItem
 import { getAppInitialized } from '../selectors';
 import { CategoryEntity } from '../types';
 import { getCategories } from '../selectors/categoryState';
+import { cloneDeep } from 'lodash';
 
 export interface AddCategoryKeywordDialogPropsFromParent {
   open: boolean;
@@ -31,6 +32,10 @@ const AddCategoryKeywordDialog = (props: AddCategoryKeywordDialogProps) => {
   const [categoryKeyword, setCategoryKeyword] = React.useState('');
   const [selectedCategoryId, setSelectedCategoryId] = React.useState<string>('');
 
+  React.useEffect(() => {
+    setCategoryKeyword('');
+  }, [props.open]);
+
   // if (!props.appInitialized) {
   //   return null;
   // }
@@ -38,6 +43,18 @@ const AddCategoryKeywordDialog = (props: AddCategoryKeywordDialogProps) => {
   if (!open) {
     return null;
   }
+
+  const sortCategoryEntities = (categoryEntities: CategoryEntity[]): CategoryEntity[] => {
+    return categoryEntities.sort((a, b) => {
+      if (a.keyword < b.keyword) {
+        return -1;
+      }
+      if (a.keyword > b.keyword) {
+        return 1;
+      }
+      return 0;
+    });
+  };
 
   const handleClose = () => {
     onClose();
@@ -58,6 +75,8 @@ const AddCategoryKeywordDialog = (props: AddCategoryKeywordDialogProps) => {
     }
   };
 
+  let alphabetizedCategoryEntities: CategoryEntity[] = cloneDeep(props.categoryEntities);
+  alphabetizedCategoryEntities = sortCategoryEntities(alphabetizedCategoryEntities);
 
   return (
     <Dialog onClose={handleClose} open={open}>
@@ -84,7 +103,7 @@ const AddCategoryKeywordDialog = (props: AddCategoryKeywordDialogProps) => {
               onChange={handleCategoryChange}
               label="Category"
             >
-              {props.categoryEntities.map((category) => (
+              {alphabetizedCategoryEntities.map((category) => (
                 <MenuItem key={category.id} value={category.id}>
                   {category.keyword}
                 </MenuItem>
