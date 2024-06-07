@@ -1,4 +1,4 @@
-import { DisregardLevel } from "./enums";
+import { BankTransactionType, DisregardLevel } from "./enums";
 
 export interface CategoryEntity {
   id: string;
@@ -24,14 +24,42 @@ export interface TransactionEntity {
 export interface CategorizedStatementData {
   startDate: string;
   endDate: string;
-  transactions: TransactionEntity[];
+  transactions: CategorizedTransactionEntity[];
   total: number;
+}
+
+export interface RawTransactionEntity {
+  id: string;
+  statementId: string;
+  transactionDate: string;
+  amount: number;
+  bankTransactionType: BankTransactionType;
+}
+
+export interface CreditCardTransactionEntity extends RawTransactionEntity {
+  postDate: string;
+  category: string;
+  description: string;
+  type: string;
+}
+
+export interface CheckingAccountTransactionEntity extends RawTransactionEntity {
+  transactionType: string;
+  name: string;
+  memo: string;
+}
+
+export type BankTransactionEntity = CreditCardTransactionEntity | CheckingAccountTransactionEntity;
+
+export interface CategorizedTransactionEntity {
+  bankTransactionEntity: BankTransactionEntity;
+  categoryEntity: CategoryEntity;
 }
 
 export type CategoryExpensesData = {
   id: string;
   categoryName: string;
-  transactions: TransactionEntity[];
+  transactions: CategorizedTransactionEntity[];
   transactionCount: number,
   totalExpenses: number,
   percentageOfTotal: number,

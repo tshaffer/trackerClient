@@ -1,4 +1,4 @@
-import { TransactionEntity } from "./entities";
+import { CategorizedTransactionEntity } from "./entities";
 
 export const serverUrl = 'http://localhost:8000';
 // export const serverUrl = 'https://tsmealwheel.herokuapp.com';
@@ -6,5 +6,5 @@ export const serverUrl = 'http://localhost:8000';
 export const apiUrlFragment = '/api/v1/';
 
 export type StringToTransactionsLUT = {
-  [key: string]: TransactionEntity[];
+  [key: string]: CategorizedTransactionEntity[];
 }

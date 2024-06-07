@@ -4,7 +4,7 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
 import '../styles/Tracker.css';
-import { CategoryExpensesData, TransactionEntity } from '../types';
+import { BankTransactionEntity, BankTransactionType, CategorizedTransactionEntity, CategoryExpensesData, CheckingAccountTransactionEntity, CreditCardTransactionEntity, TransactionEntity } from '../types';
 import { formatCurrency, formatPercentage, formatDate, expensesPerMonth } from '../utilities';
 
 interface ExpensesReportTableProps {
@@ -29,7 +29,14 @@ const ExpensesReportTable: React.FC<ExpensesReportTableProps> = ({ categoryExpen
     });
   };
 
-
+  const getTransactionDetails = (bankTransactionEntity: BankTransactionEntity): string => {
+    if (bankTransactionEntity.bankTransactionType === BankTransactionType.CreditCard) {
+      return (bankTransactionEntity as CreditCardTransactionEntity).description;
+    } else {
+      return (bankTransactionEntity as CheckingAccountTransactionEntity).name;
+    }
+  }
+  
   const handleButtonClick = (rowId: string) => {
     setSelectedRowId(prevRowId => (prevRowId === rowId ? null : rowId));
   };
@@ -80,12 +87,12 @@ const ExpensesReportTable: React.FC<ExpensesReportTableProps> = ({ categoryExpen
                   </div>
                 </div>
                 <div className="table-body">
-                  {categoryExpenses.transactions.map((transaction: TransactionEntity) => (
-                    <div className="table-row" key={transaction.id}>
+                  {categoryExpenses.transactions.map((transaction: CategorizedTransactionEntity) => (
+                    <div className="table-row" key={transaction.bankTransactionEntity.id}>
                       <div className="table-cell"></div>
-                      <div className="table-cell">{formatDate(transaction.transactionDate)}</div>
-                      <div className="table-cell">{formatCurrency(-transaction.amount)}</div>
-                      <div className="table-cell">{transaction.description}</div>
+                      <div className="table-cell">{formatDate(transaction.bankTransactionEntity.transactionDate)}</div>
+                      <div className="table-cell">{formatCurrency(-transaction.bankTransactionEntity.amount)}</div>
+                      <div className="table-cell">{getTransactionDetails(transaction.bankTransactionEntity)}</div>
                     </div>
                   ))}
                 </div>

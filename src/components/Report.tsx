@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { TrackerDispatch } from '../models';
-import { CategoryExpensesData, StringToTransactionsLUT, TransactionEntity } from '../types';
+import { CategorizedTransactionEntity, CategoryExpensesData, StringToTransactionsLUT, TransactionEntity } from '../types';
 import { getEndDate, getStartDate, getTransactionsByCategory } from '../selectors';
 import { isEmpty } from 'lodash';
 import ExpensesReportTable from './ExpensesReportTable';
@@ -24,8 +24,8 @@ const Report = (props: ReportProps) => {
 
     for (const categoryName in props.transactionsByCategory) {
       if (Object.prototype.hasOwnProperty.call(props.transactionsByCategory, categoryName)) {
-        const transactions: TransactionEntity[] = props.transactionsByCategory[categoryName];
-        const totalExpenses = -1 * roundTo((transactions.reduce((sum, transaction) => sum + transaction.amount, 0)), 2);
+        const transactions: CategorizedTransactionEntity[] = props.transactionsByCategory[categoryName];
+        const totalExpenses = -1 * roundTo((transactions.reduce((sum, transaction) => sum + transaction.bankTransactionEntity.amount, 0)), 2);
 
         const categoryRow: CategoryExpensesData = {
           id: categoryRowIndex.toString(),

@@ -2,9 +2,9 @@ import axios from "axios";
 import {
   apiUrlFragment,
   CategorizedStatementData,
+  CategorizedTransactionEntity,
   serverUrl,
   StringToTransactionsLUT,
-  TransactionEntity
 } from "../types";
 import {
   setStatementData,
@@ -27,10 +27,10 @@ export const search = (startDate: string, endDate: string): TrackerVoidPromiseTh
     return axios.get(path)
       .then((transactionsResponse: any) => {
         const categorizedStatementData: CategorizedStatementData = (transactionsResponse as any).data;
-        const transactions: TransactionEntity[] = categorizedStatementData.transactions;
+        const transactions: CategorizedTransactionEntity[] = categorizedStatementData.transactions;
         const transactionsByCategory: StringToTransactionsLUT = {};
-        transactions.forEach((transaction: TransactionEntity) => {
-          const category = transaction.category;
+        transactions.forEach((transaction: CategorizedTransactionEntity) => {
+          const category: string = transaction.categoryEntity.keyword;
           if (!transactionsByCategory[category]) {
             transactionsByCategory[category] = [];
           }
