@@ -12,15 +12,6 @@ export interface CategoryKeywordEntity {
   categoryId: string;
 }
 
-export interface TransactionEntity {
-  id: string;
-  statementId: string;
-  transactionDate: string;
-  amount: number;
-  description: string;
-  category: string;
-}
-
 export interface CategorizedStatementData {
   startDate: string;
   endDate: string;
@@ -28,7 +19,7 @@ export interface CategorizedStatementData {
   total: number;
 }
 
-export interface RawTransactionEntity {
+interface RawTransactionEntity {
   id: string;
   statementId: string;
   transactionDate: string;

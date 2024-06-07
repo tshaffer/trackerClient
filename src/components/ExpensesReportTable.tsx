@@ -4,7 +4,7 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
 import '../styles/Tracker.css';
-import { BankTransactionEntity, BankTransactionType, CategorizedTransactionEntity, CategoryExpensesData, CheckingAccountTransactionEntity, CreditCardTransactionEntity, TransactionEntity } from '../types';
+import { BankTransactionEntity, BankTransactionType, CategorizedTransactionEntity, CategoryExpensesData, CheckingAccountTransactionEntity, CreditCardTransactionEntity } from '../types';
 import { formatCurrency, formatPercentage, formatDate, expensesPerMonth } from '../utilities';
 
 interface ExpensesReportTableProps {

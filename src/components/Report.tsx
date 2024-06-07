@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { TrackerDispatch } from '../models';
-import { CategorizedTransactionEntity, CategoryExpensesData, StringToTransactionsLUT, TransactionEntity } from '../types';
+import { CategorizedTransactionEntity, CategoryExpensesData, StringToTransactionsLUT } from '../types';
 import { getEndDate, getStartDate, getTransactionsByCategory } from '../selectors';
 import { isEmpty } from 'lodash';
 import ExpensesReportTable from './ExpensesReportTable';
