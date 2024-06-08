@@ -24,3 +24,7 @@ export const getUnidentifiedBankTransactions = (state: TrackerState): BankTransa
   return state.reportDataState.unidentifiedBankTransactions;
 };
 
+export const getUnidentifiedBankTransactionById = (state: TrackerState, unidentifiedBankTransactionId: string): BankTransactionEntity | null => {
+  return state.reportDataState.unidentifiedBankTransactions.find((unidentifiedBankTransaction: BankTransactionEntity) => unidentifiedBankTransaction.id === unidentifiedBankTransactionId) || null;
+};
+

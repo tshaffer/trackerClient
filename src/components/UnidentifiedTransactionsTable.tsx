@@ -1,15 +1,21 @@
+import { v4 as uuidv4 } from 'uuid';
 import React from 'react';
 
 import '../styles/Tracker.css';
-import { BankTransactionEntity, BankTransactionType, CheckingAccountTransactionEntity, CreditCardTransactionEntity } from '../types';
+import { BankTransactionEntity, BankTransactionType, CategoryKeywordEntity, CheckingAccountTransactionEntity, CreditCardTransactionEntity } from '../types';
 import { formatCurrency, formatDate } from '../utilities';
-import { Button } from '@mui/material';
+import { IconButton } from '@mui/material';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import AddRuleDialog from './AddRuleDialog';
 
 interface UnidentifiedTransactionsTableProps {
   unidentifiedBankTransactions: BankTransactionEntity[];
 }
 
 const UnidentifiedTransactionsTable: React.FC<UnidentifiedTransactionsTableProps> = (props: UnidentifiedTransactionsTableProps) => {
+
+  const [unidentifiedBankTransactionId, setUnidentifiedBankTransactionId] = React.useState('');
+  const [showAddRuleDialog, setShowAddRuleDialog] = React.useState(false);
 
   const getTransactionTypeLabel = (bankTransactionType: BankTransactionType): string => {
     if (bankTransactionType === BankTransactionType.CreditCard) {
@@ -27,8 +33,36 @@ const UnidentifiedTransactionsTable: React.FC<UnidentifiedTransactionsTableProps
     }
   }
 
+  const handleButtonClick = (unidentifiedBankTransaction: BankTransactionEntity) => {
+    setUnidentifiedBankTransactionId(unidentifiedBankTransaction.id);
+    setShowAddRuleDialog(true);
+  };
+
+  const handleAddRule = (categoryKeyword: string, categoryId: string): void => {
+    const id: string = uuidv4();
+    const categoryKeywordEntity: CategoryKeywordEntity = {
+      id,
+      keyword: categoryKeyword,
+      categoryId
+    };
+    console.log('handleAddRule: ', categoryKeyword, categoryKeywordEntity);
+    // props.onAddRule(categoryKeywordEntity);
+  }
+
+
+  const handleCloseAddRuleDialog = () => {
+    setShowAddRuleDialog(false);
+  };
+
   return (
     <React.Fragment>
+      <AddRuleDialog
+        open={showAddRuleDialog}
+        onAddRule={handleAddRule}
+        onClose={handleCloseAddRuleDialog}
+        unidentifiedBankTransactionId={unidentifiedBankTransactionId}
+      />
+
       <div className="table-container">
         <div className="table-header">
           <div className="table-row">
@@ -43,7 +77,9 @@ const UnidentifiedTransactionsTable: React.FC<UnidentifiedTransactionsTableProps
           {props.unidentifiedBankTransactions.map((unidentifiedBankTransaction: BankTransactionEntity) => (
             <div className="table-row" key={unidentifiedBankTransaction.id}>
               <div className="table-cell">
-                <Button>Add Rule</Button>
+                <IconButton onClick={() => handleButtonClick(unidentifiedBankTransaction)}>
+                  <AssignmentIcon />
+                </IconButton>
               </div>
               <div className="table-cell">{getTransactionTypeLabel(unidentifiedBankTransaction.bankTransactionType)}</div>
               <div className="table-cell">{getTransactionDetails(unidentifiedBankTransaction)}</div>
