@@ -2,14 +2,16 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { TrackerDispatch } from '../models';
-import { CategorizedTransactionEntity, CategoryExpensesData, StringToTransactionsLUT } from '../types';
-import { getEndDate, getStartDate, getTransactionsByCategory } from '../selectors';
+import { BankTransactionEntity, CategorizedTransactionEntity, CategoryExpensesData, StringToTransactionsLUT } from '../types';
+import { getEndDate, getStartDate, getTransactionsByCategory, getUnidentifiedBankTransactions } from '../selectors';
 import { isEmpty } from 'lodash';
 import ExpensesReportTable from './ExpensesReportTable';
 import { formatDate, roundTo } from '../utilities';
+import UnidentifiedTransactionsTable from './UnidentifiedTransactionsTable';
 
 export interface ReportProps {
   transactionsByCategory: StringToTransactionsLUT,
+  unidentifiedTransactions: BankTransactionEntity[],
   startDate: string,
   endDate: string,
 }
@@ -62,6 +64,8 @@ const Report = (props: ReportProps) => {
         Date Range: {formatDate(props.startDate)} to {formatDate(props.endDate)}
       </h4>
       <ExpensesReportTable categoryExpenses={rows} startDate={props.startDate} endDate={props.endDate} />
+      <h1>Unidentified Transactions</h1>
+      <UnidentifiedTransactionsTable unidentifiedBankTransactions={props.unidentifiedTransactions} />
     </div>
   );
 };
@@ -71,6 +75,7 @@ function mapStateToProps(state: any) {
     startDate: getStartDate(state),
     endDate: getEndDate(state),
     transactionsByCategory: getTransactionsByCategory(state),
+    unidentifiedTransactions: getUnidentifiedBankTransactions(state),
   };
 }
 
