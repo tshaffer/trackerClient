@@ -1,4 +1,4 @@
-import { ReportDataState, StringToTransactionsLUT } from '../types';
+import { BankTransactionEntity, ReportDataState, StringToTransactionsLUT } from '../types';
 import { TrackerModelBaseAction } from './baseAction';
 
 // ------------------------------------
@@ -6,6 +6,7 @@ import { TrackerModelBaseAction } from './baseAction';
 // ------------------------------------
 export const SET_STATEMENT_DATA = 'SET_STATEMENT_DATA';
 export const SET_TRANSACTIONS_BY_CATEGORY = 'SET_TRANSACTIONS_BY_CATEGORY';
+export const SET_UNIDENTIFIED_BANK_TRANSACTIONS  = 'SET_UNIDENTIFIED_BANK_TRANSACTIONS';
 
 // ------------------------------------
 // Actions
@@ -48,6 +49,21 @@ export const setTransactionsByCategory = (
   };
 };
 
+interface SetUnidentifiedBankTransactionsPayload {
+  unidentifiedBankTransactions: BankTransactionEntity[]
+}
+
+export const setUnidentifiedBankTransactions = (
+  unidentifiedBankTransactions: BankTransactionEntity[]
+): any => {
+  return {
+    type: SET_UNIDENTIFIED_BANK_TRANSACTIONS,
+    payload: {
+      unidentifiedBankTransactions,
+    },
+  };
+};
+
 // ------------------------------------
 // Reducer
 // ------------------------------------
@@ -56,12 +72,13 @@ const initialState: ReportDataState = {
   startDate: '',
   endDate: '',
   transactionsByCategory: {},
+  unidentifiedBankTransactions: [],
   total: 0,
 };
 
 export const reportDataStateReducer = (
   state: ReportDataState = initialState,
-  action: TrackerModelBaseAction<SetStatementDataPayload & SetTransactionsByCategoryPayload>
+  action: TrackerModelBaseAction<SetStatementDataPayload & SetTransactionsByCategoryPayload & SetUnidentifiedBankTransactionsPayload>
 ): ReportDataState => {
   switch (action.type) {
     case SET_STATEMENT_DATA: {
@@ -70,6 +87,9 @@ export const reportDataStateReducer = (
     case SET_TRANSACTIONS_BY_CATEGORY: {
       return { ...state, transactionsByCategory: action.payload.transactionsByCategory };
     }
+    case SET_UNIDENTIFIED_BANK_TRANSACTIONS: {
+      return { ...state, unidentifiedBankTransactions: action.payload.unidentifiedBankTransactions };
+    } 
     default:
       return state;
   }

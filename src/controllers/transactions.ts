@@ -1,6 +1,8 @@
 import axios from "axios";
 import {
   apiUrlFragment,
+  BankTransactionEntity,
+  BankTransactionType,
   CategorizedStatementData,
   CategorizedTransactionEntity,
   serverUrl,
@@ -9,6 +11,7 @@ import {
 import {
   setStatementData,
   setTransactionsByCategory,
+  setUnidentifiedBankTransactions,
   TrackerDispatch,
   TrackerVoidPromiseThunkAction
 } from "../models";
@@ -28,6 +31,7 @@ export const search = (startDate: string, endDate: string): TrackerVoidPromiseTh
       .then((transactionsResponse: any) => {
         const categorizedStatementData: CategorizedStatementData = (transactionsResponse as any).data;
         const transactions: CategorizedTransactionEntity[] = categorizedStatementData.transactions;
+        const unidentifiedBankTransactions: BankTransactionEntity[] = categorizedStatementData.unidentifiedBankTransactions;
         const transactionsByCategory: StringToTransactionsLUT = {};
         transactions.forEach((transaction: CategorizedTransactionEntity) => {
           const category: string = transaction.categoryEntity.keyword;
@@ -42,6 +46,8 @@ export const search = (startDate: string, endDate: string): TrackerVoidPromiseTh
 
         console.log(transactionsByCategory);
         dispatch(setTransactionsByCategory(transactionsByCategory));
+
+        dispatch(setUnidentifiedBankTransactions(unidentifiedBankTransactions));
       });
   }
 }

@@ -1,5 +1,5 @@
 import { StringToTransactionsLUT } from "./base";
-import { CategoryEntity, CategoryKeywordEntity } from "./entities";
+import { BankTransactionEntity, CategoryEntity, CategoryKeywordEntity } from "./entities";
 
 export interface TrackerState {
   appState: AppState;
@@ -15,6 +15,7 @@ export interface ReportDataState {
   startDate: string;
   endDate: string;
   transactionsByCategory: StringToTransactionsLUT;
+  unidentifiedBankTransactions: BankTransactionEntity[];
   total: number;
 }
 

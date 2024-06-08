@@ -1,4 +1,4 @@
-import { ReportDataState, StringToTransactionsLUT, TrackerState } from "../types";
+import { BankTransactionEntity, ReportDataState, StringToTransactionsLUT, TrackerState } from "../types";
 
 export const getReportDataState = (state: TrackerState): ReportDataState => {
   return state.reportDataState;
@@ -18,5 +18,9 @@ export const getTotal = (state: TrackerState): number => {
 
 export const getTransactionsByCategory = (state: TrackerState): StringToTransactionsLUT => {
   return state.reportDataState.transactionsByCategory;
+};
+
+export const getUnidentifiedBankTransactions = (state: TrackerState): BankTransactionEntity[] => {
+  return state.reportDataState.unidentifiedBankTransactions;
 };
 
