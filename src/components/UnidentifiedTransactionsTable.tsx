@@ -1,5 +1,8 @@
-import { v4 as uuidv4 } from 'uuid';
 import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+
+import { v4 as uuidv4 } from 'uuid';
 
 import '../styles/Tracker.css';
 import { BankTransactionEntity, BankTransactionType, CategoryKeywordEntity, CheckingAccountTransactionEntity, CreditCardTransactionEntity } from '../types';
@@ -7,8 +10,6 @@ import { formatCurrency, formatDate } from '../utilities';
 import { IconButton } from '@mui/material';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import AddRuleDialog from './AddRuleDialog';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { addCategoryKeywordServerAndRedux, search } from '../controllers';
 import { TrackerDispatch } from '../models';
 
