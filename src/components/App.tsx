@@ -20,6 +20,7 @@ import { CategoryEntity, CategoryKeywordEntity, DisregardLevel } from '../types'
 import AddCategoryKeywordDialog from './AddCategoryKeywordDialog';
 import { getAppInitialized } from '../selectors';
 import CategoryList from './CategoryList';
+import CategoriesAccordion from './CategoriesAccordion';
 
 export interface AppProps {
   appInitialized: boolean;
@@ -182,7 +183,8 @@ const App = (props: AppProps) => {
       <br />
       <Report />
       <br />
-      <Box sx={{ width: '100%', maxWidth: 400, bgcolor: 'background.paper' }}>
+      <CategoriesAccordion />
+      {/* <Box sx={{ width: '100%', maxWidth: 400, bgcolor: 'background.paper' }}>
         <Accordion>
           <AccordionSummary
             expandIcon={<ArrowDropDownIcon />}
@@ -194,7 +196,7 @@ const App = (props: AppProps) => {
             <CategoryList />
           </AccordionDetails>
         </Accordion>
-      </Box>
+      </Box> */}
     </div>
   );
 };
