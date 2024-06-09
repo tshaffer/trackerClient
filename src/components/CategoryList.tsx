@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { getCategories } from '../selectors/categoryState';
 import { CategoryEntity } from '../types';
-import { List, ListItem, ListItemText } from '@mui/material';
+import { List, ListItem, ListItemText, Typography } from '@mui/material';
 
 interface CategoryListProps {
   categoryEntities: CategoryEntity[];

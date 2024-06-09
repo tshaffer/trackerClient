@@ -1,20 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Box, Accordion, AccordionSummary, AccordionDetails, Typography, List, ListItem } from '@mui/material';
+import { Box, Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-// Sample CategoryList component
-const CategoryList: React.FC = () => {
-  const categories = ['Technology', 'Science', 'Art', 'Mathematics', 'Literature'];
-  return (
-    <List>
-      {categories.map((category, index) => (
-        <ListItem key={index}>
-          <Typography>{category}</Typography>
-        </ListItem>
-      ))}
-    </List>
-  );
-};
+import CategoryList from './CategoryList';
 
 const CategoriesAccordion: React.FC = () => {
   const [maxWidth, setMaxWidth] = useState<number>(400);

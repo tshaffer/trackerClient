@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 
 import { v4 as uuidv4 } from 'uuid';
 
-import { LocalizationProvider, DatePicker, ArrowDropDownIcon } from '@mui/x-date-pickers';
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, FormControl, Typography } from '@mui/material';
+import { Button, FormControl } from '@mui/material';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import dayjs, { Dayjs } from 'dayjs';
 
@@ -19,7 +19,6 @@ import AddCategoryDialog from './AddCategoryDialog';
 import { CategoryEntity, CategoryKeywordEntity, DisregardLevel } from '../types';
 import AddCategoryKeywordDialog from './AddCategoryKeywordDialog';
 import { getAppInitialized } from '../selectors';
-import CategoryList from './CategoryList';
 import CategoriesAccordion from './CategoriesAccordion';
 
 export interface AppProps {
@@ -184,19 +183,6 @@ const App = (props: AppProps) => {
       <Report />
       <br />
       <CategoriesAccordion />
-      {/* <Box sx={{ width: '100%', maxWidth: 400, bgcolor: 'background.paper' }}>
-        <Accordion>
-          <AccordionSummary
-            expandIcon={<ArrowDropDownIcon />}
-            id="panel2-header"
-          >
-            <Typography>Categories</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <CategoryList />
-          </AccordionDetails>
-        </Accordion>
-      </Box> */}
     </div>
   );
 };
