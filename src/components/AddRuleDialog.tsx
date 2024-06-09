@@ -129,15 +129,12 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
               ))}
             </Select>
           </FormControl>
-
-
         </Box>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
         <Button onClick={handleAddRule} autoFocus>Add</Button>
       </DialogActions>
-
     </Dialog>
   );
 };

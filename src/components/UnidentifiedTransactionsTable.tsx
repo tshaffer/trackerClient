@@ -7,9 +7,17 @@ import { formatCurrency, formatDate } from '../utilities';
 import { IconButton } from '@mui/material';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import AddRuleDialog from './AddRuleDialog';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { addCategoryKeywordServerAndRedux, search } from '../controllers';
+import { TrackerDispatch } from '../models';
 
 interface UnidentifiedTransactionsTableProps {
   unidentifiedBankTransactions: BankTransactionEntity[];
+  startDate: string;
+  endDate: string;
+  onAddCategoryKeyword: (categoryKeywordEntity: CategoryKeywordEntity) => any;
+  onSearch: (startDate: string, endDate: string) => any;
 }
 
 const UnidentifiedTransactionsTable: React.FC<UnidentifiedTransactionsTableProps> = (props: UnidentifiedTransactionsTableProps) => {
@@ -46,9 +54,12 @@ const UnidentifiedTransactionsTable: React.FC<UnidentifiedTransactionsTableProps
       categoryId
     };
     console.log('handleAddRule: ', categoryKeyword, categoryKeywordEntity);
-    // props.onAddRule(categoryKeywordEntity);
+    props.onAddCategoryKeyword(categoryKeywordEntity)
+      .then(() => {
+        props.onSearch(props.startDate, props.endDate);
+      }
+    );
   }
-
 
   const handleCloseAddRuleDialog = () => {
     setShowAddRuleDialog(false);
@@ -93,4 +104,17 @@ const UnidentifiedTransactionsTable: React.FC<UnidentifiedTransactionsTableProps
   );
 }
 
-export default UnidentifiedTransactionsTable;
+function mapStateToProps(state: any) {
+  return {
+  };
+}
+
+const mapDispatchToProps = (dispatch: TrackerDispatch) => {
+  return bindActionCreators({
+    onAddCategoryKeyword: addCategoryKeywordServerAndRedux,
+    onSearch: search,
+  }, dispatch);
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(UnidentifiedTransactionsTable);
+

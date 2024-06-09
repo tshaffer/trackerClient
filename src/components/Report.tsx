@@ -65,7 +65,7 @@ const Report = (props: ReportProps) => {
       </h4>
       <ExpensesReportTable categoryExpenses={rows} startDate={props.startDate} endDate={props.endDate} />
       <h1>Unidentified Transactions</h1>
-      <UnidentifiedTransactionsTable unidentifiedBankTransactions={props.unidentifiedTransactions} />
+      <UnidentifiedTransactionsTable unidentifiedBankTransactions={props.unidentifiedTransactions} startDate={props.startDate} endDate={props.endDate}/>
     </div>
   );
 };
