@@ -11,17 +11,15 @@ interface CategoryListProps {
 
 const CategoryList: React.FC<CategoryListProps> = (props: CategoryListProps) => {
   return (
-    <div>
-      <List>
-        {props.categoryEntities.map((categoryEntity: CategoryEntity) => {
-          return (
-            <ListItem key={categoryEntity.id}>
-              <ListItemText primary={categoryEntity.keyword} />
-            </ListItem>
-          );
-        })}
-      </List>
-    </div>
+    <List>
+      {props.categoryEntities.map((categoryEntity: CategoryEntity) => {
+        return (
+          <ListItem key={categoryEntity.id}>
+            <ListItemText primary={categoryEntity.keyword} />
+          </ListItem>
+        );
+      })}
+    </List>
   );
 }
 

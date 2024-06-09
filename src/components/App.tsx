@@ -33,6 +33,10 @@ export interface AppProps {
 
 const App = (props: AppProps) => {
 
+  const [listWidth, setListWidth] = React.useState<number>(0);
+  // const listRef = React.useRef<HTMLUListElement>(null);
+  const listRef = React.useRef<any>(null);
+
   const [selectedFile, setSelectedFile] = React.useState(null);
   const [showAddCategoryDialog, setShowAddCategoryDialog] = React.useState(false);
   const [showAddCategoryKeywordDialog, setShowAddCategoryKeywordDialog] = React.useState(false);
@@ -40,11 +44,36 @@ const App = (props: AppProps) => {
   const [startDate, setStartDate] = React.useState("2024-01-01");
   const [endDate, setEndDate] = React.useState("2024-12-31");
 
+  // React.useEffect(() => {
+  //   if (listRef.current) {
+  //     const items = listRef.current.children;
+  //     let maxWidth = 0;
+  //     for (let i = 0; i < items.length; i++) {
+  //       const itemWidth = (items[i] as HTMLElement).offsetWidth;
+  //       if (itemWidth > maxWidth) {
+  //         maxWidth = itemWidth;
+  //       }
+  //     }
+  //     setListWidth(maxWidth);
+  //   }
+  // }, []);
+
   React.useEffect(() => {
     if (!props.appInitialized) {
       props.onLoadCategories()
         .then(() => {
           console.log('invoke onSetAppInitialized');
+          if (listRef.current) {
+            const items = listRef.current.children;
+            let maxWidth = 0;
+            for (let i = 0; i < items.length; i++) {
+              const itemWidth = (items[i] as HTMLElement).offsetWidth;
+              if (itemWidth > maxWidth) {
+                maxWidth = itemWidth;
+              }
+            }
+            setListWidth(maxWidth);
+          }
           return props.onSetAppInitialized();
         })
     }
@@ -182,7 +211,7 @@ const App = (props: AppProps) => {
       <br />
       <Report />
       <br />
-      <Box sx={{ width: '100%', maxWidth: 400, bgcolor: 'background.paper' }}>
+      <Box sx={{ width: 'auto', maxWidth: listWidth, bgcolor: 'background.paper' }}>
         <Accordion>
           <AccordionSummary
             expandIcon={<ArrowDropDownIcon />}
@@ -191,7 +220,9 @@ const App = (props: AppProps) => {
             <Typography>Categories</Typography>
           </AccordionSummary>
           <AccordionDetails>
-            <CategoryList />
+            <div ref={listRef}>
+              <CategoryList />
+            </div>
           </AccordionDetails>
         </Accordion>
       </Box>
