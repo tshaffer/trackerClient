@@ -37,8 +37,8 @@ const App = (props: AppProps) => {
   const [showAddCategoryDialog, setShowAddCategoryDialog] = React.useState(false);
   const [showAddCategoryKeywordDialog, setShowAddCategoryKeywordDialog] = React.useState(false);
 
-  const [startDate, setStartDate] = React.useState("2024-01-01");
-  const [endDate, setEndDate] = React.useState("2024-12-31");
+  const [startDate, setStartDate] = React.useState("2023-01-01");
+  const [endDate, setEndDate] = React.useState("2023-12-31");
 
   React.useEffect(() => {
     if (!props.appInitialized) {
