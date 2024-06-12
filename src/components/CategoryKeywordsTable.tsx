@@ -45,7 +45,7 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
         <div className="table-body">
           {props.categoryKeywordEntities.map((categoryKeywordEntity: CategoryKeywordEntity) => (
             <div className="table-row" key={categoryKeywordEntity.id}>
-              <Box display="flex" alignItems="center">
+              {/* <Box display="flex" alignItems="center">
                 <FormControl component="fieldset">
                   <RadioGroup row value={selectedOption} onChange={handleOptionChange}>
                     <FormControlLabel value="edit" control={<Radio />} label="Edit" />
@@ -73,6 +73,40 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
                     <MenuItem value={3}>Option 3</MenuItem>
                   </Select>
                 )}
+              </Box>
+ */}
+              <Box display="flex" alignItems="center">
+                <FormControl component="fieldset">
+                  <RadioGroup row value={selectedOption} onChange={handleOptionChange}>
+                    <Box display="flex" alignItems="center">
+                      <FormControlLabel value="edit" control={<Radio />} label="Edit" />
+                      {selectedOption === 'edit' && (
+                        <TextField
+                          label="Edit"
+                          value={textFieldValue}
+                          onChange={(event) => setTextFieldValue(event.target.value)}
+                          style={{ marginLeft: '16px' }}
+                        />
+                      )}
+                    </Box>
+                    <Box display="flex" alignItems="center">
+                      <FormControlLabel value="choose" control={<Radio />} label="Choose" />
+                      {selectedOption === 'choose' && (
+                        <Select
+                          value={selectedValue}
+                          onChange={(event) => setSelectedValue(event.target.value)}
+                          displayEmpty
+                          style={{ marginLeft: '16px' }}
+                        >
+                          <MenuItem value="" disabled>Select an option</MenuItem>
+                          <MenuItem value={1}>Option 1</MenuItem>
+                          <MenuItem value={2}>Option 2</MenuItem>
+                          <MenuItem value={3}>Option 3</MenuItem>
+                        </Select>
+                      )}
+                    </Box>
+                  </RadioGroup>
+                </FormControl>
               </Box>
 
               {/* <div className="table-cell">
@@ -165,6 +199,59 @@ const EditOrChooseComponent = () => {
           <MenuItem value={3}>Option 3</MenuItem>
         </Select>
       )}
+    </Box>
+  );
+};
+
+export default EditOrChooseComponent;
+*/
+
+/*
+import React, { useState } from 'react';
+import { FormControl, FormControlLabel, Radio, RadioGroup, TextField, Select, MenuItem, Box } from '@mui/material';
+
+const EditOrChooseComponent = () => {
+  const [selectedOption, setSelectedOption] = useState('edit');
+  const [textFieldValue, setTextFieldValue] = useState('');
+  const [selectedValue, setSelectedValue] = useState('');
+
+  const handleOptionChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
+
+  return (
+    <Box display="flex" alignItems="center">
+      <FormControl component="fieldset">
+        <RadioGroup row value={selectedOption} onChange={handleOptionChange}>
+          <Box display="flex" alignItems="center">
+            <FormControlLabel value="edit" control={<Radio />} label="Edit" />
+            {selectedOption === 'edit' && (
+              <TextField
+                label="Edit"
+                value={textFieldValue}
+                onChange={(event) => setTextFieldValue(event.target.value)}
+                style={{ marginLeft: '16px' }}
+              />
+            )}
+          </Box>
+          <Box display="flex" alignItems="center">
+            <FormControlLabel value="choose" control={<Radio />} label="Choose" />
+            {selectedOption === 'choose' && (
+              <Select
+                value={selectedValue}
+                onChange={(event) => setSelectedValue(event.target.value)}
+                displayEmpty
+                style={{ marginLeft: '16px' }}
+              >
+                <MenuItem value="" disabled>Select an option</MenuItem>
+                <MenuItem value={1}>Option 1</MenuItem>
+                <MenuItem value={2}>Option 2</MenuItem>
+                <MenuItem value={3}>Option 3</MenuItem>
+              </Select>
+            )}
+          </Box>
+        </RadioGroup>
+      </FormControl>
     </Box>
   );
 };
