@@ -52,6 +52,13 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
     }
   };
 
+  const handleKeyDown = (event: { key: string; preventDefault: () => void; }) => {
+    if (event.key === 'Enter') {
+      event.preventDefault(); // Prevent form submission
+      handleAddCategory();
+    }
+  };
+
   const handleClose = () => {
     onClose();
   };
@@ -60,7 +67,12 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
     <Dialog onClose={handleClose} open={open}>
       <DialogTitle>Add Category</DialogTitle>
       <DialogContent style={{ paddingBottom: '0px' }}>
-        <Box component="form" noValidate autoComplete="off">
+        <Box
+          component="form"
+          noValidate
+          autoComplete="off"
+          onKeyDown={handleKeyDown}
+        >
           <div style={{ paddingBottom: '8px' }}>
             <TextField
               margin="normal"
