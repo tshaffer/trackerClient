@@ -1,6 +1,6 @@
 import axios from "axios";
 import { CategoryEntity, serverUrl, apiUrlFragment, CategoryKeywordEntity } from "../types";
-import { TrackerAnyPromiseThunkAction, TrackerDispatch, addCategories, addCategoryKeywordRedux, addCategoryRedux } from '../models';
+import { TrackerAnyPromiseThunkAction, TrackerDispatch, addCategories, addCategoryKeywordRedux, addCategoryKeywords, addCategoryRedux } from '../models';
 
 export const loadCategories = (): TrackerAnyPromiseThunkAction => {
 
@@ -12,6 +12,25 @@ export const loadCategories = (): TrackerAnyPromiseThunkAction => {
       .then((response: any) => {
         const categories: CategoryEntity[] = response.data;
         dispatch(addCategories(categories));
+        return Promise.resolve();
+      }).catch((error) => {
+        console.log('error');
+        console.log(error);
+        return '';
+      });
+  };
+};
+
+export const loadCategoryKeywords = (): TrackerAnyPromiseThunkAction => {
+
+  return (dispatch: TrackerDispatch, getState: any) => {
+
+    const path = serverUrl + apiUrlFragment + 'categoryKeywords';
+
+    return axios.get(path)
+      .then((response: any) => {
+        const categoryKeywordEntities: CategoryKeywordEntity[] = response.data;
+        dispatch(addCategoryKeywords(categoryKeywordEntities));
         return Promise.resolve();
       }).catch((error) => {
         console.log('error');

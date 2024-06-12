@@ -1,4 +1,4 @@
-import { CategoryEntity, TrackerState } from '../types';
+import { CategoryEntity, CategoryKeywordEntity, TrackerState } from '../types';
 
 export const getCategories = (state: TrackerState): CategoryEntity[] => {
   return state.categoryState.categories;
@@ -12,4 +12,8 @@ export const getCategoryDisregardLevel = (state: TrackerState, id: string): numb
   const category = getCategoryById(state, id);
   return category ? category.disregardLevel : 0;
 }
+
+export const getCategoryKeywordEntities = (state: TrackerState): CategoryKeywordEntity[] => {
+  return state.categoryState.categoryKeywords;
+};
 

@@ -8,6 +8,7 @@ import { TrackerModelBaseAction } from './baseAction';
 export const ADD_CATEGORY = 'ADD_CATEGORY';
 export const ADD_CATEGORY_KEYWORD = 'ADD_CATEGORY_KEYWORD';
 export const ADD_CATEGORIES = 'ADD_CATEGORIES';
+export const ADD_CATEGORY_KEYWORDS = 'ADD_CATEGORY_KEYWORDS';
 
 // ------------------------------------
 // Actions
@@ -54,6 +55,21 @@ export const addCategories = (
   };
 };
 
+interface AddCategoryKeywordsPayload {
+  categoryKeywordEntities: CategoryKeywordEntity[];
+}
+
+export const addCategoryKeywords = (
+  categoryKeywordEntities: CategoryKeywordEntity[],
+): any => {
+  return {
+    type: ADD_CATEGORY_KEYWORDS,
+    payload: {
+      categoryKeywordEntities
+    }
+  };
+};
+
 
 // ------------------------------------
 // Reducer
@@ -66,7 +82,7 @@ const initialState: CategoryState = {
 
 export const categoryStateReducer = (
   state: CategoryState = initialState,
-  action: TrackerModelBaseAction<AddCategoryPayload & AddCategoryKeywordPayload & AddCategoriesPayload>
+  action: TrackerModelBaseAction<AddCategoryPayload & AddCategoryKeywordPayload & AddCategoriesPayload & AddCategoryKeywordsPayload>
 ): CategoryState => {
   switch (action.type) {
     case ADD_CATEGORY: {
@@ -90,6 +106,11 @@ export const categoryStateReducer = (
     case ADD_CATEGORIES: {
       const newState = cloneDeep(state) as CategoryState;
       newState.categories = newState.categories.concat(action.payload.categories);
+      return newState;
+    }
+    case ADD_CATEGORY_KEYWORDS: {
+      const newState = cloneDeep(state) as CategoryState;
+      newState.categoryKeywords = newState.categoryKeywords.concat(action.payload.categoryKeywordEntities);
       return newState;
     }
     default:

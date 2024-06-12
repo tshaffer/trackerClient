@@ -11,7 +11,12 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import dayjs, { Dayjs } from 'dayjs';
 
 import { TrackerDispatch, setAppInitialized } from '../models';
-import { addCategoryKeywordServerAndRedux, addCategoryServerAndRedux, loadCategories } from '../controllers';
+import {
+  addCategoryKeywordServerAndRedux,
+  addCategoryServerAndRedux,
+  loadCategories,
+  loadCategoryKeywords
+} from '../controllers';
 import { isNil } from 'lodash';
 import { search, uploadFile } from '../controllers';
 import Report from './Report';
@@ -20,12 +25,14 @@ import { CategoryEntity, CategoryKeywordEntity, DisregardLevel } from '../types'
 import { getAppInitialized } from '../selectors';
 import CategoriesAccordion from './CategoriesAccordion';
 import AddRuleDialog from './AddRuleDialog';
+import CategoryKeywordsTable from './CategoryKeywordsTable';
 
 export interface AppProps {
   appInitialized: boolean;
   onAddCategory: (categoryEntity: CategoryEntity) => any;
   onAddCategoryKeyword: (categoryKeywordEntity: CategoryKeywordEntity) => any;
   onLoadCategories: () => any;
+  onLoadCategoryKeywords: () => any;
   onSearch: (startDate: string, endDate: string) => any;
   onSetAppInitialized: () => any;
   onUploadFile: (formData: FormData) => any;
@@ -43,6 +50,9 @@ const App = (props: AppProps) => {
   React.useEffect(() => {
     if (!props.appInitialized) {
       props.onLoadCategories()
+        .then(() => {
+          return props.onLoadCategoryKeywords();
+        })
         .then(() => {
           console.log('invoke onSetAppInitialized');
           return props.onSetAppInitialized();
@@ -156,7 +166,7 @@ const App = (props: AppProps) => {
   if (!props.appInitialized) {
     return null;
   }
-  
+
   return (
     <div>
       <AddCategoryDialog
@@ -173,6 +183,8 @@ const App = (props: AppProps) => {
         onClose={handleCloseAddCategoryKeywordDialog}
       />
 
+      <CategoryKeywordsTable />
+      <br />
       <input type="file" name="file" onChange={handleFileChangeHandler} />
       <br />
       <button type="button" onClick={handleUploadFile}>Upload</button>
@@ -189,6 +201,7 @@ const App = (props: AppProps) => {
       <Report />
       <br />
       <CategoriesAccordion />
+      <br />
     </div>
   );
 };
@@ -207,6 +220,7 @@ const mapDispatchToProps = (dispatch: TrackerDispatch) => {
     onUploadFile: uploadFile,
     onSearch: search,
     onLoadCategories: loadCategories,
+    onLoadCategoryKeywords: loadCategoryKeywords,
   }, dispatch);
 };
 

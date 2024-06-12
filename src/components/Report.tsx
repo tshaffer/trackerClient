@@ -64,7 +64,7 @@ const Report = (props: ReportProps) => {
         Date Range: {formatDate(props.startDate)} to {formatDate(props.endDate)}
       </h4>
       <ExpensesReportTable categoryExpenses={rows} startDate={props.startDate} endDate={props.endDate} />
-      <h2>Unidentified Transactions ({props.unidentifiedTransactions.length})</h1>
+      <h2>Unidentified Transactions ({props.unidentifiedTransactions.length})</h2>
       <UnidentifiedTransactionsTable unidentifiedBankTransactions={props.unidentifiedTransactions} startDate={props.startDate} endDate={props.endDate}/>
     </div>
   );
