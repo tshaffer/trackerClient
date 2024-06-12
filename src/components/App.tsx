@@ -17,7 +17,6 @@ import { search, uploadFile } from '../controllers';
 import Report from './Report';
 import AddCategoryDialog from './AddCategoryDialog';
 import { CategoryEntity, CategoryKeywordEntity, DisregardLevel } from '../types';
-import AddCategoryKeywordDialog from './AddCategoryKeywordDialog';
 import { getAppInitialized } from '../selectors';
 import CategoriesAccordion from './CategoriesAccordion';
 import AddRuleDialog from './AddRuleDialog';
