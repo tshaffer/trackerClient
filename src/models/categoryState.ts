@@ -9,13 +9,14 @@ export const ADD_CATEGORY = 'ADD_CATEGORY';
 export const ADD_CATEGORY_KEYWORD = 'ADD_CATEGORY_KEYWORD';
 export const ADD_CATEGORIES = 'ADD_CATEGORIES';
 export const ADD_CATEGORY_KEYWORDS = 'ADD_CATEGORY_KEYWORDS';
+export const UPDATE_CATEGORY_KEYWORD = 'UPDATE_CATEGORY_KEYWORD';
 
 // ------------------------------------
 // Actions
 // ------------------------------------
 
 interface AddCategoryPayload {
-  categoryEntity: CategoryEntity,  
+  categoryEntity: CategoryEntity,
 }
 
 export const addCategoryRedux = (categoryEntity: CategoryEntity): any => {
@@ -28,12 +29,21 @@ export const addCategoryRedux = (categoryEntity: CategoryEntity): any => {
 };
 
 interface AddCategoryKeywordPayload {
-  categoryKeywordEntity: CategoryKeywordEntity,  
+  categoryKeywordEntity: CategoryKeywordEntity,
 }
 
 export const addCategoryKeywordRedux = (categoryKeywordEntity: CategoryKeywordEntity): any => {
   return {
     type: ADD_CATEGORY_KEYWORD,
+    payload: {
+      categoryKeywordEntity
+    }
+  };
+}
+
+export const updateCategoryKeywordRedux = (categoryKeywordEntity: CategoryKeywordEntity): any => {
+  return {
+    type: UPDATE_CATEGORY_KEYWORD,
     payload: {
       categoryKeywordEntity
     }
@@ -70,7 +80,6 @@ export const addCategoryKeywords = (
   };
 };
 
-
 // ------------------------------------
 // Reducer
 // ------------------------------------
@@ -101,6 +110,15 @@ export const categoryStateReducer = (
           ...state.categoryKeywords,
           action.payload.categoryKeywordEntity,
         ],
+      };
+    }
+    case UPDATE_CATEGORY_KEYWORD: {
+      const updatedKeyword = action.payload.categoryKeywordEntity;
+      return {
+        ...state,
+        categoryKeywords: state.categoryKeywords.map((keyword) =>
+          keyword.id === updatedKeyword.id ? updatedKeyword : keyword
+        ),
       };
     }
     case ADD_CATEGORIES: {

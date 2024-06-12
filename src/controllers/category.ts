@@ -1,6 +1,6 @@
 import axios from "axios";
 import { CategoryEntity, serverUrl, apiUrlFragment, CategoryKeywordEntity } from "../types";
-import { TrackerAnyPromiseThunkAction, TrackerDispatch, addCategories, addCategoryKeywordRedux, addCategoryKeywords, addCategoryRedux } from '../models';
+import { TrackerAnyPromiseThunkAction, TrackerDispatch, addCategories, addCategoryKeywordRedux, addCategoryKeywords, addCategoryRedux, updateCategoryKeywordRedux } from '../models';
 
 export const loadCategories = (): TrackerAnyPromiseThunkAction => {
 
@@ -64,23 +64,49 @@ export const addCategoryServerAndRedux = (categoryEntity: CategoryEntity): Track
 };
 
 export const addCategoryKeywordServerAndRedux = (categoryKeywordEntity: CategoryKeywordEntity): TrackerAnyPromiseThunkAction => {
+
+  return (dispatch: TrackerDispatch, getState: any) => {
+
+    const path = serverUrl + apiUrlFragment + 'addCategoryKeyword';
+
+    const addCategoryKeywordBody = categoryKeywordEntity;
+
+    return axios.post(
+      path,
+      addCategoryKeywordBody
+    ).then((response) => {
+      dispatch(addCategoryKeywordRedux(categoryKeywordEntity));
+      return Promise.resolve();
+    }).catch((error) => {
+      console.log('error');
+      console.log(error);
+      return '';
+    });
+  };
+}
+
+export const updateCategoryKeywordServerAndRedux = (categoryKeywordEntity: CategoryKeywordEntity): TrackerAnyPromiseThunkAction => {
   
     return (dispatch: TrackerDispatch, getState: any) => {
   
-      const path = serverUrl + apiUrlFragment + 'addCategoryKeyword';
+      dispatch(updateCategoryKeywordRedux(categoryKeywordEntity));
+      return Promise.resolve();
+
+    //   const path = serverUrl + apiUrlFragment + 'updateCategoryKeyword';
   
-      const addCategoryKeywordBody = categoryKeywordEntity;
+    //   const updateCategoryKeywordBody = categoryKeywordEntity;
   
-      return axios.post(
-        path,
-        addCategoryKeywordBody
-      ).then((response) => {
-        dispatch(addCategoryKeywordRedux(categoryKeywordEntity));
-        return Promise.resolve();
-      }).catch((error) => {
-        console.log('error');
-        console.log(error);
-        return '';
-      });
-    };
+    //   return axios.post(
+    //     path,
+    //     updateCategoryKeywordBody
+    //   ).then((response) => {
+    //     dispatch(updateCategoryKeywordRedux(categoryKeywordEntity));
+    //     return Promise.resolve();
+    //   }).catch((error) => {
+    //     console.log('error');
+    //     console.log(error);
+    //     return '';
+    //   });
+    // };
   }
+};

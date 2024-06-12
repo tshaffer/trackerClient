@@ -9,10 +9,12 @@ import { Box, FormControl, FormControlLabel, IconButton, MenuItem, Radio, RadioG
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import { TrackerDispatch } from '../models';
 import { getCategories, getCategoryKeywordEntities } from '../selectors/categoryState';
+import { updateCategoryKeywordServerAndRedux } from '../controllers/';
 
 interface CategoryKeywordsTableProps {
   categoryKeywordEntities: CategoryKeywordEntity[];
   categories: CategoryEntity[];
+  onUpdateCategoryKeyword: (categoryKeywordEntity: CategoryKeywordEntity) => any;
 }
 
 const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: CategoryKeywordsTableProps) => {
@@ -33,6 +35,13 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
     return props.categories.find((category: CategoryEntity) => category.id === categoryId) as CategoryEntity;
   };
 
+  const handleCategoryKeywordChange = (categoryKeywordEntity: CategoryKeywordEntity, keyword: string) => {
+    console.log(categoryKeywordEntity);
+    console.log(keyword);
+    categoryKeywordEntity.keyword = keyword;
+    props.onUpdateCategoryKeyword(categoryKeywordEntity);
+  };
+
   return (
     <React.Fragment>
       <div className="table-container">
@@ -45,36 +54,6 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
         <div className="table-body">
           {props.categoryKeywordEntities.map((categoryKeywordEntity: CategoryKeywordEntity) => (
             <div className="table-row" key={categoryKeywordEntity.id}>
-              {/* <Box display="flex" alignItems="center">
-                <FormControl component="fieldset">
-                  <RadioGroup row value={selectedOption} onChange={handleOptionChange}>
-                    <FormControlLabel value="edit" control={<Radio />} label="Edit" />
-                    <FormControlLabel value="choose" control={<Radio />} label="Choose" />
-                  </RadioGroup>
-                </FormControl>
-                {selectedOption === 'edit' && (
-                  <TextField
-                    label="Edit"
-                    value={textFieldValue}
-                    onChange={(event) => setTextFieldValue(event.target.value)}
-                    style={{ marginLeft: '16px' }}
-                  />
-                )}
-                {selectedOption === 'choose' && (
-                  <Select
-                    value={selectedValue}
-                    onChange={(event) => setSelectedValue(event.target.value)}
-                    displayEmpty
-                    style={{ marginLeft: '16px' }}
-                  >
-                    <MenuItem value="" disabled>Select an option</MenuItem>
-                    <MenuItem value={1}>Option 1</MenuItem>
-                    <MenuItem value={2}>Option 2</MenuItem>
-                    <MenuItem value={3}>Option 3</MenuItem>
-                  </Select>
-                )}
-              </Box>
- */}
               <Box display="flex" alignItems="center">
                 <FormControl component="fieldset">
                   <RadioGroup row value={selectedOption} onChange={handleOptionChange}>
@@ -83,8 +62,8 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
                       {(
                         <TextField
                           label="Edit"
-                          value={textFieldValue}
-                          onChange={(event) => setTextFieldValue(event.target.value)}
+                          value={categoryKeywordEntity.keyword}
+                          onChange={(event) => handleCategoryKeywordChange(categoryKeywordEntity, event.target.value)}
                           style={{ marginLeft: '16px' }}
                           disabled={selectedOption !== 'edit'}
                         />
@@ -153,6 +132,7 @@ function mapStateToProps(state: any) {
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
+    onUpdateCategoryKeyword: updateCategoryKeywordServerAndRedux,
   }, dispatch);
 };
 
