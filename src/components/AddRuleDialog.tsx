@@ -1,11 +1,11 @@
-import * as React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { Button, DialogActions, DialogContent, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import { Button, DialogActions, DialogContent, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Tooltip } from '@mui/material';
 import { getAppInitialized, getUnidentifiedBankTransactionById } from '../selectors';
 import { BankTransactionEntity, BankTransactionType, CategoryEntity, CheckingAccountTransactionEntity, CreditCardTransactionEntity } from '../types';
 import { getCategories } from '../selectors/categoryState';
@@ -45,10 +45,21 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
 
   const [categoryKeyword, setCategoryKeyword] = React.useState(getTransactionDetails(props.unidentifiedBankTransaction));
   const [selectedCategoryId, setSelectedCategoryId] = React.useState<string>('');
+  const textFieldRef = useRef(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setCategoryKeyword(getTransactionDetails(props.unidentifiedBankTransaction));
   }, [props.open, props.unidentifiedBankTransactionId, props.unidentifiedBankTransaction]);
+
+  useEffect(() => {
+    if (open) {
+      setTimeout(() => {
+        if (open && textFieldRef.current) {
+          (textFieldRef.current as any).focus();
+        }
+      }, 200);
+    }
+  }, [open]);
 
   // if (!props.appInitialized) {
   //   return null;
@@ -74,14 +85,6 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
     onClose();
   };
 
-  const handleCategoryKeywordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCategoryKeyword(event.target.value);
-  };
-
-  function handleCategoryChange(event: SelectChangeEvent<string>, child: React.ReactNode): void {
-    setSelectedCategoryId(event.target.value as string);
-  }
-
   const handleAddRule = (): void => {
     if (categoryKeyword !== '') {
       props.onAddRule(categoryKeyword, selectedCategoryId);
@@ -89,7 +92,22 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
     }
   };
 
-  const getUnidentifiedBankTransaction = (): JSX.Element => {
+  const handleKeyDown = (event: { key: string; preventDefault: () => void; }) => {
+    if (event.key === 'Enter') {
+      event.preventDefault(); // Prevent form submission
+      handleAddRule();
+    }
+  };
+
+  const handleCategoryKeywordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCategoryKeyword(event.target.value);
+  };
+
+  function handleCategoryChange(event: React.ChangeEvent<HTMLInputElement>): void {
+    setSelectedCategoryId(event.target.value as string);
+  }
+
+  const renderUnidentifiedBankTransaction = (): JSX.Element => {
     if (isNil(props.unidentifiedBankTransaction)) {
       return <></>;
     } else {
@@ -104,7 +122,6 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
   let alphabetizedCategoryEntities: CategoryEntity[] = cloneDeep(props.categoryEntities);
   alphabetizedCategoryEntities = sortCategoryEntities(alphabetizedCategoryEntities);
 
-
   return (
     <Dialog onClose={handleClose} open={open}>
       <DialogTitle>Add Category Keyword</DialogTitle>
@@ -113,41 +130,45 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
           component="form"
           noValidate
           autoComplete="off"
+          onKeyDown={handleKeyDown}
           sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '300px' }}
         >
-          {getUnidentifiedBankTransaction()}
-          {/* <TextField
-            defaultValue={getTransactionDetails(props.unidentifiedBankTransaction)}
-            inputProps={{ readOnly: true }}
-            disabled
-          /> */}
+          {renderUnidentifiedBankTransaction()}
           <TextField
-            label="Category Keyword"
-            variant="outlined"
-            value={categoryKeyword}
-            onChange={handleCategoryKeywordChange}
-            required
+              margin="normal"
+              label="Category Keyword"
+              variant="outlined"
+              value={categoryKeyword}
+              onChange={handleCategoryKeywordChange}
+              inputRef={textFieldRef}
+              fullWidth
           />
-          <FormControl variant="outlined" required>
-            <InputLabel id="category-select-label">Category</InputLabel>
-            <Select
-              labelId="category-select-label"
-              value={selectedCategoryId}
-              onChange={handleCategoryChange}
-              label="Category"
-            >
-              {alphabetizedCategoryEntities.map((category) => (
-                <MenuItem key={category.id} value={category.id}>
-                  {category.keyword}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+            <div>
+              <TextField
+                id="category"
+                select
+                label="Select"
+                value={selectedCategoryId}
+                helperText="Select the associated category"
+                variant="standard"
+                onChange={handleCategoryChange}
+              >
+                {alphabetizedCategoryEntities.map((category) => (
+                  <MenuItem key={category.id} value={category.id}>
+                    {category.keyword}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </div>
         </Box>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
-        <Button onClick={handleAddRule} autoFocus>Add</Button>
+        <Tooltip title="Press Enter to add the category keyword" arrow>
+          <Button onClick={handleAddRule} autoFocus variant="contained" color="primary">
+            Add
+          </Button>
+        </Tooltip>
       </DialogActions>
     </Dialog>
   );
@@ -162,6 +183,3 @@ function mapStateToProps(state: any, ownProps: AddRuleDialogPropsFromParent) {
 }
 
 export default connect(mapStateToProps)(AddRuleDialog);
-
-
-
