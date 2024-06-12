@@ -20,6 +20,7 @@ import { CategoryEntity, CategoryKeywordEntity, DisregardLevel } from '../types'
 import AddCategoryKeywordDialog from './AddCategoryKeywordDialog';
 import { getAppInitialized } from '../selectors';
 import CategoriesAccordion from './CategoriesAccordion';
+import AddRuleDialog from './AddRuleDialog';
 
 export interface AppProps {
   appInitialized: boolean;
@@ -165,9 +166,11 @@ const App = (props: AppProps) => {
         onClose={handleCloseAddCategoryDialog}
       />
 
-      <AddCategoryKeywordDialog
+      {/* <AddCategoryKeywordDialog */}
+      <AddRuleDialog
         open={showAddCategoryKeywordDialog}
-        onAddCategoryKeyword={handleAddCategoryKeyword}
+        unidentifiedBankTransactionId={''}
+        onAddRule={handleAddCategoryKeyword}
         onClose={handleCloseAddCategoryKeywordDialog}
       />
 

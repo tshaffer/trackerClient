@@ -89,8 +89,21 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
     }
   };
 
+  const getUnidentifiedBankTransaction = (): JSX.Element => {
+    if (isNil(props.unidentifiedBankTransaction)) {
+      return <></>;
+    } else {
+      return <TextField
+        defaultValue={getTransactionDetails(props.unidentifiedBankTransaction)}
+        inputProps={{ readOnly: true }}
+        disabled
+      />
+    }
+  }
+
   let alphabetizedCategoryEntities: CategoryEntity[] = cloneDeep(props.categoryEntities);
   alphabetizedCategoryEntities = sortCategoryEntities(alphabetizedCategoryEntities);
+
 
   return (
     <Dialog onClose={handleClose} open={open}>
@@ -102,11 +115,12 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
           autoComplete="off"
           sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '300px' }}
         >
-          <TextField
+          {getUnidentifiedBankTransaction()}
+          {/* <TextField
             defaultValue={getTransactionDetails(props.unidentifiedBankTransaction)}
             inputProps={{ readOnly: true }}
             disabled
-          />
+          /> */}
           <TextField
             label="Category Keyword"
             variant="outlined"
