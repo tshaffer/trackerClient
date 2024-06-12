@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import DialogTitle from '@mui/material/DialogTitle';
@@ -27,7 +27,7 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
   const [categoryLabel, setCategoryLabel] = React.useState('');
   const textFieldRef = useRef(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setCategoryLabel('');
   }, [props.open]);
 
@@ -45,6 +45,10 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
     return null;
   }
 
+  const handleClose = () => {
+    onClose();
+  };
+
   const handleAddCategory = (): void => {
     if (categoryLabel !== '') {
       props.onAddCategory(categoryLabel);
@@ -57,10 +61,6 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
       event.preventDefault(); // Prevent form submission
       handleAddCategory();
     }
-  };
-
-  const handleClose = () => {
-    onClose();
   };
 
   return (
