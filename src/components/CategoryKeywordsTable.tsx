@@ -4,14 +4,15 @@ import { bindActionCreators } from 'redux';
 
 
 import '../styles/Tracker.css';
-import { CategoryKeywordEntity } from '../types';
+import { CategoryEntity, CategoryKeywordEntity } from '../types';
 import { IconButton } from '@mui/material';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import { TrackerDispatch } from '../models';
-import { getCategoryKeywordEntities } from '../selectors/categoryState';
+import { getCategories, getCategoryKeywordEntities } from '../selectors/categoryState';
 
 interface CategoryKeywordsTableProps {
   categoryKeywordEntities: CategoryKeywordEntity[];
+  categories: CategoryEntity[];
 }
 
 const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: CategoryKeywordsTableProps) => {
@@ -20,6 +21,10 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
     throw new Error('Function not implemented.');
   }
 
+  const getCategory = (categoryId: string): CategoryEntity => {
+    return props.categories.find((category: CategoryEntity) => category.id === categoryId) as CategoryEntity;
+  };
+
   return (
     <React.Fragment>
       <div className="table-container">
@@ -27,6 +32,7 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
           <div className="table-row">
             <div className="table-cell"></div>
             <div className="table-cell">Keyword</div>
+            <div className="table-cell">Category</div>
           </div>
         </div>
         <div className="table-body">
@@ -38,6 +44,7 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
                 </IconButton>
               </div>
               <div className="table-cell">{categoryKeywordEntity.keyword}</div>
+              <div className="table-cell">{getCategory(categoryKeywordEntity.categoryId).keyword}</div>
             </div>
           ))}
         </div>
@@ -49,6 +56,7 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
 function mapStateToProps(state: any) {
   return {
     categoryKeywordEntities: getCategoryKeywordEntities(state),
+    categories: getCategories(state),
   };
 }
 
