@@ -80,23 +80,25 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
                   <RadioGroup row value={selectedOption} onChange={handleOptionChange}>
                     <Box display="flex" alignItems="center">
                       <FormControlLabel value="edit" control={<Radio />} label="Edit" />
-                      {selectedOption === 'edit' && (
+                      {(
                         <TextField
                           label="Edit"
                           value={textFieldValue}
                           onChange={(event) => setTextFieldValue(event.target.value)}
                           style={{ marginLeft: '16px' }}
+                          disabled={selectedOption !== 'edit'}
                         />
                       )}
                     </Box>
                     <Box display="flex" alignItems="center">
                       <FormControlLabel value="choose" control={<Radio />} label="Choose" />
-                      {selectedOption === 'choose' && (
+                      {(
                         <Select
                           value={selectedValue}
                           onChange={(event) => setSelectedValue(event.target.value)}
                           displayEmpty
                           style={{ marginLeft: '16px' }}
+                          disabled={selectedOption !== 'choose'}
                         >
                           <MenuItem value="" disabled>Select an option</MenuItem>
                           <MenuItem value={1}>Option 1</MenuItem>
