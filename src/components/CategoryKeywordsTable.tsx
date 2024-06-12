@@ -10,6 +10,7 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import { TrackerDispatch } from '../models';
 import { getCategories, getCategoryKeywordEntities } from '../selectors/categoryState';
 import { updateCategoryKeywordServerAndRedux } from '../controllers/';
+import { cloneDeep } from 'lodash';
 
 interface CategoryKeywordsTableProps {
   categoryKeywordEntities: CategoryKeywordEntity[];
@@ -35,6 +36,19 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
     return props.categories.find((category: CategoryEntity) => category.id === categoryId) as CategoryEntity;
   };
 
+  const sortCategoryEntities = (categoryEntities: CategoryEntity[]): CategoryEntity[] => {
+    return categoryEntities.sort((a, b) => {
+      if (a.keyword < b.keyword) {
+        return -1;
+      }
+      if (a.keyword > b.keyword) {
+        return 1;
+      }
+      return 0;
+    });
+  };
+
+
   const handleCategoryKeywordChange = (categoryKeywordEntity: CategoryKeywordEntity, keyword: string) => {
     console.log(categoryKeywordEntity);
     console.log(keyword);
@@ -42,79 +56,78 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
     props.onUpdateCategoryKeyword(categoryKeywordEntity);
   };
 
+  function handleCategoryChange(event: React.ChangeEvent<HTMLInputElement>): void {
+    console.log('handleCategoryChange', event.target.value);
+  }
+
+  let alphabetizedCategoryEntities: CategoryEntity[] = cloneDeep(props.categories);
+  alphabetizedCategoryEntities = sortCategoryEntities(alphabetizedCategoryEntities);
+
   return (
     <React.Fragment>
       <div className="table-container">
         <div className="table-header">
           <div className="table-row">
-            <div className="table-cell">Keyword</div>
-            <div className="table-cell">Category</div>
+            <div className="table-cell-keyword">Keyword</div>
+            <div className="table-cell-keyword">Category</div>
           </div>
         </div>
         <div className="table-body">
           {props.categoryKeywordEntities.map((categoryKeywordEntity: CategoryKeywordEntity) => (
             <div className="table-row" key={categoryKeywordEntity.id}>
-              <Box display="flex" alignItems="center">
-                <FormControl component="fieldset">
-                  <RadioGroup row value={selectedOption} onChange={handleOptionChange}>
-                    <Box display="flex" alignItems="center">
-                      <FormControlLabel value="edit" control={<Radio />} label="Edit" />
-                      {(
-                        <TextField
-                          label="Edit"
-                          value={categoryKeywordEntity.keyword}
-                          onChange={(event) => handleCategoryKeywordChange(categoryKeywordEntity, event.target.value)}
-                          style={{ marginLeft: '16px' }}
-                          disabled={selectedOption !== 'edit'}
-                        />
-                      )}
-                    </Box>
-                    <Box display="flex" alignItems="center">
-                      <FormControlLabel value="choose" control={<Radio />} label="Choose" />
-                      {(
-                        <Select
-                          value={selectedValue}
-                          onChange={(event) => setSelectedValue(event.target.value)}
-                          displayEmpty
-                          style={{ marginLeft: '16px' }}
-                          disabled={selectedOption !== 'choose'}
-                        >
-                          <MenuItem value="" disabled>Select an option</MenuItem>
-                          <MenuItem value={1}>Option 1</MenuItem>
-                          <MenuItem value={2}>Option 2</MenuItem>
-                          <MenuItem value={3}>Option 3</MenuItem>
-                        </Select>
-                      )}
-                    </Box>
-                  </RadioGroup>
-                </FormControl>
-              </Box>
-
-              {/* <div className="table-cell">
-                <TextField
-                  id="standard-basic"
-                  label="Standard"
-                  variant="standard"
-                  value={categoryKeywordEntity.keyword}
-                />
+              <div className="table-cell-keyword">
+                <Box display="flex" alignItems="center">
+                  <FormControl component="fieldset">
+                    <RadioGroup row value={selectedOption} onChange={handleOptionChange}>
+                      <Box display="flex" alignItems="center">
+                        <FormControlLabel value="edit" control={<Radio />} label="Edit" />
+                        {(
+                          <TextField
+                            label="Edit"
+                            value={categoryKeywordEntity.keyword}
+                            onChange={(event) => handleCategoryKeywordChange(categoryKeywordEntity, event.target.value)}
+                            style={{ marginLeft: '16px' }}
+                            disabled={selectedOption !== 'edit'}
+                          />
+                        )}
+                      </Box>
+                      <Box display="flex" alignItems="center">
+                        <FormControlLabel value="choose" control={<Radio />} label="Choose" />
+                        {(
+                          <Select
+                            value={selectedValue}
+                            onChange={(event) => setSelectedValue(event.target.value)}
+                            displayEmpty
+                            style={{ marginLeft: '16px' }}
+                            disabled={selectedOption !== 'choose'}
+                          >
+                            <MenuItem value="" disabled>Select an option</MenuItem>
+                            <MenuItem value={1}>Option 1</MenuItem>
+                            <MenuItem value={2}>Option 2</MenuItem>
+                            <MenuItem value={3}>Option 3</MenuItem>
+                          </Select>
+                        )}
+                      </Box>
+                    </RadioGroup>
+                  </FormControl>
+                </Box>
+              </div>
+              <div className="table-cell-keyword">
                 <TextField
                   id="category"
                   select
-                  label="Select"
-                  value={categoryKeywordEntity.categoryId}
+                  value={getCategory(categoryKeywordEntity.categoryId)}
                   helperText="Select the associated category"
                   variant="standard"
-                // onChange={handleCategoryChange}
+                  onChange={handleCategoryChange}
                 >
-                  {props.categoryKeywordEntities.map((categoryKeyword) => (
-                    <MenuItem key={categoryKeyword.id} value={categoryKeyword.id}>
-                      {categoryKeyword.keyword}
+                  {alphabetizedCategoryEntities.map((category) => (
+                    <MenuItem key={category.id} value={category.id}>
+                      {category.keyword}
                     </MenuItem>
                   ))}
                 </TextField>
-
-              </div> */}
-              <div className="table-cell">{getCategory(categoryKeywordEntity.categoryId).keyword}</div>
+              </div>
             </div>
           ))}
         </div>
