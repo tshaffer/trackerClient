@@ -5,7 +5,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { Button, DialogActions, DialogContent } from '@mui/material';
+import { Button, DialogActions, DialogContent, Tooltip } from '@mui/material';
 import { getAppInitialized } from '../selectors';
 
 export interface AddCategoryDialogPropsFromParent {
@@ -87,7 +87,11 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
-        <Button onClick={handleAddCategory} autoFocus>Add</Button>
+        <Tooltip title="Press Enter to add the category" arrow>
+          <Button onClick={handleAddCategory} autoFocus variant="contained" color="primary">
+            Add
+          </Button>
+        </Tooltip>
       </DialogActions>
     </Dialog>
   );
