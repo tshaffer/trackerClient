@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 import '../styles/Tracker.css';
 import { CategoryEntity, CategoryKeywordEntity } from '../types';
 import { Box, FormControl, FormControlLabel, IconButton, MenuItem, Radio, RadioGroup, Select, TextField } from '@mui/material';
-import AssignmentIcon from '@mui/icons-material/Assignment';
+import SaveIcon from '@mui/icons-material/Save';
 import { TrackerDispatch } from '../models';
 import { getCategories, getCategoryKeywordEntities } from '../selectors/categoryState';
 import { updateCategoryKeywordServerAndRedux } from '../controllers/';
@@ -23,13 +23,14 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
   const [selectedOption, setSelectedOption] = React.useState('edit');
   const [textFieldValue, setTextFieldValue] = React.useState('');
   const [selectedValue, setSelectedValue] = React.useState('');
+  const [selectedCategoryId, setSelectedCategoryId] = React.useState<string>('');
 
   const handleOptionChange = (event: any) => {
     setSelectedOption(event.target.value);
   };
 
-  function handleButtonClick(categoryKeywordEntity: CategoryKeywordEntity): void {
-    throw new Error('Function not implemented.');
+  function handleSaveCategoryKeyword(): void {
+    console.log('handleSaveCategoryKeyword');
   }
 
   const getCategory = (categoryId: string): CategoryEntity => {
@@ -58,6 +59,7 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
 
   function handleCategoryChange(event: React.ChangeEvent<HTMLInputElement>): void {
     console.log('handleCategoryChange', event.target.value);
+    setSelectedCategoryId(event.target.value as string);
   }
 
   let alphabetizedCategoryEntities: CategoryEntity[] = cloneDeep(props.categories);
@@ -70,6 +72,7 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
           <div className="table-row">
             <div className="table-cell-keyword">Keyword</div>
             <div className="table-cell-keyword">Category</div>
+            <div className="table-cell"></div>
           </div>
         </div>
         <div className="table-body">
@@ -94,18 +97,22 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
                       <Box display="flex" alignItems="center">
                         <FormControlLabel value="choose" control={<Radio />} label="Choose" />
                         {(
-                          <Select
-                            value={selectedValue}
-                            onChange={(event) => setSelectedValue(event.target.value)}
-                            displayEmpty
-                            style={{ marginLeft: '16px' }}
+                          <TextField
+                            id="categoryKeyword"
+                            select
+                            label="Select"
+                            value={selectedCategoryId}
+                            helperText="Select the associated category"
+                            variant="standard"
+                            onChange={handleCategoryChange}
                             disabled={selectedOption !== 'choose'}
                           >
-                            <MenuItem value="" disabled>Select an option</MenuItem>
-                            <MenuItem value={1}>Option 1</MenuItem>
-                            <MenuItem value={2}>Option 2</MenuItem>
-                            <MenuItem value={3}>Option 3</MenuItem>
-                          </Select>
+                            {props.categoryKeywordEntities.map((categoryKeywordEntity: CategoryKeywordEntity) => (
+                              <MenuItem key={categoryKeywordEntity.id} value={categoryKeywordEntity.id}>
+                                {categoryKeywordEntity.keyword}
+                              </MenuItem>
+                            ))}
+                          </TextField>
                         )}
                       </Box>
                     </RadioGroup>
@@ -127,6 +134,11 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
                     </MenuItem>
                   ))}
                 </TextField>
+              </div>
+              <div className="table-cell-keyword">
+                <IconButton onClick={handleSaveCategoryKeyword}>
+                  <SaveIcon />
+                </IconButton>
               </div>
             </div>
           ))}
