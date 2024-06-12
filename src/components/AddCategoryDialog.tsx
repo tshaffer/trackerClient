@@ -36,7 +36,7 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
       setTimeout(() => {
         if (open && textFieldRef.current) {
           (textFieldRef.current as any).focus();
-        }  
+        }
       }, 200);
     }
   }, [open]);
@@ -60,18 +60,15 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
     <Dialog onClose={handleClose} open={open}>
       <DialogTitle>Add Category</DialogTitle>
       <DialogContent style={{ paddingBottom: '0px' }}>
-        <Box
-          component="form"
-          noValidate
-          autoComplete="off"
-        >
-          <div>
+        <Box component="form" noValidate autoComplete="off">
+          <div style={{ paddingBottom: '8px' }}>
             <TextField
-              style={{ paddingBottom: '8px' }}
+              margin="normal"
               label="Category Label"
               value={categoryLabel}
               onChange={(event) => setCategoryLabel(event.target.value)}
               inputRef={textFieldRef}
+              fullWidth
             />
           </div>
         </Box>
