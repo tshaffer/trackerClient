@@ -10,10 +10,15 @@ interface CategoryListProps {
 }
 
 const CategoryList: React.FC<CategoryListProps> = (props: CategoryListProps) => {
+
+  const categoryEntities: CategoryEntity[] = props.categoryEntities
+  .map((categoryEntity: CategoryEntity) => categoryEntity)
+  .sort((a, b) => (a.keyword).localeCompare(b.keyword));
+
   return (
     <div>
       <List>
-        {props.categoryEntities.map((categoryEntity: CategoryEntity) => {
+        {categoryEntities.map((categoryEntity: CategoryEntity) => {
           return (
             <ListItem key={categoryEntity.id}>
               <ListItemText primary={categoryEntity.keyword} />
