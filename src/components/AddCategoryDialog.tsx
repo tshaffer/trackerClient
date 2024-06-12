@@ -28,37 +28,16 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
   const textFieldRef = useRef(null);
 
   React.useEffect(() => {
-    console.log('React.useEffect props.open');
-    console.log(open);
-    console.log(textFieldRef.current);
     setCategoryLabel('');
   }, [props.open]);
 
-  React.useEffect(() => {
-    console.log('React.useEffect textFieldRef.current');
-    console.log(open);
-    console.log(textFieldRef.current);
-    if (open && textFieldRef.current) {
-      (textFieldRef.current as any).focus();
-    }
-  }, [textFieldRef]);
-
-  // if (!props.appInitialized) {
-  //   return null;
-  // }
   useEffect(() => {
-    console.log('React.useEffect setTimeout');
-    console.log(open);
-    console.log(textFieldRef.current);
     if (open) {
       setTimeout(() => {
-        console.log('React.useEffect timeout');
-        console.log(open);
-        console.log(textFieldRef.current);
         if (open && textFieldRef.current) {
           (textFieldRef.current as any).focus();
         }  
-      }, 1000);
+      }, 200);
     }
   }, [open]);
 
@@ -77,14 +56,6 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
     onClose();
   };
 
-  const handleSetCategoryLabel = (categoryLabel: string): void => {
-    setCategoryLabel(categoryLabel);
-    console.log('handleSetCategoryLabel');
-    console.log(open);
-    console.log(textFieldRef.current);
-
-  };
-
   return (
     <Dialog onClose={handleClose} open={open}>
       <DialogTitle>Add Category</DialogTitle>
@@ -99,7 +70,7 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
               style={{ paddingBottom: '8px' }}
               label="Category Label"
               value={categoryLabel}
-              onChange={(event) => handleSetCategoryLabel(event.target.value)}
+              onChange={(event) => setCategoryLabel(event.target.value)}
               inputRef={textFieldRef}
             />
           </div>
