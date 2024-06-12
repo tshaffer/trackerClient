@@ -5,7 +5,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { Button, DialogActions, DialogContent, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Tooltip } from '@mui/material';
+import { Button, DialogActions, DialogContent, MenuItem, Tooltip } from '@mui/material';
 import { getAppInitialized } from '../selectors';
 import { CategoryEntity } from '../types';
 import { getCategories } from '../selectors/categoryState';
@@ -89,7 +89,7 @@ const AddCategoryKeywordDialog = (props: AddCategoryKeywordDialogProps) => {
     setCategoryKeyword(event.target.value);
   };
 
-  function handleCategoryChange(event: SelectChangeEvent<string>, child: React.ReactNode): void {
+  function handleCategoryChange(event: React.ChangeEvent<HTMLInputElement>): void {
     setSelectedCategoryId(event.target.value as string);
   }
 
@@ -117,21 +117,23 @@ const AddCategoryKeywordDialog = (props: AddCategoryKeywordDialogProps) => {
               inputRef={textFieldRef}
               fullWidth
             />
-            <FormControl variant="outlined" style={{ minWidth: '300px' }}>
-              <InputLabel id="category-select-label">Category</InputLabel>
-              <Select
-                labelId="category-select-label"
+            <div>
+              <TextField
+                id="category"
+                select
+                label="Select"
                 value={selectedCategoryId}
+                helperText="Select the associated category"
+                variant="standard"
                 onChange={handleCategoryChange}
-                label="Category"
               >
                 {alphabetizedCategoryEntities.map((category) => (
                   <MenuItem key={category.id} value={category.id}>
                     {category.keyword}
                   </MenuItem>
                 ))}
-              </Select>
-            </FormControl>
+              </TextField>
+            </div>
           </div>
 
         </Box>
