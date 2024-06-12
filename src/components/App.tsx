@@ -48,7 +48,7 @@ const App = (props: AppProps) => {
           return props.onSetAppInitialized();
         })
     }
-  });
+  }, [props.appInitialized]);
 
   const handleCloseAddCategoryDialog = () => {
     setShowAddCategoryDialog(false);
@@ -153,6 +153,10 @@ const App = (props: AppProps) => {
   };
 
 
+  if (!props.appInitialized) {
+    return null;
+  }
+  
   return (
     <div>
       <AddCategoryDialog
