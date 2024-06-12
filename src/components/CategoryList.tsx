@@ -23,7 +23,7 @@ const CategoryList: React.FC<CategoryListProps> = (props: CategoryListProps) => 
   return (
     <div>
       <List>
-        {props.categoryEntities.map((categoryEntity: CategoryEntity) => (
+        {categoryEntities.map((categoryEntity: CategoryEntity) => (
           <CustomListItem key={categoryEntity.id}>
             <ListItemText primary={categoryEntity.keyword} />
           </CustomListItem>
