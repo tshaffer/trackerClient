@@ -123,10 +123,10 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
                       <Box display="flex" alignItems="center">
                         <FormControlLabel value={EditCategoryRuleMode.Edit} control={<Radio />} label="Edit" />
                         <TextField
-                          label="Edit"
                           value={categoryKeywordById[categoryKeywordEntity.id].keyword}
                           onChange={(event) => handleCategoryKeywordChange(categoryKeywordEntity, event.target.value)}
-                          style={{ marginLeft: '16px' }}
+                          style={{ marginLeft: '16px', minWidth: '400px' }}
+                          helperText="Edit the keyword"
                           disabled={selectedOptionById[categoryKeywordEntity.id] !== EditCategoryRuleMode.Edit}
                         />
                       </Box>
@@ -136,11 +136,11 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
                           <TextField
                             id="categoryKeyword"
                             select
-                            label="Select"
+                            style={{ minWidth: '400px' }}
                             value={selectCategoryKeywordById[categoryKeywordEntity.id]}
-                            helperText="Select the keyword"
                             variant="standard"
                             onChange={(event) => handleCategoryKeywordOptionChange(categoryKeywordEntity.id, event.target.value)}
+                            helperText="Select the keyword from the list"
                             disabled={selectedOptionById[categoryKeywordEntity.id] !== EditCategoryRuleMode.Choose}
                           >
                             {props.categoryKeywordEntities.map((categoryKeywordEntity: CategoryKeywordEntity) => (
