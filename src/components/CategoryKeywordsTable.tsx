@@ -10,7 +10,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import { TrackerDispatch } from '../models';
 import { getCategories, getCategoryKeywordEntities } from '../selectors/categoryState';
 import { updateCategoryKeywordServerAndRedux } from '../controllers/';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isEmpty } from 'lodash';
 
 interface CategoryKeywordsTableProps {
   categoryKeywordEntities: CategoryKeywordEntity[];
@@ -24,6 +24,20 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
   const [textFieldValue, setTextFieldValue] = React.useState('');
   const [selectedValue, setSelectedValue] = React.useState('');
   const [selectedCategoryId, setSelectedCategoryId] = React.useState<string>('');
+
+  const [categoryKeywordById, setCategoryKeywordById] = React.useState<{ [keyword: string]: CategoryKeywordEntity }>({}); // key is categoryKeywordId
+
+  React.useEffect(() => {
+    for (const iterator of props.categoryKeywordEntities) {
+      setCategoryKeywordById((prevState) => {
+        return {
+          ...prevState,
+          [iterator.id]: iterator,
+        };
+      });      
+    }
+  }, [props.categoryKeywordEntities]);
+
 
   const handleOptionChange = (event: any) => {
     setSelectedOption(event.target.value);
@@ -49,12 +63,11 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
     });
   };
 
-
   const handleCategoryKeywordChange = (categoryKeywordEntity: CategoryKeywordEntity, keyword: string) => {
-    console.log(categoryKeywordEntity);
-    console.log(keyword);
-    categoryKeywordEntity.keyword = keyword;
-    props.onUpdateCategoryKeyword(categoryKeywordEntity);
+    const currentCategoryKeywordById: { [keyword: string]: CategoryKeywordEntity } = cloneDeep(categoryKeywordById);
+    const currentCategoryByKeyword: CategoryKeywordEntity = currentCategoryKeywordById[categoryKeywordEntity.id];
+    currentCategoryByKeyword.keyword = keyword;
+    setCategoryKeywordById(currentCategoryKeywordById);
   };
 
   function handleCategoryChange(event: React.ChangeEvent<HTMLInputElement>): void {
@@ -62,8 +75,29 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
     setSelectedCategoryId(event.target.value as string);
   }
 
+  const getTextField = (categoryKeywordEntity: CategoryKeywordEntity): JSX.Element => {
+    console.log('getTextField', categoryKeywordEntity);
+    return (
+      <TextField
+        label="Edit"
+        value={categoryKeywordById[categoryKeywordEntity.id].keyword}
+        onChange={(event) => handleCategoryKeywordChange(categoryKeywordEntity, event.target.value)}
+        style={{ marginLeft: '16px' }}
+        disabled={selectedOption !== 'edit'}
+      />
+    );
+  };
+
   let alphabetizedCategoryEntities: CategoryEntity[] = cloneDeep(props.categories);
   alphabetizedCategoryEntities = sortCategoryEntities(alphabetizedCategoryEntities);
+
+  if (props.categoryKeywordEntities.length === 0) {
+    return <></>;
+  }
+
+  if (isEmpty(categoryKeywordById)) {
+    return <></>;
+  }
 
   return (
     <React.Fragment>
@@ -84,15 +118,7 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
                     <RadioGroup row value={selectedOption} onChange={handleOptionChange}>
                       <Box display="flex" alignItems="center">
                         <FormControlLabel value="edit" control={<Radio />} label="Edit" />
-                        {(
-                          <TextField
-                            label="Edit"
-                            value={categoryKeywordEntity.keyword}
-                            onChange={(event) => handleCategoryKeywordChange(categoryKeywordEntity, event.target.value)}
-                            style={{ marginLeft: '16px' }}
-                            disabled={selectedOption !== 'edit'}
-                          />
-                        )}
+                        {getTextField(categoryKeywordEntity)}
                       </Box>
                       <Box display="flex" alignItems="center">
                         <FormControlLabel value="choose" control={<Radio />} label="Choose" />
@@ -162,106 +188,3 @@ const mapDispatchToProps = (dispatch: TrackerDispatch) => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CategoryKeywordsTable);
-
-
-/*
-import React, { useState } from 'react';
-import { FormControl, FormControlLabel, Radio, RadioGroup, TextField, Select, MenuItem, Box } from '@mui/material';
-
-const EditOrChooseComponent = () => {
-  const [selectedOption, setSelectedOption] = useState('edit');
-  const [textFieldValue, setTextFieldValue] = useState('');
-  const [selectedValue, setSelectedValue] = useState('');
-
-  const handleOptionChange = (event) => {
-    setSelectedOption(event.target.value);
-  };
-
-  return (
-    <Box display="flex" alignItems="center">
-      <FormControl component="fieldset">
-        <RadioGroup row value={selectedOption} onChange={handleOptionChange}>
-          <FormControlLabel value="edit" control={<Radio />} label="Edit" />
-          <FormControlLabel value="choose" control={<Radio />} label="Choose" />
-        </RadioGroup>
-      </FormControl>
-      {selectedOption === 'edit' && (
-        <TextField
-          label="Edit"
-          value={textFieldValue}
-          onChange={(event) => setTextFieldValue(event.target.value)}
-          style={{ marginLeft: '16px' }}
-        />
-      )}
-      {selectedOption === 'choose' && (
-        <Select
-          value={selectedValue}
-          onChange={(event) => setSelectedValue(event.target.value)}
-          displayEmpty
-          style={{ marginLeft: '16px' }}
-        >
-          <MenuItem value="" disabled>Select an option</MenuItem>
-          <MenuItem value={1}>Option 1</MenuItem>
-          <MenuItem value={2}>Option 2</MenuItem>
-          <MenuItem value={3}>Option 3</MenuItem>
-        </Select>
-      )}
-    </Box>
-  );
-};
-
-export default EditOrChooseComponent;
-*/
-
-/*
-import React, { useState } from 'react';
-import { FormControl, FormControlLabel, Radio, RadioGroup, TextField, Select, MenuItem, Box } from '@mui/material';
-
-const EditOrChooseComponent = () => {
-  const [selectedOption, setSelectedOption] = useState('edit');
-  const [textFieldValue, setTextFieldValue] = useState('');
-  const [selectedValue, setSelectedValue] = useState('');
-
-  const handleOptionChange = (event) => {
-    setSelectedOption(event.target.value);
-  };
-
-  return (
-    <Box display="flex" alignItems="center">
-      <FormControl component="fieldset">
-        <RadioGroup row value={selectedOption} onChange={handleOptionChange}>
-          <Box display="flex" alignItems="center">
-            <FormControlLabel value="edit" control={<Radio />} label="Edit" />
-            {selectedOption === 'edit' && (
-              <TextField
-                label="Edit"
-                value={textFieldValue}
-                onChange={(event) => setTextFieldValue(event.target.value)}
-                style={{ marginLeft: '16px' }}
-              />
-            )}
-          </Box>
-          <Box display="flex" alignItems="center">
-            <FormControlLabel value="choose" control={<Radio />} label="Choose" />
-            {selectedOption === 'choose' && (
-              <Select
-                value={selectedValue}
-                onChange={(event) => setSelectedValue(event.target.value)}
-                displayEmpty
-                style={{ marginLeft: '16px' }}
-              >
-                <MenuItem value="" disabled>Select an option</MenuItem>
-                <MenuItem value={1}>Option 1</MenuItem>
-                <MenuItem value={2}>Option 2</MenuItem>
-                <MenuItem value={3}>Option 3</MenuItem>
-              </Select>
-            )}
-          </Box>
-        </RadioGroup>
-      </FormControl>
-    </Box>
-  );
-};
-
-export default EditOrChooseComponent;
-*/
