@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 
 
 import '../styles/Tracker.css';
-import { CategoryEntity, CategoryKeywordEntity } from '../types';
+import { CategoryEntity, CategoryKeywordEntity, EditCategoryRuleMode } from '../types';
 import { Box, FormControl, FormControlLabel, IconButton, MenuItem, Radio, RadioGroup, Select, TextField } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import { TrackerDispatch } from '../models';
@@ -20,28 +20,46 @@ interface CategoryKeywordsTableProps {
 
 const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: CategoryKeywordsTableProps) => {
 
-  const [selectedOption, setSelectedOption] = React.useState('edit');
+  const [selectedOption, setSelectedOption] = React.useState<EditCategoryRuleMode>(EditCategoryRuleMode.Edit);
+  
   const [textFieldValue, setTextFieldValue] = React.useState('');
   const [selectedValue, setSelectedValue] = React.useState('');
   const [selectedCategoryId, setSelectedCategoryId] = React.useState<string>('');
 
+  const [selectedOptionById, setSelectedOptionById] = React.useState<{ [keyword: string]: EditCategoryRuleMode }>({}); // key is categoryKeywordId
   const [categoryKeywordById, setCategoryKeywordById] = React.useState<{ [keyword: string]: CategoryKeywordEntity }>({}); // key is categoryKeywordId
-
+  const [selectCategoryKeywordById, setSelectCategoryKeywordById] = React.useState<{ [keyword: string]: CategoryKeywordEntity }>({}); // key is categoryKeywordId 
+  
   React.useEffect(() => {
-    for (const iterator of props.categoryKeywordEntities) {
-      setCategoryKeywordById((prevState) => {
-        return {
-          ...prevState,
-          [iterator.id]: iterator,
-        };
-      });      
+    const localSelectedOptionsById: { [keyword: string]: EditCategoryRuleMode } = {};
+    const localCategoryKeywordById: { [keyword: string]: CategoryKeywordEntity } = {};
+    const localSelectedCategoryKeywordById: { [keyword: string]: CategoryKeywordEntity } = {};
+    for (const categoryKeywordEntity of props.categoryKeywordEntities) {
+      localSelectedOptionsById[categoryKeywordEntity.id] = EditCategoryRuleMode.Edit;
+      localCategoryKeywordById[categoryKeywordEntity.id] = categoryKeywordEntity;
+      localSelectedCategoryKeywordById[categoryKeywordEntity.id] = categoryKeywordEntity;
     }
+    
+    setSelectedOptionById(localSelectedOptionsById);
+    setCategoryKeywordById(localCategoryKeywordById);
+    setSelectCategoryKeywordById(localSelectedCategoryKeywordById);
+    
+    // for (const categoryKeywordEntity of props.categoryKeywordEntities) {
+    //   setSelectedOptionById((prevState) => {
+    //     return {
+    //       ...prevState,
+    //       [categoryKeywordEntity.id]: EditCategoryRuleMode.Edit,
+    //     };
+    //   });
+    //   setCategoryKeywordById((prevState) => {
+    //     return {
+    //       ...prevState,
+    //       [categoryKeywordEntity.id]: categoryKeywordEntity,
+    //     };
+    //   });
+    // }
   }, [props.categoryKeywordEntities]);
 
-
-  const handleOptionChange = (event: any) => {
-    setSelectedOption(event.target.value);
-  };
 
   function handleSaveCategoryKeyword(): void {
     console.log('handleSaveCategoryKeyword');
@@ -63,6 +81,12 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
     });
   };
 
+  const handleOptionChange = (id: string, event: any) => {
+    const currentSelectedOptionById: { [keyword: string]: EditCategoryRuleMode } = cloneDeep(selectedOptionById);
+    currentSelectedOptionById[id] = event.target.value;
+    setSelectedOptionById(currentSelectedOptionById);
+  };
+
   const handleCategoryKeywordChange = (categoryKeywordEntity: CategoryKeywordEntity, keyword: string) => {
     const currentCategoryKeywordById: { [keyword: string]: CategoryKeywordEntity } = cloneDeep(categoryKeywordById);
     const currentCategoryByKeyword: CategoryKeywordEntity = currentCategoryKeywordById[categoryKeywordEntity.id];
@@ -70,23 +94,19 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
     setCategoryKeywordById(currentCategoryKeywordById);
   };
 
+  function handleCategoryKeywordOptionChange(selectedCategoryKeywordEntityId: string): void {
+    console.log('handleCategoryKeywordOptionChange', selectedCategoryKeywordEntityId);
+    // const currentCategoryKeywordById: { [keyword: string]: CategoryKeywordEntity } = cloneDeep(categoryKeywordById);
+    // const currentCategoryByKeyword: CategoryKeywordEntity = currentCategoryKeywordById[categoryKeywordEntity.id];
+    // currentCategoryByKeyword.keyword = keyword;
+    // setCategoryKeywordById(currentCategoryKeywordById);
+  }
+
+
   function handleCategoryChange(event: React.ChangeEvent<HTMLInputElement>): void {
     console.log('handleCategoryChange', event.target.value);
     setSelectedCategoryId(event.target.value as string);
   }
-
-  const getTextField = (categoryKeywordEntity: CategoryKeywordEntity): JSX.Element => {
-    console.log('getTextField', categoryKeywordEntity);
-    return (
-      <TextField
-        label="Edit"
-        value={categoryKeywordById[categoryKeywordEntity.id].keyword}
-        onChange={(event) => handleCategoryKeywordChange(categoryKeywordEntity, event.target.value)}
-        style={{ marginLeft: '16px' }}
-        disabled={selectedOption !== 'edit'}
-      />
-    );
-  };
 
   let alphabetizedCategoryEntities: CategoryEntity[] = cloneDeep(props.categories);
   alphabetizedCategoryEntities = sortCategoryEntities(alphabetizedCategoryEntities);
@@ -115,23 +135,29 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
               <div className="table-cell-keyword">
                 <Box display="flex" alignItems="center">
                   <FormControl component="fieldset">
-                    <RadioGroup row value={selectedOption} onChange={handleOptionChange}>
+                    <RadioGroup row value={selectedOptionById[categoryKeywordEntity.id]} onChange={(event) => handleOptionChange(categoryKeywordEntity.id, event)}>
                       <Box display="flex" alignItems="center">
-                        <FormControlLabel value="edit" control={<Radio />} label="Edit" />
-                        {getTextField(categoryKeywordEntity)}
+                        <FormControlLabel value={EditCategoryRuleMode.Edit} control={<Radio />} label="Edit" />
+                        <TextField
+                          label="Edit"
+                          value={categoryKeywordById[categoryKeywordEntity.id].keyword}
+                          onChange={(event) => handleCategoryKeywordChange(categoryKeywordEntity, event.target.value)}
+                          style={{ marginLeft: '16px' }}
+                          disabled={selectedOptionById[categoryKeywordEntity.id] !== EditCategoryRuleMode.Edit}
+                        />
                       </Box>
                       <Box display="flex" alignItems="center">
-                        <FormControlLabel value="choose" control={<Radio />} label="Choose" />
+                        <FormControlLabel value={EditCategoryRuleMode.Choose} control={<Radio />} label="Choose" />
                         {(
                           <TextField
                             id="categoryKeyword"
                             select
                             label="Select"
-                            value={selectedCategoryId}
-                            helperText="Select the associated category"
+                            value={selectCategoryKeywordById[categoryKeywordEntity.id].id}
+                            helperText="Select the keyword"
                             variant="standard"
-                            onChange={handleCategoryChange}
-                            disabled={selectedOption !== 'choose'}
+                            onChange={(event) => handleCategoryKeywordOptionChange(event.target.value)}
+                            disabled={selectedOptionById[categoryKeywordEntity.id] !== EditCategoryRuleMode.Choose}
                           >
                             {props.categoryKeywordEntities.map((categoryKeywordEntity: CategoryKeywordEntity) => (
                               <MenuItem key={categoryKeywordEntity.id} value={categoryKeywordEntity.id}>
