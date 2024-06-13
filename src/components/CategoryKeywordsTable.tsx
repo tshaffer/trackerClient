@@ -130,7 +130,7 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
                           disabled={selectedOptionById[categoryKeywordEntity.id] !== EditCategoryRuleMode.Edit}
                         />
                       </Box>
-                      <Box display="flex" alignItems="center">
+                      <Box display="flex" alignItems="center" sx={{ marginTop: '12px' }}>
                         <FormControlLabel value={EditCategoryRuleMode.Choose} control={<Radio />} label="Choose" />
                         {(
                           <TextField
