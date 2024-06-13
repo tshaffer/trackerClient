@@ -26,18 +26,18 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
   const [selectedValue, setSelectedValue] = React.useState('');
   const [selectedCategoryId, setSelectedCategoryId] = React.useState<string>('');
 
-  const [selectedOptionById, setSelectedOptionById] = React.useState<{ [keyword: string]: EditCategoryRuleMode }>({}); // key is categoryKeywordId
-  const [categoryKeywordById, setCategoryKeywordById] = React.useState<{ [keyword: string]: CategoryKeywordEntity }>({}); // key is categoryKeywordId
-  const [selectCategoryKeywordById, setSelectCategoryKeywordById] = React.useState<{ [keyword: string]: CategoryKeywordEntity }>({}); // key is categoryKeywordId 
+  const [selectedOptionById, setSelectedOptionById] = React.useState<{ [categoryKeywordId: string]: EditCategoryRuleMode }>({}); // key is categoryKeywordId, value is EditCategoryRuleMode
+  const [categoryKeywordById, setCategoryKeywordById] = React.useState<{ [categoryKeywordId: string]: CategoryKeywordEntity }>({}); // key is categoryKeywordId, value is CategoryKeywordEntity
+  const [selectCategoryKeywordById, setSelectCategoryKeywordById] = React.useState<{ [categoryKeywordId: string]: string }>({}); // key is categoryKeywordId, value is keyword
   
   React.useEffect(() => {
-    const localSelectedOptionsById: { [keyword: string]: EditCategoryRuleMode } = {};
-    const localCategoryKeywordById: { [keyword: string]: CategoryKeywordEntity } = {};
-    const localSelectedCategoryKeywordById: { [keyword: string]: CategoryKeywordEntity } = {};
+    const localSelectedOptionsById: { [categoryKeywordId: string]: EditCategoryRuleMode } = {};
+    const localCategoryKeywordById: { [categoryKeywordId: string]: CategoryKeywordEntity } = {};
+    const localSelectedCategoryKeywordById: { [categoryKeywordId: string]: string } = {};
     for (const categoryKeywordEntity of props.categoryKeywordEntities) {
       localSelectedOptionsById[categoryKeywordEntity.id] = EditCategoryRuleMode.Edit;
       localCategoryKeywordById[categoryKeywordEntity.id] = categoryKeywordEntity;
-      localSelectedCategoryKeywordById[categoryKeywordEntity.id] = categoryKeywordEntity;
+      localSelectedCategoryKeywordById[categoryKeywordEntity.id] = categoryKeywordEntity.keyword;
     }
     
     setSelectedOptionById(localSelectedOptionsById);
@@ -94,8 +94,8 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
     setCategoryKeywordById(currentCategoryKeywordById);
   };
 
-  function handleCategoryKeywordOptionChange(selectedCategoryKeywordEntityId: string): void {
-    console.log('handleCategoryKeywordOptionChange', selectedCategoryKeywordEntityId);
+  function handleCategoryKeywordOptionChange(selectedCategoryKeywordEntityId: string, keyword: string): void {
+    console.log('handleCategoryKeywordOptionChange', selectedCategoryKeywordEntityId, keyword);
     // const currentCategoryKeywordById: { [keyword: string]: CategoryKeywordEntity } = cloneDeep(categoryKeywordById);
     // const currentCategoryByKeyword: CategoryKeywordEntity = currentCategoryKeywordById[categoryKeywordEntity.id];
     // currentCategoryByKeyword.keyword = keyword;
@@ -153,14 +153,14 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
                             id="categoryKeyword"
                             select
                             label="Select"
-                            value={selectCategoryKeywordById[categoryKeywordEntity.id].id}
+                            value={selectCategoryKeywordById[categoryKeywordEntity.id]}
                             helperText="Select the keyword"
                             variant="standard"
-                            onChange={(event) => handleCategoryKeywordOptionChange(event.target.value)}
+                            onChange={(event) => handleCategoryKeywordOptionChange(categoryKeywordEntity.id, event.target.value)}
                             disabled={selectedOptionById[categoryKeywordEntity.id] !== EditCategoryRuleMode.Choose}
                           >
                             {props.categoryKeywordEntities.map((categoryKeywordEntity: CategoryKeywordEntity) => (
-                              <MenuItem key={categoryKeywordEntity.id} value={categoryKeywordEntity.id}>
+                              <MenuItem key={categoryKeywordEntity.id} value={categoryKeywordEntity.keyword}>
                                 {categoryKeywordEntity.keyword}
                               </MenuItem>
                             ))}
