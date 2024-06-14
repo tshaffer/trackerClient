@@ -10,6 +10,7 @@ import { TrackerAnyPromiseThunkAction, TrackerDispatch } from '../models';
 import { getCategories, getCategoryKeywordEntities } from '../selectors/categoryState';
 import { addCategoryKeywordServerAndRedux, addCategoryServerAndRedux, deleteCategoryKeywordServerAndRedux, updateCategoryKeywordServerAndRedux } from '../controllers/';
 import { cloneDeep, isEmpty } from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 
 interface CategoryKeywordsTableProps {
   categoryKeywordEntities: CategoryKeywordEntity[];
@@ -27,7 +28,9 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
   const [categoryIdByCategoryKeywordId, setCategoryIdByCategoryKeywordId] = React.useState<{ [categoryKeywordId: string]: string }>({}); // key is categoryKeywordId, value is categoryId
 
   React.useEffect(() => {
-    
+
+    console.log('useEffect');
+
     const localSelectedOptionsById: { [categoryKeywordId: string]: EditCategoryRuleMode } = {};
     const localCategoryKeywordById: { [categoryKeywordId: string]: CategoryKeywordEntity } = {};
     const localSelectedCategoryKeywordById: { [categoryKeywordId: string]: string } = {};
@@ -38,7 +41,7 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
       localSelectedCategoryKeywordById[categoryKeywordEntity.id] = categoryKeywordEntity.keyword;
       localCategoryIdByCategoryKeywordId[categoryKeywordEntity.id] = categoryKeywordEntity.categoryId;
     }
-    
+
     setSelectedOptionById(localSelectedOptionsById);
     setCategoryKeywordById(localCategoryKeywordById);
     setSelectCategoryKeywordById(localSelectedCategoryKeywordById);
@@ -105,11 +108,12 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
             // keyword changed, new keyword already exists, combo of new keyword and category does not exist
             // NO - User cannot assign a keyword to a category if the keyword already exists and is assigned to a different category
             console.log('combo does not exist');
-            const newCategoryKeywordEntity: CategoryKeywordEntity = {
-              ...updatedCategoryKeywordEntityViaTextField,
-              categoryId: updatedCategoryId,
-            };
-            props.onAddCategoryKeyword(newCategoryKeywordEntity);
+            // HANDLE ERROR CASE
+            // const newCategoryKeywordEntity: CategoryKeywordEntity = {
+            //   ...updatedCategoryKeywordEntityViaTextField,
+            //   categoryId: updatedCategoryId,
+            // };
+            // props.onAddCategoryKeyword(newCategoryKeywordEntity);
           } // keyword changed, new keyword already exists, combo of new keyword and category already exists
 
 
@@ -120,6 +124,16 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
         } else {
           // keyword is new
           console.log('keyword is new');
+
+          const newCategoryKeywordEntity: CategoryKeywordEntity = {
+            ...updatedCategoryKeywordEntityViaTextField,
+            id: uuidv4(),
+            categoryId: updatedCategoryId,
+          };
+          props.onAddCategoryKeyword(newCategoryKeywordEntity);
+          props.onDeleteCategoryKeyword(originalCategoryKeywordEntity);
+
+          // update react state
         }
         // does the updated keyword already exist or is it a new keyword?
         // const updatedCategoryKeywordEntity: CategoryKeywordEntity = {
@@ -171,7 +185,8 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
     console.log('handleCategoryKeywordOptionChange', selectedCategoryKeywordEntityId, keyword);
     const currentSelectCategoryKeywordById: { [keyword: string]: string } = cloneDeep(selectCategoryKeywordById);
     currentSelectCategoryKeywordById[selectedCategoryKeywordEntityId] = keyword;
-    setSelectCategoryKeywordById(currentSelectCategoryKeywordById);}
+    setSelectCategoryKeywordById(currentSelectCategoryKeywordById);
+  }
 
 
   const handleCategoryChange = (categoryKeywordId: string, categoryId: string) => {
@@ -251,7 +266,7 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
                   helperText="Select the associated category"
                   variant="standard"
                   onChange={(event) => handleCategoryChange(categoryKeywordEntity.id, event.target.value)}
-                  >
+                >
                   {alphabetizedCategoryEntities.map((category) => (
                     <MenuItem key={category.id} value={category.id}>
                       {category.keyword}

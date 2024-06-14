@@ -67,21 +67,24 @@ export const addCategoryKeywordServerAndRedux = (categoryKeywordEntity: Category
 
   return (dispatch: TrackerDispatch, getState: any) => {
 
-    const path = serverUrl + apiUrlFragment + 'addCategoryKeyword';
+    dispatch(addCategoryKeywordRedux(categoryKeywordEntity));
+    return Promise.resolve();
 
-    const addCategoryKeywordBody = categoryKeywordEntity;
+    // const path = serverUrl + apiUrlFragment + 'addCategoryKeyword';
 
-    return axios.post(
-      path,
-      addCategoryKeywordBody
-    ).then((response) => {
-      dispatch(addCategoryKeywordRedux(categoryKeywordEntity));
-      return Promise.resolve();
-    }).catch((error) => {
-      console.log('error');
-      console.log(error);
-      return '';
-    });
+    // const addCategoryKeywordBody = categoryKeywordEntity;
+
+    // return axios.post(
+    //   path,
+    //   addCategoryKeywordBody
+    // ).then((response) => {
+    //   dispatch(addCategoryKeywordRedux(categoryKeywordEntity));
+    //   return Promise.resolve();
+    // }).catch((error) => {
+    //   console.log('error');
+    //   console.log(error);
+    //   return '';
+    // });
   };
 }
 
