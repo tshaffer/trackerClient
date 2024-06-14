@@ -108,7 +108,7 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
 
     // check for updated values
     const updatedCategoryKeywordEntityViaTextField: CategoryKeywordEntity = categoryKeywordById[categoryKeywordEntityId];
-    const updatedKeywordViaSelect = selectCategoryKeywordById[categoryKeywordEntityId];
+    const updatedKeywordViaSelect: string = selectCategoryKeywordById[categoryKeywordEntityId];
     const updatedCategoryId: string = categoryIdByCategoryKeywordId[categoryKeywordEntityId];
 
     console.log('updated values');
@@ -122,10 +122,11 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
     console.log('categoryChanged', categoryChanged);
 
     if (selectedEditCategoryRuleMode === EditCategoryRuleMode.Edit) {
+      // EDIT keyworde mode
       if (updatedCategoryKeywordEntityViaTextField.keyword !== originalKeyword) {
         console.log('keyword changed');
         const keywordAlreadyExists: boolean = props.categoryKeywordEntities.some((categoryKeywordEntity: CategoryKeywordEntity) => categoryKeywordEntity.keyword === updatedCategoryKeywordEntityViaTextField.keyword);
-        
+
         if (keywordAlreadyExists) {
           // keyword has changed, but the updated one already exists
           console.log('keyword already exists');
@@ -136,14 +137,14 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
           if (!comboAlreadyExists) {
             // keyword changed, new keyword already exists, combo of new keyword and category does not exist
             // NO - User cannot assign a keyword to a category if the keyword already exists and is assigned to a different category
-            console.log('combo does not exist');
+            console.log('ERROR - keyword assigned to multiple categories');
             // HANDLE ERROR CASE - indicate an error to the user and restore old value
           } else {
 
             // keyword changed, new keyword already exists, combo of new keyword and category already exists. Delete this instance of categoryKeywordEntity
             deleteCategoryKeywordInReactState(categoryKeywordEntityId);
             props.onDeleteCategoryKeyword(originalCategoryKeywordEntity);
-          
+
           }
         } else {
           // keyword is new
@@ -154,14 +155,55 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
           updatedCategoryKeywordEntity.categoryId = updatedCategoryId;
           updateCategoryKeywordFromInReactState(updatedCategoryKeywordEntity);
           props.onUpdateCategoryKeyword(updatedCategoryKeywordEntity);
-        
+
         }
       } else {
         console.log('keyword has not changed');
+
+        if (!categoryChanged) {
+          // neither keyword nor category has changed. Do nothing. (Save button should have been disabled).
+          console.log('category unchanged, return');
+          return;
+        } {
+          console.log('category has changed');
+          const updatedCategoryKeywordEntity: CategoryKeywordEntity = cloneDeep(updatedCategoryKeywordEntityViaTextField);
+          updatedCategoryKeywordEntity.categoryId = updatedCategoryId;
+          updateCategoryKeywordFromInReactState(updatedCategoryKeywordEntity);
+          props.onUpdateCategoryKeyword(updatedCategoryKeywordEntity);
+        }
       }
     } else {
-      console.log('User selected existing keyword');
+      // CHOOSE keyword mode
 
+      if (updatedKeywordViaSelect !== originalKeyword) {
+
+        console.log('keyword changed');
+        const comboAlreadyExists: boolean = updatedKeywordCategoryCombinationExistsInProps(updatedKeywordViaSelect, updatedCategoryId);
+        console.log('comboAlreadyExists', comboAlreadyExists);
+
+        if (!comboAlreadyExists) {
+          // keyword changed, new keyword already exists, combo of new keyword and category does not exist
+          // NO - User cannot assign a keyword to a category if the keyword already exists and is assigned to a different category
+          console.log('ERROR - keyword assigned to multiple categories');
+          // HANDLE ERROR CASE - indicate an error to the user and restore old value
+        } else {
+          // keyword changed, new keyword already exists, combo of new keyword and category already exists. Delete this instance of categoryKeywordEntity
+          deleteCategoryKeywordInReactState(categoryKeywordEntityId);
+          props.onDeleteCategoryKeyword(originalCategoryKeywordEntity);
+        }
+      } else {
+        if (!categoryChanged) {
+          // neither keyword nor category has changed. Do nothing. (Save button should have been disabled).
+          console.log('category unchanged, return');
+          return;
+        } {
+          console.log('category has changed');
+          const updatedCategoryKeywordEntity: CategoryKeywordEntity = cloneDeep(updatedCategoryKeywordEntityViaTextField);
+          updatedCategoryKeywordEntity.categoryId = updatedCategoryId;
+          updateCategoryKeywordFromInReactState(updatedCategoryKeywordEntity);
+          props.onUpdateCategoryKeyword(updatedCategoryKeywordEntity);
+        }
+      }
     }
 
 
