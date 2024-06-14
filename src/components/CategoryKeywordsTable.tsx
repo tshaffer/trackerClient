@@ -50,7 +50,21 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
     generateReactState();
   }, [props.categoryKeywordEntities]);
 
-  const deleteCategoryKeywordFromReactState = (categoryKeywordEntityId: string): void => {
+  const updateCategoryKeywordFromInReactState = (categoryKeywordEntity: CategoryKeywordEntity): void => {
+    const localCategoryKeywordById: { [categoryKeywordId: string]: CategoryKeywordEntity } = cloneDeep(categoryKeywordById);
+    const localSelectedCategoryKeywordById: { [categoryKeywordId: string]: string } = cloneDeep(selectCategoryKeywordById);
+    const localCategoryIdByCategoryKeywordId: { [categoryKeywordId: string]: string } = cloneDeep(categoryIdByCategoryKeywordId);
+
+    localCategoryKeywordById[categoryKeywordEntity.id] = categoryKeywordEntity;
+    localSelectedCategoryKeywordById[categoryKeywordEntity.id] = categoryKeywordEntity.keyword;
+    localCategoryIdByCategoryKeywordId[categoryKeywordEntity.id] = categoryKeywordEntity.categoryId;
+
+    setCategoryKeywordById(localCategoryKeywordById);
+    setSelectCategoryKeywordById(localSelectedCategoryKeywordById);
+    setCategoryIdByCategoryKeywordId(localCategoryIdByCategoryKeywordId);
+  }
+
+  const deleteCategoryKeywordInReactState = (categoryKeywordEntityId: string): void => {
     const localSelectedOptionsById: { [categoryKeywordId: string]: EditCategoryRuleMode } = cloneDeep(selectedOptionById);
     const localCategoryKeywordById: { [categoryKeywordId: string]: CategoryKeywordEntity } = cloneDeep(categoryKeywordById);
     const localSelectedCategoryKeywordById: { [categoryKeywordId: string]: string } = cloneDeep(selectCategoryKeywordById);
@@ -111,11 +125,10 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
       if (updatedCategoryKeywordEntityViaTextField.keyword !== originalKeyword) {
         console.log('keyword changed');
         const keywordAlreadyExists: boolean = props.categoryKeywordEntities.some((categoryKeywordEntity: CategoryKeywordEntity) => categoryKeywordEntity.keyword === updatedCategoryKeywordEntityViaTextField.keyword);
+        
         if (keywordAlreadyExists) {
-
           // keyword has changed, but the updated one already exists
           console.log('keyword already exists');
-
 
           const comboAlreadyExists: boolean = updatedKeywordCategoryCombinationExistsInProps(updatedCategoryKeywordEntityViaTextField.keyword, updatedCategoryId);
           console.log('comboAlreadyExists', comboAlreadyExists);
@@ -126,25 +139,22 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
             console.log('combo does not exist');
             // HANDLE ERROR CASE - indicate an error to the user and restore old value
           } else {
-            // keyword changed, new keyword already exists, combo of new keyword and category already exists. Delete this instance
-            deleteCategoryKeywordFromReactState(categoryKeywordEntityId);
+
+            // keyword changed, new keyword already exists, combo of new keyword and category already exists. Delete this instance of categoryKeywordEntity
+            deleteCategoryKeywordInReactState(categoryKeywordEntityId);
             props.onDeleteCategoryKeyword(originalCategoryKeywordEntity);
+          
           }
         } else {
           // keyword is new
           console.log('keyword is new');
 
-          const newCategoryKeywordEntity: CategoryKeywordEntity = {
-            ...updatedCategoryKeywordEntityViaTextField,
-            id: uuidv4(),
-            categoryId: updatedCategoryId,
-          };
-          props.onAddCategoryKeyword(newCategoryKeywordEntity);
-          props.onDeleteCategoryKeyword(originalCategoryKeywordEntity);
-
-          // update react state
-          // console.log('regenerateReactState');
-          // generateReactState();
+          // keyword is new. Clone selected keywordEntity (includes new keyword). Updated categoryId in case it changed.
+          const updatedCategoryKeywordEntity: CategoryKeywordEntity = cloneDeep(updatedCategoryKeywordEntityViaTextField);
+          updatedCategoryKeywordEntity.categoryId = updatedCategoryId;
+          updateCategoryKeywordFromInReactState(updatedCategoryKeywordEntity);
+          props.onUpdateCategoryKeyword(updatedCategoryKeywordEntity);
+        
         }
       } else {
         console.log('keyword has not changed');
