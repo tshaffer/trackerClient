@@ -2,20 +2,21 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-
 import '../styles/Tracker.css';
 import { CategoryEntity, CategoryKeywordEntity, EditCategoryRuleMode } from '../types';
 import { Box, FormControl, FormControlLabel, IconButton, MenuItem, Radio, RadioGroup, Select, TextField } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
-import { TrackerDispatch } from '../models';
+import { TrackerAnyPromiseThunkAction, TrackerDispatch } from '../models';
 import { getCategories, getCategoryKeywordEntities } from '../selectors/categoryState';
-import { updateCategoryKeywordServerAndRedux } from '../controllers/';
+import { addCategoryKeywordServerAndRedux, addCategoryServerAndRedux, deleteCategoryKeywordServerAndRedux, updateCategoryKeywordServerAndRedux } from '../controllers/';
 import { cloneDeep, isEmpty } from 'lodash';
 
 interface CategoryKeywordsTableProps {
   categoryKeywordEntities: CategoryKeywordEntity[];
   categories: CategoryEntity[];
-  onUpdateCategoryKeyword: (categoryKeywordEntity: CategoryKeywordEntity) => any;
+  onAddCategoryKeyword: (categoryKeywordEntity: CategoryKeywordEntity) => TrackerAnyPromiseThunkAction;
+  onUpdateCategoryKeyword: (categoryKeywordEntity: CategoryKeywordEntity) => TrackerAnyPromiseThunkAction;
+  onDeleteCategoryKeyword: (categoryKeywordEntity: CategoryKeywordEntity) => TrackerAnyPromiseThunkAction;
 }
 
 const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: CategoryKeywordsTableProps) => {
@@ -46,11 +47,17 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
   }, [props.categoryKeywordEntities]);
 
 
+  const updatedKeywordCategoryCombinationExistsInProps = (keyword: string, categoryId: string): boolean => {
+    return props.categoryKeywordEntities.some((categoryKeywordEntity: CategoryKeywordEntity) => categoryKeywordEntity.keyword === keyword && categoryKeywordEntity.categoryId === categoryId);
+  }
+
   function handleSaveCategoryKeyword(categoryKeywordEntityId: string): void {
     console.log('handleSaveCategoryKeyword');
 
     // original values
     const originalCategoryKeywordEntity: CategoryKeywordEntity = props.categoryKeywordEntities.find((categoryKeywordEntity: CategoryKeywordEntity) => categoryKeywordEntity.id === categoryKeywordEntityId) as CategoryKeywordEntity;
+    const clonedCategoryKeywordEntity: CategoryKeywordEntity = cloneDeep(originalCategoryKeywordEntity);
+
     const originalKeyword = originalCategoryKeywordEntity.keyword;
     const originalCategoryId = originalCategoryKeywordEntity.categoryId;
     const originalCategory = getCategory(originalCategoryId);
@@ -58,7 +65,7 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
     console.log('original values');
     const selectedEditCategoryRuleMode: EditCategoryRuleMode = selectedOptionById[categoryKeywordEntityId];
     console.log('selectedEditCategoryRuleMode', selectedEditCategoryRuleMode);
-    
+
     console.log('original values');
     console.log('originalCategoryKeywordEntity', originalCategoryKeywordEntity);
     console.log('originalKeyword', originalKeyword);
@@ -74,6 +81,60 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
     console.log('updatedCategoryKeywordEntityViaTextField', updatedCategoryKeywordEntityViaTextField);
     console.log('updatedKeywordViaSelect', updatedKeywordViaSelect);
     console.log('updatedCategoryId', updatedCategoryId);
+
+    console.log('SUMMARY');
+
+    const categoryChanged: boolean = updatedCategoryId !== originalCategoryId;
+    console.log('categoryChanged', categoryChanged);
+
+    if (selectedEditCategoryRuleMode === EditCategoryRuleMode.Edit) {
+      if (updatedCategoryKeywordEntityViaTextField.keyword !== originalKeyword) {
+        console.log('keyword changed');
+        const keywordAlreadyExists: boolean = props.categoryKeywordEntities.some((categoryKeywordEntity: CategoryKeywordEntity) => categoryKeywordEntity.keyword === updatedCategoryKeywordEntityViaTextField.keyword);
+        if (keywordAlreadyExists) {
+
+          // keyword has changed, but the updated one already exists
+          console.log('keyword already exists');
+
+          props.onDeleteCategoryKeyword(originalCategoryKeywordEntity);
+
+          const comboAlreadyExists: boolean = updatedKeywordCategoryCombinationExistsInProps(updatedCategoryKeywordEntityViaTextField.keyword, updatedCategoryId);
+          console.log('comboAlreadyExists', comboAlreadyExists);
+
+          if (!comboAlreadyExists) {
+            // keyword changed, new keyword already exists, combo of new keyword and category does not exist
+            // NO - User cannot assign a keyword to a category if the keyword already exists and is assigned to a different category
+            console.log('combo does not exist');
+            const newCategoryKeywordEntity: CategoryKeywordEntity = {
+              ...updatedCategoryKeywordEntityViaTextField,
+              categoryId: updatedCategoryId,
+            };
+            props.onAddCategoryKeyword(newCategoryKeywordEntity);
+          } // keyword changed, new keyword already exists, combo of new keyword and category already exists
+
+
+
+
+
+
+        } else {
+          // keyword is new
+          console.log('keyword is new');
+        }
+        // does the updated keyword already exist or is it a new keyword?
+        // const updatedCategoryKeywordEntity: CategoryKeywordEntity = {
+        //   ...originalCategoryKeywordEntity,
+        //   keyword: updatedCategoryKeywordEntityViaTextField.keyword,
+        // };
+        // props.onUpdateCategoryKeyword(updatedCategoryKeywordEntity);
+      } else {
+        console.log('keyword has not changed');
+      }
+    } else {
+      console.log('User selected existing keyword');
+
+    }
+
 
   }
 
@@ -220,7 +281,9 @@ function mapStateToProps(state: any) {
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
+    onAddCategoryKeyword: addCategoryKeywordServerAndRedux,
     onUpdateCategoryKeyword: updateCategoryKeywordServerAndRedux,
+    onDeleteCategoryKeyword: deleteCategoryKeywordServerAndRedux,
   }, dispatch);
 };
 

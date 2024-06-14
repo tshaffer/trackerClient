@@ -10,6 +10,7 @@ export const ADD_CATEGORY_KEYWORD = 'ADD_CATEGORY_KEYWORD';
 export const ADD_CATEGORIES = 'ADD_CATEGORIES';
 export const ADD_CATEGORY_KEYWORDS = 'ADD_CATEGORY_KEYWORDS';
 export const UPDATE_CATEGORY_KEYWORD = 'UPDATE_CATEGORY_KEYWORD';
+export const DELETE_CATEGORY_KEYWORD = 'DELETE_CATEGORY_KEYWORD';
 
 // ------------------------------------
 // Actions
@@ -44,6 +45,15 @@ export const addCategoryKeywordRedux = (categoryKeywordEntity: CategoryKeywordEn
 export const updateCategoryKeywordRedux = (categoryKeywordEntity: CategoryKeywordEntity): any => {
   return {
     type: UPDATE_CATEGORY_KEYWORD,
+    payload: {
+      categoryKeywordEntity
+    }
+  };
+}
+
+export const deleteCategoryKeywordRedux = (categoryKeywordEntity: CategoryKeywordEntity): any => {
+  return {
+    type: DELETE_CATEGORY_KEYWORD,
     payload: {
       categoryKeywordEntity
     }
@@ -118,6 +128,15 @@ export const categoryStateReducer = (
         ...state,
         categoryKeywords: state.categoryKeywords.map((keyword) =>
           keyword.id === updatedKeyword.id ? updatedKeyword : keyword
+        ),
+      };
+    }
+    case DELETE_CATEGORY_KEYWORD: {
+      const deletedKeyword = action.payload.categoryKeywordEntity;
+      return {
+        ...state,
+        categoryKeywords: state.categoryKeywords.filter((keyword) =>
+          keyword.id !== deletedKeyword.id
         ),
       };
     }

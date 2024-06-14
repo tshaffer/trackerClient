@@ -1,6 +1,6 @@
 import axios from "axios";
 import { CategoryEntity, serverUrl, apiUrlFragment, CategoryKeywordEntity } from "../types";
-import { TrackerAnyPromiseThunkAction, TrackerDispatch, addCategories, addCategoryKeywordRedux, addCategoryKeywords, addCategoryRedux, updateCategoryKeywordRedux } from '../models';
+import { TrackerAnyPromiseThunkAction, TrackerDispatch, addCategories, addCategoryKeywordRedux, addCategoryKeywords, addCategoryRedux, deleteCategoryKeywordRedux, updateCategoryKeywordRedux } from '../models';
 
 export const loadCategories = (): TrackerAnyPromiseThunkAction => {
 
@@ -109,4 +109,30 @@ export const updateCategoryKeywordServerAndRedux = (categoryKeywordEntity: Categ
     //   });
     // };
   }
+};
+
+export const deleteCategoryKeywordServerAndRedux = (categoryKeywordEntity: CategoryKeywordEntity): TrackerAnyPromiseThunkAction => {
+  
+  return (dispatch: TrackerDispatch, getState: any) => {
+
+    dispatch(deleteCategoryKeywordRedux(categoryKeywordEntity));
+    return Promise.resolve();
+
+  //   const path = serverUrl + apiUrlFragment + 'deleteCategoryKeyword';
+
+  //   const deleteCategoryKeywordBody = categoryKeywordEntity;
+
+  //   return axios.post(
+  //     path,
+  //     deleteCategoryKeywordBody
+  //   ).then((response) => {
+  //     dispatch(deleteCategoryKeywordRedux(categoryKeywordEntity));
+  //     return Promise.resolve();
+  //   }).catch((error) => {
+  //     console.log('error');
+  //     console.log(error);
+  //     return '';
+  //   });
+  // };
+}
 };
