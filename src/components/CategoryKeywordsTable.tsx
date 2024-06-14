@@ -46,8 +46,35 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
   }, [props.categoryKeywordEntities]);
 
 
-  function handleSaveCategoryKeyword(): void {
+  function handleSaveCategoryKeyword(categoryKeywordEntityId: string): void {
     console.log('handleSaveCategoryKeyword');
+
+    // original values
+    const originalCategoryKeywordEntity: CategoryKeywordEntity = props.categoryKeywordEntities.find((categoryKeywordEntity: CategoryKeywordEntity) => categoryKeywordEntity.id === categoryKeywordEntityId) as CategoryKeywordEntity;
+    const originalKeyword = originalCategoryKeywordEntity.keyword;
+    const originalCategoryId = originalCategoryKeywordEntity.categoryId;
+    const originalCategory = getCategory(originalCategoryId);
+
+    console.log('original values');
+    const selectedEditCategoryRuleMode: EditCategoryRuleMode = selectedOptionById[categoryKeywordEntityId];
+    console.log('selectedEditCategoryRuleMode', selectedEditCategoryRuleMode);
+    
+    console.log('original values');
+    console.log('originalCategoryKeywordEntity', originalCategoryKeywordEntity);
+    console.log('originalKeyword', originalKeyword);
+    console.log('originalCategoryId', originalCategoryId);
+    console.log('originalCategory', originalCategory);
+
+    // check for updated values
+    const updatedCategoryKeywordEntityViaTextField: CategoryKeywordEntity = categoryKeywordById[categoryKeywordEntityId];
+    const updatedKeywordViaSelect = selectCategoryKeywordById[categoryKeywordEntityId];
+    const updatedCategoryId: string = categoryIdByCategoryKeywordId[categoryKeywordEntityId];
+
+    console.log('updated values');
+    console.log('updatedCategoryKeywordEntityViaTextField', updatedCategoryKeywordEntityViaTextField);
+    console.log('updatedKeywordViaSelect', updatedKeywordViaSelect);
+    console.log('updatedCategoryId', updatedCategoryId);
+
   }
 
   const getCategory = (categoryId: string): CategoryEntity => {
@@ -172,7 +199,7 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
                 </TextField>
               </div>
               <div className="table-cell-keyword">
-                <IconButton onClick={handleSaveCategoryKeyword}>
+                <IconButton onClick={() => handleSaveCategoryKeyword(categoryKeywordEntity.id)}>
                   <SaveIcon />
                 </IconButton>
               </div>
