@@ -6,6 +6,8 @@ import '../styles/Tracker.css';
 import { CategoryEntity, CategoryKeywordEntity } from '../types';
 import { IconButton, MenuItem, TextField } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
+import DeleteIcon from '@mui/icons-material/Delete';
+
 import { TrackerAnyPromiseThunkAction, TrackerDispatch } from '../models';
 import { getCategories, getCategoryKeywordEntities } from '../selectors/categoryState';
 import { addCategoryKeywordServerAndRedux, deleteCategoryKeywordServerAndRedux, updateCategoryKeywordServerAndRedux } from '../controllers/';
@@ -159,6 +161,12 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
     }
   }
 
+  const handleDeleteCategoryKeyword = (categoryKeywordEntityId: string): void => {
+    const categoryKeywordEntity: CategoryKeywordEntity = categoryKeywordById[categoryKeywordEntityId];
+    deleteCategoryKeywordInReactState(categoryKeywordEntityId);
+    props.onDeleteCategoryKeyword(categoryKeywordEntity);
+  }
+
   const getCategory = (categoryId: string): CategoryEntity => {
     return props.categories.find((category: CategoryEntity) => category.id === categoryId) as CategoryEntity;
   };
@@ -240,6 +248,11 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
                 <IconButton onClick={() => handleSaveCategoryKeyword(categoryKeywordEntity.id)}>
                   <SaveIcon />
                 </IconButton>
+                <IconButton
+                  onClick={() => handleDeleteCategoryKeyword(categoryKeywordEntity.id) }>
+                  <DeleteIcon />
+                </IconButton>
+
               </div>
             </div>
           ))}
