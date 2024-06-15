@@ -33,6 +33,14 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
     setAnchorElReports(null);
   };
 
+  const buttonStyle = {
+    justifyContent: 'space-between',
+    textTransform: 'none',
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+  };
+
   return (
     <Box
       sx={{
@@ -55,13 +63,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
         </AccordionSummary>
         <AccordionDetails>
           <Button
-            fullWidth
+            sx={buttonStyle}
             aria-haspopup="true"
             onMouseEnter={handleHoverCategories}
             onClick={() => handleCloseCategories('List')}
-            endIcon={<ChevronRightIcon />}
           >
-            Categories
+            <span>Categories</span> <ChevronRightIcon />
           </Button>
           <Popover
             id="categories-popover"
@@ -86,13 +93,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
           </Popover>
 
           <Button
-            fullWidth
+            sx={buttonStyle}
             aria-haspopup="true"
             onMouseEnter={handleHoverReports}
             onClick={() => handleCloseReports('Summary')}
-            endIcon={<ChevronRightIcon />}
           >
-            Reports
+            <span>Reports</span> <ChevronRightIcon />
           </Button>
           <Popover
             id="reports-popover"
