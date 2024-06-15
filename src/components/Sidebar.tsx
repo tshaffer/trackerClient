@@ -1,12 +1,22 @@
-import React from 'react';
-import { Accordion, AccordionSummary, AccordionDetails, Button, Box, Typography } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import React, { useState } from 'react';
+import { Button, Menu, MenuItem, Box, Typography } from '@mui/material';
 
 interface SidebarProps {
   onButtonClick: (label: string, subLabel?: string) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = (subLabel: string) => {
+    onButtonClick('Categories', subLabel);
+    setAnchorEl(null);
+  };
+
   return (
     <Box
       sx={{
@@ -23,16 +33,25 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
         Expense Tracker
       </Typography>
 
-      <Accordion>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography>Categories</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Button fullWidth onClick={() => onButtonClick('Categories', 'List')}>List</Button>
-          <Button fullWidth onClick={() => onButtonClick('Categories', 'Add')}>Add</Button>
-          <Button fullWidth onClick={() => onButtonClick('Categories', 'Edit')}>Edit</Button>
-        </AccordionDetails>
-      </Accordion>
+      <Button
+        fullWidth
+        aria-controls="categories-menu"
+        aria-haspopup="true"
+        onClick={handleClick}
+      >
+        Categories
+      </Button>
+      <Menu
+        id="categories-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={() => setAnchorEl(null)}
+      >
+        <MenuItem onClick={() => handleClose('List')}>List</MenuItem>
+        <MenuItem onClick={() => handleClose('Add')}>Add</MenuItem>
+        <MenuItem onClick={() => handleClose('Edit')}>Edit</MenuItem>
+      </Menu>
 
       {/* Add other main buttons here in a similar way */}
     </Box>
