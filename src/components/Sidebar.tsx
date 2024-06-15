@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Menu, MenuItem, Box, Typography } from '@mui/material';
+import { Button, Popover, MenuItem, Box, Typography } from '@mui/material';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 interface SidebarProps {
@@ -14,7 +14,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
   };
 
   const handleClose = (subLabel?: string) => {
-    onButtonClick('Categories', subLabel);
+    if (subLabel) {
+      onButtonClick('Categories', subLabel);
+    }
     setAnchorEl(null);
   };
 
@@ -36,7 +38,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
 
       <Button
         fullWidth
-        aria-controls="categories-menu"
         aria-haspopup="true"
         onMouseEnter={handleHover}
         onClick={() => handleClose('List')}
@@ -44,18 +45,27 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
       >
         Categories
       </Button>
-      <Menu
-        id="categories-menu"
-        anchorEl={anchorEl}
-        keepMounted
+      <Popover
+        id="categories-popover"
         open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
         onClose={() => handleClose()}
-        MenuListProps={{ onMouseLeave: () => handleClose() }}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+        PaperProps={{
+          onMouseLeave: () => handleClose(),
+        }}
       >
         <MenuItem onClick={() => handleClose('List')}>List</MenuItem>
         <MenuItem onClick={() => handleClose('Add')}>Add</MenuItem>
         <MenuItem onClick={() => handleClose('Edit')}>Edit</MenuItem>
-      </Menu>
+      </Popover>
 
       {/* Add other main buttons here in a similar way */}
     </Box>

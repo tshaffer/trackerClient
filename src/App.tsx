@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Sidebar from './Sidebar';
-import CategoriesContent from './CategoriesContent';
+import Sidebar from './components/Sidebar';
+import CategoriesContent from './components/CategoriesContent';
 import { Box, Typography } from '@mui/material';
 import './App.css';
 
