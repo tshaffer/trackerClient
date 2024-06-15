@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import CategoriesContent from './components/CategoriesContent';
+import ReportsContent from './components/ReportsContent';
 import { Box, Typography } from '@mui/material';
 import './App.css';
 
@@ -21,6 +22,12 @@ const App: React.FC = () => {
       else if (selectedSubButton === 'Edit') activeTab = 2;
 
       return <CategoriesContent activeTab={activeTab} />;
+    } else if (selectedMainButton === 'Reports') {
+      let activeTab = 0;
+      if (selectedSubButton === 'Summary') activeTab = 0;
+      else if (selectedSubButton === 'Detailed') activeTab = 1;
+
+      return <ReportsContent activeTab={activeTab} />;
     }
     return <Typography variant="h4">Welcome</Typography>;
   };

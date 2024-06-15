@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Popover, MenuItem, Box, Typography } from '@mui/material';
+import { Accordion, AccordionSummary, AccordionDetails, Button, Popover, MenuItem, Box, Typography } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 interface SidebarProps {
@@ -7,17 +8,29 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [anchorElCategories, setAnchorElCategories] = useState<null | HTMLElement>(null);
+  const [anchorElReports, setAnchorElReports] = useState<null | HTMLElement>(null);
 
-  const handleHover = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
+  const handleHoverCategories = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorElCategories(event.currentTarget);
   };
 
-  const handleClose = (subLabel?: string) => {
+  const handleHoverReports = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorElReports(event.currentTarget);
+  };
+
+  const handleCloseCategories = (subLabel?: string) => {
     if (subLabel) {
       onButtonClick('Categories', subLabel);
     }
-    setAnchorEl(null);
+    setAnchorElCategories(null);
+  };
+
+  const handleCloseReports = (subLabel?: string) => {
+    if (subLabel) {
+      onButtonClick('Reports', subLabel);
+    }
+    setAnchorElReports(null);
   };
 
   return (
@@ -36,36 +49,73 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
         Expense Tracker
       </Typography>
 
-      <Button
-        fullWidth
-        aria-haspopup="true"
-        onMouseEnter={handleHover}
-        onClick={() => handleClose('List')}
-        endIcon={<ChevronRightIcon />}
-      >
-        Categories
-      </Button>
-      <Popover
-        id="categories-popover"
-        open={Boolean(anchorEl)}
-        anchorEl={anchorEl}
-        onClose={() => handleClose()}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
-        PaperProps={{
-          onMouseLeave: () => handleClose(),
-        }}
-      >
-        <MenuItem onClick={() => handleClose('List')}>List</MenuItem>
-        <MenuItem onClick={() => handleClose('Add')}>Add</MenuItem>
-        <MenuItem onClick={() => handleClose('Edit')}>Edit</MenuItem>
-      </Popover>
+      <Accordion defaultExpanded>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography>Menu</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Button
+            fullWidth
+            aria-haspopup="true"
+            onMouseEnter={handleHoverCategories}
+            onClick={() => handleCloseCategories('List')}
+            endIcon={<ChevronRightIcon />}
+          >
+            Categories
+          </Button>
+          <Popover
+            id="categories-popover"
+            open={Boolean(anchorElCategories)}
+            anchorEl={anchorElCategories}
+            onClose={() => handleCloseCategories()}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'left',
+            }}
+            PaperProps={{
+              onMouseLeave: () => handleCloseCategories(),
+            }}
+          >
+            <MenuItem onClick={() => handleCloseCategories('List')}>List</MenuItem>
+            <MenuItem onClick={() => handleCloseCategories('Add')}>Add</MenuItem>
+            <MenuItem onClick={() => handleCloseCategories('Edit')}>Edit</MenuItem>
+          </Popover>
+
+          <Button
+            fullWidth
+            aria-haspopup="true"
+            onMouseEnter={handleHoverReports}
+            onClick={() => handleCloseReports('Summary')}
+            endIcon={<ChevronRightIcon />}
+          >
+            Reports
+          </Button>
+          <Popover
+            id="reports-popover"
+            open={Boolean(anchorElReports)}
+            anchorEl={anchorElReports}
+            onClose={() => handleCloseReports()}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'left',
+            }}
+            PaperProps={{
+              onMouseLeave: () => handleCloseReports(),
+            }}
+          >
+            <MenuItem onClick={() => handleCloseReports('Summary')}>Summary</MenuItem>
+            <MenuItem onClick={() => handleCloseReports('Detailed')}>Detailed</MenuItem>
+          </Popover>
+        </AccordionDetails>
+      </Accordion>
 
       {/* Add other main buttons here in a similar way */}
     </Box>
