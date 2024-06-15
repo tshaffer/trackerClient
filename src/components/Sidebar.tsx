@@ -1,9 +1,9 @@
-// src/components/Sidebar.tsx
 import React from 'react';
-import { Button, Box, Typography } from '@mui/material';
+import { Accordion, AccordionSummary, AccordionDetails, Button, Box, Typography } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 interface SidebarProps {
-  onButtonClick: (label: string) => void;
+  onButtonClick: (label: string, subLabel?: string) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
@@ -17,21 +17,25 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
         boxSizing: 'border-box',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
       }}
     >
-      <Typography variant="h6" component="div" sx={{ marginBottom: '20px', marginTop: '10px' }}>
+      <Typography variant="h5" component="div" sx={{ marginBottom: '20px', textAlign: 'center' }}>
         Expense Tracker
       </Typography>
-      <Button fullWidth onClick={() => onButtonClick('Categories')}>
-        Categories
-      </Button>
-      <Button fullWidth onClick={() => onButtonClick('Keywords')}>
-        Keywords
-      </Button>
-      <Button fullWidth onClick={() => onButtonClick('Statements')}>
-        Statements
-      </Button>
+
+      <Accordion>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography>Categories</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Button fullWidth onClick={() => onButtonClick('Categories')}>Categories</Button>
+          <Button fullWidth onClick={() => onButtonClick('Categories', 'List')}>List</Button>
+          <Button fullWidth onClick={() => onButtonClick('Categories', 'Add')}>Add</Button>
+          <Button fullWidth onClick={() => onButtonClick('Categories', 'Edit')}>Edit</Button>
+        </AccordionDetails>
+      </Accordion>
+
+      {/* Add other main buttons here in a similar way */}
     </Box>
   );
 };
