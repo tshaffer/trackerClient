@@ -3,14 +3,13 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import '../styles/Tracker.css';
-import { CategoryEntity, CategoryKeywordEntity, EditCategoryRuleMode } from '../types';
-import { Box, FormControl, FormControlLabel, IconButton, MenuItem, Radio, RadioGroup, Select, TextField } from '@mui/material';
+import { CategoryEntity, CategoryKeywordEntity } from '../types';
+import { Box, FormControl, FormControlLabel, IconButton, MenuItem, Radio, RadioGroup, TextField } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import { TrackerAnyPromiseThunkAction, TrackerDispatch } from '../models';
 import { getCategories, getCategoryKeywordEntities } from '../selectors/categoryState';
-import { addCategoryKeywordServerAndRedux, addCategoryServerAndRedux, deleteCategoryKeywordServerAndRedux, updateCategoryKeywordServerAndRedux } from '../controllers/';
+import { addCategoryKeywordServerAndRedux, deleteCategoryKeywordServerAndRedux, updateCategoryKeywordServerAndRedux } from '../controllers/';
 import { cloneDeep, isEmpty } from 'lodash';
-import { v4 as uuidv4 } from 'uuid';
 
 interface CategoryKeywordsTableProps {
   categoryKeywordEntities: CategoryKeywordEntity[];
@@ -22,24 +21,20 @@ interface CategoryKeywordsTableProps {
 
 const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: CategoryKeywordsTableProps) => {
 
-  const [selectedOptionById, setSelectedOptionById] = React.useState<{ [categoryKeywordId: string]: EditCategoryRuleMode }>({}); // key is categoryKeywordId, value is EditCategoryRuleMode
   const [categoryKeywordById, setCategoryKeywordById] = React.useState<{ [categoryKeywordId: string]: CategoryKeywordEntity }>({}); // key is categoryKeywordId, value is CategoryKeywordEntity
   const [selectCategoryKeywordById, setSelectCategoryKeywordById] = React.useState<{ [categoryKeywordId: string]: string }>({}); // key is categoryKeywordId, value is keyword
   const [categoryIdByCategoryKeywordId, setCategoryIdByCategoryKeywordId] = React.useState<{ [categoryKeywordId: string]: string }>({}); // key is categoryKeywordId, value is categoryId
 
   const generateReactState = (): void => {
-    const localSelectedOptionsById: { [categoryKeywordId: string]: EditCategoryRuleMode } = {};
     const localCategoryKeywordById: { [categoryKeywordId: string]: CategoryKeywordEntity } = {};
     const localSelectedCategoryKeywordById: { [categoryKeywordId: string]: string } = {};
     const localCategoryIdByCategoryKeywordId: { [categoryKeywordId: string]: string } = {};
     for (const categoryKeywordEntity of props.categoryKeywordEntities) {
-      localSelectedOptionsById[categoryKeywordEntity.id] = EditCategoryRuleMode.Edit;
       localCategoryKeywordById[categoryKeywordEntity.id] = categoryKeywordEntity;
       localSelectedCategoryKeywordById[categoryKeywordEntity.id] = categoryKeywordEntity.keyword;
       localCategoryIdByCategoryKeywordId[categoryKeywordEntity.id] = categoryKeywordEntity.categoryId;
     }
 
-    setSelectedOptionById(localSelectedOptionsById);
     setCategoryKeywordById(localCategoryKeywordById);
     setSelectCategoryKeywordById(localSelectedCategoryKeywordById);
     setCategoryIdByCategoryKeywordId(localCategoryIdByCategoryKeywordId);
@@ -65,17 +60,14 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
   }
 
   const deleteCategoryKeywordInReactState = (categoryKeywordEntityId: string): void => {
-    const localSelectedOptionsById: { [categoryKeywordId: string]: EditCategoryRuleMode } = cloneDeep(selectedOptionById);
     const localCategoryKeywordById: { [categoryKeywordId: string]: CategoryKeywordEntity } = cloneDeep(categoryKeywordById);
     const localSelectedCategoryKeywordById: { [categoryKeywordId: string]: string } = cloneDeep(selectCategoryKeywordById);
     const localCategoryIdByCategoryKeywordId: { [categoryKeywordId: string]: string } = cloneDeep(categoryIdByCategoryKeywordId);
 
-    delete localSelectedOptionsById[categoryKeywordEntityId];
     delete localCategoryKeywordById[categoryKeywordEntityId];
     delete localSelectedCategoryKeywordById[categoryKeywordEntityId];
     delete localCategoryIdByCategoryKeywordId[categoryKeywordEntityId];
 
-    setSelectedOptionById(localSelectedOptionsById);
     setCategoryKeywordById(localCategoryKeywordById);
     setSelectCategoryKeywordById(localSelectedCategoryKeywordById);
     setCategoryIdByCategoryKeywordId(localCategoryIdByCategoryKeywordId);
@@ -95,10 +87,6 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
     const originalKeyword = originalCategoryKeywordEntity.keyword;
     const originalCategoryId = originalCategoryKeywordEntity.categoryId;
     const originalCategory = getCategory(originalCategoryId);
-
-    console.log('original values');
-    const selectedEditCategoryRuleMode: EditCategoryRuleMode = selectedOptionById[categoryKeywordEntityId];
-    console.log('selectedEditCategoryRuleMode', selectedEditCategoryRuleMode);
 
     console.log('original values');
     console.log('originalCategoryKeywordEntity', originalCategoryKeywordEntity);
@@ -121,64 +109,15 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
     const categoryChanged: boolean = updatedCategoryId !== originalCategoryId;
     console.log('categoryChanged', categoryChanged);
 
-    if (selectedEditCategoryRuleMode === EditCategoryRuleMode.Edit) {
-      // EDIT keyworde mode
-      if (updatedCategoryKeywordEntityViaTextField.keyword !== originalKeyword) {
-        console.log('keyword changed');
-        const keywordAlreadyExists: boolean = props.categoryKeywordEntities.some((categoryKeywordEntity: CategoryKeywordEntity) => categoryKeywordEntity.keyword === updatedCategoryKeywordEntityViaTextField.keyword);
+    if (updatedCategoryKeywordEntityViaTextField.keyword !== originalKeyword) {
+      console.log('keyword changed');
+      const keywordAlreadyExists: boolean = props.categoryKeywordEntities.some((categoryKeywordEntity: CategoryKeywordEntity) => categoryKeywordEntity.keyword === updatedCategoryKeywordEntityViaTextField.keyword);
 
-        if (keywordAlreadyExists) {
-          // keyword has changed, but the updated one already exists
-          console.log('keyword already exists');
+      if (keywordAlreadyExists) {
+        // keyword has changed, but the updated one already exists
+        console.log('keyword already exists');
 
-          const comboAlreadyExists: boolean = updatedKeywordCategoryCombinationExistsInProps(updatedCategoryKeywordEntityViaTextField.keyword, updatedCategoryId);
-          console.log('comboAlreadyExists', comboAlreadyExists);
-
-          if (!comboAlreadyExists) {
-            // keyword changed, new keyword already exists, combo of new keyword and category does not exist
-            // NO - User cannot assign a keyword to a category if the keyword already exists and is assigned to a different category
-            console.log('ERROR - keyword assigned to multiple categories');
-            // HANDLE ERROR CASE - indicate an error to the user and restore old value
-          } else {
-
-            // keyword changed, new keyword already exists, combo of new keyword and category already exists. Delete this instance of categoryKeywordEntity
-            deleteCategoryKeywordInReactState(categoryKeywordEntityId);
-            props.onDeleteCategoryKeyword(originalCategoryKeywordEntity);
-
-          }
-        } else {
-          // keyword is new
-          console.log('keyword is new');
-
-          // keyword is new. Clone selected keywordEntity (includes new keyword). Updated categoryId in case it changed.
-          const updatedCategoryKeywordEntity: CategoryKeywordEntity = cloneDeep(updatedCategoryKeywordEntityViaTextField);
-          updatedCategoryKeywordEntity.categoryId = updatedCategoryId;
-          updateCategoryKeywordFromInReactState(updatedCategoryKeywordEntity);
-          props.onUpdateCategoryKeyword(updatedCategoryKeywordEntity);
-
-        }
-      } else {
-        console.log('keyword has not changed');
-
-        if (!categoryChanged) {
-          // neither keyword nor category has changed. Do nothing. (Save button should have been disabled).
-          console.log('category unchanged, return');
-          return;
-        } {
-          console.log('category has changed');
-          const updatedCategoryKeywordEntity: CategoryKeywordEntity = cloneDeep(updatedCategoryKeywordEntityViaTextField);
-          updatedCategoryKeywordEntity.categoryId = updatedCategoryId;
-          updateCategoryKeywordFromInReactState(updatedCategoryKeywordEntity);
-          props.onUpdateCategoryKeyword(updatedCategoryKeywordEntity);
-        }
-      }
-    } else {
-      // CHOOSE keyword mode
-
-      if (updatedKeywordViaSelect !== originalKeyword) {
-
-        console.log('keyword changed');
-        const comboAlreadyExists: boolean = updatedKeywordCategoryCombinationExistsInProps(updatedKeywordViaSelect, updatedCategoryId);
+        const comboAlreadyExists: boolean = updatedKeywordCategoryCombinationExistsInProps(updatedCategoryKeywordEntityViaTextField.keyword, updatedCategoryId);
         console.log('comboAlreadyExists', comboAlreadyExists);
 
         if (!comboAlreadyExists) {
@@ -187,26 +126,38 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
           console.log('ERROR - keyword assigned to multiple categories');
           // HANDLE ERROR CASE - indicate an error to the user and restore old value
         } else {
+
           // keyword changed, new keyword already exists, combo of new keyword and category already exists. Delete this instance of categoryKeywordEntity
           deleteCategoryKeywordInReactState(categoryKeywordEntityId);
           props.onDeleteCategoryKeyword(originalCategoryKeywordEntity);
+
         }
       } else {
-        if (!categoryChanged) {
-          // neither keyword nor category has changed. Do nothing. (Save button should have been disabled).
-          console.log('category unchanged, return');
-          return;
-        } {
-          console.log('category has changed');
-          const updatedCategoryKeywordEntity: CategoryKeywordEntity = cloneDeep(updatedCategoryKeywordEntityViaTextField);
-          updatedCategoryKeywordEntity.categoryId = updatedCategoryId;
-          updateCategoryKeywordFromInReactState(updatedCategoryKeywordEntity);
-          props.onUpdateCategoryKeyword(updatedCategoryKeywordEntity);
-        }
+        // keyword is new
+        console.log('keyword is new');
+
+        // keyword is new. Clone selected keywordEntity (includes new keyword). Updated categoryId in case it changed.
+        const updatedCategoryKeywordEntity: CategoryKeywordEntity = cloneDeep(updatedCategoryKeywordEntityViaTextField);
+        updatedCategoryKeywordEntity.categoryId = updatedCategoryId;
+        updateCategoryKeywordFromInReactState(updatedCategoryKeywordEntity);
+        props.onUpdateCategoryKeyword(updatedCategoryKeywordEntity);
+
+      }
+    } else {
+      console.log('keyword has not changed');
+
+      if (!categoryChanged) {
+        // neither keyword nor category has changed. Do nothing. (Save button should have been disabled).
+        console.log('category unchanged, return');
+        return;
+      } {
+        console.log('category has changed');
+        const updatedCategoryKeywordEntity: CategoryKeywordEntity = cloneDeep(updatedCategoryKeywordEntityViaTextField);
+        updatedCategoryKeywordEntity.categoryId = updatedCategoryId;
+        updateCategoryKeywordFromInReactState(updatedCategoryKeywordEntity);
+        props.onUpdateCategoryKeyword(updatedCategoryKeywordEntity);
       }
     }
-
-
   }
 
   const getCategory = (categoryId: string): CategoryEntity => {
@@ -223,12 +174,6 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
       }
       return 0;
     });
-  };
-
-  const handleOptionChange = (id: string, event: any) => {
-    const currentSelectedOptionById: { [keyword: string]: EditCategoryRuleMode } = cloneDeep(selectedOptionById);
-    currentSelectedOptionById[id] = event.target.value;
-    setSelectedOptionById(currentSelectedOptionById);
   };
 
   const handleCategoryKeywordChange = (categoryKeywordEntity: CategoryKeywordEntity, keyword: string) => {
@@ -289,9 +234,7 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
               <div className="table-cell-keyword">
                 <Box display="flex" alignItems="center">
                   <FormControl component="fieldset">
-                    <RadioGroup row value={selectedOptionById[categoryKeywordEntity.id]} onChange={(event) => handleOptionChange(categoryKeywordEntity.id, event)}>
                       <Box display="flex" alignItems="center">
-                        <FormControlLabel value={EditCategoryRuleMode.Edit} control={<Radio />} label="Edit" />
                         <TextField
                           value={categoryKeywordById[categoryKeywordEntity.id].keyword}
                           onChange={(event) => handleCategoryKeywordChange(categoryKeywordEntity, event.target.value)}
@@ -299,31 +242,8 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
                           onBlurCapture={(event) => handleBlurCapture(event)}
                           style={{ marginLeft: '16px', minWidth: '400px' }}
                           helperText="Edit the keyword"
-                          disabled={selectedOptionById[categoryKeywordEntity.id] !== EditCategoryRuleMode.Edit}
                         />
                       </Box>
-                      <Box display="flex" alignItems="center" sx={{ marginTop: '12px' }}>
-                        <FormControlLabel value={EditCategoryRuleMode.Choose} control={<Radio />} label="Choose" />
-                        {(
-                          <TextField
-                            id="categoryKeyword"
-                            select
-                            style={{ minWidth: '400px' }}
-                            value={selectCategoryKeywordById[categoryKeywordEntity.id]}
-                            variant="standard"
-                            onChange={(event) => handleCategoryKeywordOptionChange(categoryKeywordEntity.id, event.target.value)}
-                            helperText="Select the keyword from the list"
-                            disabled={selectedOptionById[categoryKeywordEntity.id] !== EditCategoryRuleMode.Choose}
-                          >
-                            {props.categoryKeywordEntities.map((categoryKeywordEntity: CategoryKeywordEntity) => (
-                              <MenuItem key={categoryKeywordEntity.id} value={categoryKeywordEntity.keyword}>
-                                {categoryKeywordEntity.keyword}
-                              </MenuItem>
-                            ))}
-                          </TextField>
-                        )}
-                      </Box>
-                    </RadioGroup>
                   </FormControl>
                 </Box>
               </div>
