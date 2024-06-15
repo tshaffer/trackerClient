@@ -6,11 +6,11 @@ import './App.css';
 
 const App: React.FC = () => {
   const [selectedMainButton, setSelectedMainButton] = useState<string | null>(null);
-  const [selectedSubButton, setSelectedSubButton] = useState<string | null>(null);
+  const [selectedSubButton, setSelectedSubButton] = useState<string | null>('List');
 
   const handleButtonClick = (label: string, subLabel?: string) => {
     setSelectedMainButton(label);
-    setSelectedSubButton(subLabel || null);
+    setSelectedSubButton(subLabel || 'List');
   };
 
   const renderContent = () => {

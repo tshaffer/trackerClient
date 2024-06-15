@@ -14,9 +14,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
   };
 
   const handleClose = (subLabel?: string) => {
-    if (subLabel) {
-      onButtonClick('Categories', subLabel);
-    }
+    onButtonClick('Categories', subLabel);
     setAnchorEl(null);
   };
 
@@ -41,6 +39,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
         aria-controls="categories-menu"
         aria-haspopup="true"
         onMouseEnter={handleHover}
+        onClick={() => handleClose('List')}
         endIcon={<ChevronRightIcon />}
       >
         Categories
