@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 
 import '../styles/Tracker.css';
 import { CategoryEntity, CategoryKeywordEntity } from '../types';
-import { Box, FormControl, FormControlLabel, IconButton, MenuItem, Radio, RadioGroup, TextField } from '@mui/material';
+import { IconButton, MenuItem, TextField } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import { TrackerAnyPromiseThunkAction, TrackerDispatch } from '../models';
 import { getCategories, getCategoryKeywordEntities } from '../selectors/categoryState';
@@ -82,7 +82,6 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
 
     // original values
     const originalCategoryKeywordEntity: CategoryKeywordEntity = props.categoryKeywordEntities.find((categoryKeywordEntity: CategoryKeywordEntity) => categoryKeywordEntity.id === categoryKeywordEntityId) as CategoryKeywordEntity;
-    const clonedCategoryKeywordEntity: CategoryKeywordEntity = cloneDeep(originalCategoryKeywordEntity);
 
     const originalKeyword = originalCategoryKeywordEntity.keyword;
     const originalCategoryId = originalCategoryKeywordEntity.categoryId;
@@ -183,28 +182,10 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
     setCategoryKeywordById(currentCategoryKeywordById);
   };
 
-  function handleCategoryKeywordOptionChange(selectedCategoryKeywordEntityId: string, keyword: string): void {
-    console.log('handleCategoryKeywordOptionChange', selectedCategoryKeywordEntityId, keyword);
-    const currentSelectCategoryKeywordById: { [keyword: string]: string } = cloneDeep(selectCategoryKeywordById);
-    currentSelectCategoryKeywordById[selectedCategoryKeywordEntityId] = keyword;
-    setSelectCategoryKeywordById(currentSelectCategoryKeywordById);
-  }
-
-
   const handleCategoryChange = (categoryKeywordId: string, categoryId: string) => {
     const currentCategoryIdByCategoryKeywordId: { [categoryKeywordId: string]: string } = cloneDeep(categoryIdByCategoryKeywordId);
     currentCategoryIdByCategoryKeywordId[categoryKeywordId] = categoryId;
     setCategoryIdByCategoryKeywordId(currentCategoryIdByCategoryKeywordId);
-  }
-
-  function handleBlur(event: any): void {
-    console.log('handleBlur', event);
-    console.log(event.target.value);
-  }
-
-  function handleBlurCapture(event: any): void {
-    console.log('handleBlurCapture', event);
-    console.log(event.target.value);
   }
 
   let alphabetizedCategoryEntities: CategoryEntity[] = cloneDeep(props.categories);
@@ -232,20 +213,12 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
           {props.categoryKeywordEntities.map((categoryKeywordEntity: CategoryKeywordEntity) => (
             <div className="table-row" key={categoryKeywordEntity.id}>
               <div className="table-cell-keyword">
-                <Box display="flex" alignItems="center">
-                  <FormControl component="fieldset">
-                      <Box display="flex" alignItems="center">
-                        <TextField
-                          value={categoryKeywordById[categoryKeywordEntity.id].keyword}
-                          onChange={(event) => handleCategoryKeywordChange(categoryKeywordEntity, event.target.value)}
-                          onBlur={(event) => handleBlur(event)}
-                          onBlurCapture={(event) => handleBlurCapture(event)}
-                          style={{ marginLeft: '16px', minWidth: '400px' }}
-                          helperText="Edit the keyword"
-                        />
-                      </Box>
-                  </FormControl>
-                </Box>
+                <TextField
+                  value={categoryKeywordById[categoryKeywordEntity.id].keyword}
+                  onChange={(event) => handleCategoryKeywordChange(categoryKeywordEntity, event.target.value)}
+                  style={{ marginLeft: '16px', minWidth: '400px' }}
+                  helperText="Edit the keyword"
+                />
               </div>
               <div className="table-cell-keyword">
                 <TextField
