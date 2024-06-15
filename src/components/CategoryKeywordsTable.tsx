@@ -218,7 +218,7 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
           </div>
         </div>
         <div className="table-body">
-          {props.categoryKeywordEntities.map((categoryKeywordEntity: CategoryKeywordEntity) => (
+          {Object.values(categoryKeywordById).map((categoryKeywordEntity: CategoryKeywordEntity) => (
             <div className="table-row" key={categoryKeywordEntity.id}>
               <div className="table-cell-keyword">
                 <TextField
