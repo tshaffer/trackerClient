@@ -28,7 +28,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
           <Typography>Categories</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Button fullWidth onClick={() => onButtonClick('Categories')}>Categories</Button>
           <Button fullWidth onClick={() => onButtonClick('Categories', 'List')}>List</Button>
           <Button fullWidth onClick={() => onButtonClick('Categories', 'Add')}>Add</Button>
           <Button fullWidth onClick={() => onButtonClick('Categories', 'Edit')}>Edit</Button>
