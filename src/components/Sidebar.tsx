@@ -84,6 +84,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
           </Button>
           <Popover
             id="categories-popover"
+            style={{ pointerEvents: 'none' }}
             open={Boolean(anchorEl) && currentMenu === 'Categories'}
             anchorEl={anchorEl}
             onClose={handlePopoverLeave}
@@ -116,6 +117,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
           </Button>
           <Popover
             id="reports-popover"
+            style={{ pointerEvents: 'none' }}
             open={Boolean(anchorEl) && currentMenu === 'Reports'}
             anchorEl={anchorEl}
             onClose={handlePopoverLeave}
