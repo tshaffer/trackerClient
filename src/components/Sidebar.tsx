@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Accordion, AccordionSummary, AccordionDetails, Button, Popover, MenuItem, Box, Typography } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { isNil } from 'lodash';
 
 interface SidebarProps {
   onButtonClick: (label: string, subLabel?: string) => void;
@@ -24,9 +25,23 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
     setCurrentMenu(null);
   };
 
-  const handleMouseLeave = () => {
+  const handlePopoverEnter = () => {
+    // Prevent closing the popover when moving from button to popover
+    setAnchorEl(anchorEl);
+  };
+
+  const handlePopoverLeave = () => {
     setAnchorEl(null);
     setCurrentMenu(null);
+  };
+
+  const handleButtonMouseLeave = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (!isNil(anchorEl)) {
+      if (!anchorEl.contains(event.relatedTarget as Node)) {
+        setAnchorEl(null);
+        setCurrentMenu(null);
+      }
+    }
   };
 
   const buttonStyle = {
@@ -62,6 +77,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
             sx={buttonStyle}
             aria-haspopup="true"
             onMouseEnter={(e) => handleHover(e, 'Categories')}
+            onMouseLeave={handleButtonMouseLeave}
             onClick={() => handleClose('List')}
           >
             <span>Categories</span> <ChevronRightIcon />
@@ -70,7 +86,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
             id="categories-popover"
             open={Boolean(anchorEl) && currentMenu === 'Categories'}
             anchorEl={anchorEl}
-            onClose={handleMouseLeave}
+            onClose={handlePopoverLeave}
             anchorOrigin={{
               vertical: 'top',
               horizontal: 'right',
@@ -80,7 +96,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
               horizontal: 'left',
             }}
             PaperProps={{
-              onMouseLeave: handleMouseLeave,
+              onMouseEnter: handlePopoverEnter,
+              onMouseLeave: handlePopoverLeave,
             }}
           >
             <MenuItem onClick={() => handleClose('List')}>List</MenuItem>
@@ -92,6 +109,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
             sx={buttonStyle}
             aria-haspopup="true"
             onMouseEnter={(e) => handleHover(e, 'Reports')}
+            onMouseLeave={handleButtonMouseLeave}
             onClick={() => handleClose('Summary')}
           >
             <span>Reports</span> <ChevronRightIcon />
@@ -100,7 +118,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
             id="reports-popover"
             open={Boolean(anchorEl) && currentMenu === 'Reports'}
             anchorEl={anchorEl}
-            onClose={handleMouseLeave}
+            onClose={handlePopoverLeave}
             anchorOrigin={{
               vertical: 'top',
               horizontal: 'right',
@@ -110,7 +128,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
               horizontal: 'left',
             }}
             PaperProps={{
-              onMouseLeave: handleMouseLeave,
+              onMouseEnter: handlePopoverEnter,
+              onMouseLeave: handlePopoverLeave,
             }}
           >
             <MenuItem onClick={() => handleClose('Summary')}>Summary</MenuItem>
