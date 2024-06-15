@@ -13,11 +13,15 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
   const [currentMenu, setCurrentMenu] = useState<string | null>(null);
 
   const handleHover = (event: React.MouseEvent<HTMLButtonElement>, menu: string) => {
+    console.log('hover');
+    return;
     setAnchorEl(event.currentTarget);
     setCurrentMenu(menu);
   };
 
   const handleClose = (subLabel?: string) => {
+    console.log('close');
+    // return;
     if (subLabel) {
       onButtonClick(currentMenu!, subLabel);
     }
@@ -26,22 +30,28 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
   };
 
   const handlePopoverEnter = () => {
+    console.log('enter');
+    return;
     // Prevent closing the popover when moving from button to popover
-    setAnchorEl(anchorEl);
+    // setAnchorEl(anchorEl);
   };
 
   const handlePopoverLeave = () => {
-    setAnchorEl(null);
-    setCurrentMenu(null);
+    console.log('leave');
+    return;
+    // setAnchorEl(null);
+    // setCurrentMenu(null);
   };
 
   const handleButtonMouseLeave = (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (!isNil(anchorEl)) {
-      if (!anchorEl.contains(event.relatedTarget as Node)) {
-        setAnchorEl(null);
-        setCurrentMenu(null);
-      }
-    }
+    console.log('button leave');
+    return;
+    // if (!isNil(anchorEl)) {
+    //   if (!anchorEl.contains(event.relatedTarget as Node)) {
+    //     setAnchorEl(null);
+    //     setCurrentMenu(null);
+    //   }
+    // }
   };
 
   const buttonStyle = {
