@@ -96,7 +96,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
             sx={buttonStyle}
             aria-haspopup="true"
             onMouseEnter={(e) => handleHover(e, 'Reports')}
-            onClick={() => handleClose('Summary')}
+            onClick={() => handleClose('Expenses')}
           >
             <span>Reports</span> <ChevronRightIcon />
           </Button>
@@ -118,8 +118,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
             <Paper>
               <ClickAwayListener onClickAway={handleClickAway}>
                 <MenuList>
-                  <MenuItem onClick={() => handleClose('Summary')}>Summary</MenuItem>
-                  <MenuItem onClick={() => handleClose('Detailed')}>Detailed</MenuItem>
+                  <MenuItem onClick={() => handleClose('Expenses')}>Expenses</MenuItem>
+                  <MenuItem onClick={() => handleClose('Assets')}>Assets</MenuItem>
                 </MenuList>
               </ClickAwayListener>
             </Paper>
