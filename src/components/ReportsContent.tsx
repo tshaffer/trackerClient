@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Tabs, Tab, Box, Typography, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, TextField, MenuItem, Select, InputLabel, SelectChangeEvent } from '@mui/material';
+import { Tabs, Tab, Box, Typography, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, TextField, MenuItem, Select, InputLabel, SelectChangeEvent, Button } from '@mui/material';
 
 interface ReportsContentProps {
   activeTab: number;
@@ -34,6 +34,19 @@ const ReportsContent: React.FC<ReportsContentProps> = ({ activeTab }) => {
 
   const handleStatementChange = (event: SelectChangeEvent<string>) => {
     setSelectedStatement(event.target.value as string);
+  };
+
+  const handleGenerateReport = () => {
+    // Logic to generate the report
+    console.log('Generating report with the following settings:');
+    console.log('Date Option:', dateOption);
+    if (dateOption === 'dateRange') {
+      console.log('Start Date:', startDate);
+      console.log('End Date:', endDate);
+    }
+    if (dateOption === 'statement') {
+      console.log('Selected Statement:', selectedStatement);
+    }
   };
 
   return (
@@ -96,6 +109,10 @@ const ReportsContent: React.FC<ReportsContentProps> = ({ activeTab }) => {
                 </Select>
               </FormControl>
             </FormControl>
+            <br/>
+            <Button variant="contained" color="primary" sx={{ mt: 3 }} onClick={handleGenerateReport}>
+              Generate Expenses Report
+            </Button>
           </Box>
         )}
         {tabIndex === 1 && <Typography>Assets Content</Typography>}
