@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Tabs, Tab, Box, Typography, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, TextField, MenuItem, Select, InputLabel, SelectChangeEvent, Button } from '@mui/material';
-import { formatDate } from '../utilities';
+import { Tabs, Tab, Box, Typography, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, MenuItem, Select, InputLabel, SelectChangeEvent, Button } from '@mui/material';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { TrackerDispatch } from '../models';
@@ -23,8 +22,6 @@ interface ReportsContentProps {
 const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProps) => {
   const [tabIndex, setTabIndex] = React.useState(props.activeTab);
   const [dateOption, setDateOption] = useState<string>('all');
-  // const [startDate, setStartDate] = useState<string | null>(null);
-  // const [endDate, setEndDate] = useState<string | null>(null);
   const [selectedStatement, setSelectedStatement] = useState<string>('');
   const [startDate, setStartDate] = React.useState("2023-01-01");
   const [endDate, setEndDate] = React.useState("2023-12-31");
@@ -55,20 +52,11 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
     }
   };
 
-  // const handleStartDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setStartDate(event.target.value);
-  // };
-
-  // const handleEndDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   setEndDate(event.target.value);
-  // };
-
   const handleStatementChange = (event: SelectChangeEvent<string>) => {
     setSelectedStatement(event.target.value as string);
   };
 
   const handleGenerateReport = () => {
-    // Logic to generate the report
     console.log('Generating report with the following settings:');
     console.log('Date Option:', dateOption);
     if (dateOption === 'dateRange') {
@@ -141,28 +129,6 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
                   {renderEndDate()}
                 </React.Fragment>
               )}
-              {/* Date Range: {formatDate(props.startDate)} to {formatDate(props.endDate)} */}
-
-              {/* <TextField
-                label="Start Date"
-                type="date"
-                value={startDate || ''}
-                onChange={handleStartDateChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                disabled={dateOption !== 'dateRange'}
-              />
-              <TextField
-                label="End Date"
-                type="date"
-                value={endDate || ''}
-                onChange={handleEndDateChange}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                disabled={dateOption !== 'dateRange'}
-              /> */}
             </Box>
             <FormControl component="fieldset" sx={{ mt: 2 }}>
               <RadioGroup value={dateOption} onChange={handleDateOptionChange}>
