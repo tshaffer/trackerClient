@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Tabs, Tab, Box, Typography, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, TextField, MenuItem, Select, InputLabel } from '@mui/material';
+import { Tabs, Tab, Box, Typography, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, TextField, MenuItem, Select, InputLabel, SelectChangeEvent } from '@mui/material';
 
 interface ReportsContentProps {
   activeTab: number;
@@ -32,7 +32,7 @@ const ReportsContent: React.FC<ReportsContentProps> = ({ activeTab }) => {
     setEndDate(event.target.value);
   };
 
-  const handleStatementChange = (event: any) => {
+  const handleStatementChange = (event: SelectChangeEvent) => {
     setSelectedStatement(event.target.value as string);
   };
 
