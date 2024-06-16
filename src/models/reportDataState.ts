@@ -6,23 +6,25 @@ import { TrackerModelBaseAction } from './baseAction';
 // ------------------------------------
 export const SET_STATEMENT_DATA = 'SET_STATEMENT_DATA';
 export const SET_TRANSACTIONS_BY_CATEGORY = 'SET_TRANSACTIONS_BY_CATEGORY';
-export const SET_UNIDENTIFIED_BANK_TRANSACTIONS  = 'SET_UNIDENTIFIED_BANK_TRANSACTIONS';
+export const SET_UNIDENTIFIED_BANK_TRANSACTIONS = 'SET_UNIDENTIFIED_BANK_TRANSACTIONS';
 export const SET_EXPENSE_REPORT_DATE_RANGE_TYPE = 'SET_EXPENSE_REPORT_DATE_RANGE_TYPE';
+export const SET_START_DATE = 'SET_START_DATE';
+export const SET_END_DATE = 'SET_END_DATE';
 
 // ------------------------------------
 // Actions
 // ------------------------------------
 
 interface SetStatementDataPayload {
-  startDate: string,  
+  startDate: string,
   endDate: string,
   total: number,
 }
 
 export const setStatementData = (
   startDate: string,
-   endDate: string, 
-   total: number,
+  endDate: string,
+  total: number,
 ): any => {
 
   return {
@@ -79,6 +81,37 @@ export const setExpenseReportDateRangeType = (
     },
   };
 };
+
+interface SetStartDatePayload {
+  startDate: string;
+}
+
+export const setStartDate = (
+  startDate: string
+): any => {
+  return {
+    type: SET_START_DATE,
+    payload: {
+      startDate,
+    },
+  };
+};
+
+interface SetEndDatePayload {
+  endDate: string;
+}
+
+export const setEndDate = (
+  endDate: string
+): any => {
+  return {
+    type: SET_END_DATE,
+    payload: {
+      endDate,
+    },
+  };
+};
+
 // ------------------------------------
 // Reducer
 // ------------------------------------
@@ -94,7 +127,7 @@ const initialState: ReportDataState = {
 
 export const reportDataStateReducer = (
   state: ReportDataState = initialState,
-  action: TrackerModelBaseAction<SetStatementDataPayload & SetTransactionsByCategoryPayload & SetUnidentifiedBankTransactionsPayload & SetExpenseReportDateRangeTypePayload>
+  action: TrackerModelBaseAction<SetStatementDataPayload & SetTransactionsByCategoryPayload & SetUnidentifiedBankTransactionsPayload & SetExpenseReportDateRangeTypePayload & SetStartDatePayload & SetEndDatePayload>
 ): ReportDataState => {
   switch (action.type) {
     case SET_STATEMENT_DATA: {
@@ -108,6 +141,12 @@ export const reportDataStateReducer = (
     }
     case SET_EXPENSE_REPORT_DATE_RANGE_TYPE: {
       return { ...state, expenseReportDateRangeType: action.payload.expenseReportDateRangeType };
+    }
+    case SET_START_DATE: {
+      return { ...state, startDate: action.payload.startDate };
+    }
+    case SET_END_DATE: {
+      return { ...state, endDate: action.payload.endDate };
     }
     default:
       return state;

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Tabs, Tab, Box, Typography, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, MenuItem, Select, InputLabel, SelectChangeEvent, Button } from '@mui/material';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { TrackerDispatch, setExpenseReportDateRangeType } from '../models';
+import { TrackerDispatch, setEndDate, setExpenseReportDateRangeType, setStartDate } from '../models';
 import { getStartDate, getEndDate, getTransactionsByCategory, getUnidentifiedBankTransactions, getExpenseReportDateRangeType } from '../selectors';
 import { StringToTransactionsLUT, BankTransactionEntity, ExpenseReportDateRangeType } from '../types';
 import dayjs, { Dayjs } from 'dayjs';
@@ -10,6 +10,7 @@ import { isNil } from 'lodash';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { search } from '../controllers';
 
 export interface ReportsContentPropsFromParent {
   activeTab: number;
@@ -22,14 +23,14 @@ interface ReportsContentProps extends ReportsContentPropsFromParent {
   startDate: string,
   endDate: string,
   onSetExpenseReportDateRangeType: (dateRangeType: ExpenseReportDateRangeType) => any;
+  onSetStartDate: (startDate: string) => any;
+  onSetEndDate: (endDate: string) => any;
+  onSearch: (startDate: string, endDate: string) => any;
 }
 
 const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProps) => {
   const [tabIndex, setTabIndex] = React.useState(props.activeTab);
-  // const [props.expenseReportDateRangeType, setDateOption] = useState<ExpenseReportDateRangeType>(ExpenseReportDateRangeType.All);
   const [selectedStatement, setSelectedStatement] = useState<string>('');
-  const [startDate, setStartDate] = React.useState("2023-01-01");
-  const [endDate, setEndDate] = React.useState("2023-12-31");
 
   React.useEffect(() => {
     setTabIndex(props.activeTab);
@@ -46,14 +47,14 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
   const handleSetStartDate = (dateDayJs: Dayjs | null) => {
     if (!isNil(dateDayJs)) {
       const date: Date = dateDayJs.toDate();
-      setStartDate(date.toISOString());
+      props.onSetStartDate(date.toISOString());
     }
   };
 
   const handleSetEndDate = (dateDayJs: Dayjs | null) => {
     if (!isNil(dateDayJs)) {
       const date: Date = dateDayJs.toDate();
-      setEndDate(date.toISOString());
+      props.onSetEndDate(date.toISOString());
     }
   };
 
@@ -71,6 +72,8 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
     if (props.expenseReportDateRangeType === 'statement') {
       console.log('Selected Statement:', selectedStatement);
     }
+
+    props.onSearch(props.startDate, props.endDate);
   };
 
   const renderStartDate = (): JSX.Element => {
@@ -81,7 +84,7 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
             <DemoContainer components={['DatePicker']}>
               <DatePicker
                 label="Date"
-                value={dayjs(startDate)}
+                value={dayjs(props.startDate)}
                 onChange={(newValue) => handleSetStartDate(newValue)}
                 disabled={props.expenseReportDateRangeType !== ExpenseReportDateRangeType.DateRange}
               />
@@ -100,7 +103,7 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
             <DemoContainer components={['DatePicker']}>
               <DatePicker
                 label="Date"
-                value={dayjs(endDate)}
+                value={dayjs(props.endDate)}
                 onChange={(newValue) => handleSetEndDate(newValue)}
                 disabled={props.expenseReportDateRangeType !== ExpenseReportDateRangeType.DateRange}
               />
@@ -110,6 +113,7 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
       </React.Fragment>
     );
   };
+  
   return (
     <Box sx={{ width: '100%' }}>
       <Typography variant="h4">Reports</Typography>
@@ -180,6 +184,9 @@ function mapStateToProps(state: any) {
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
     onSetExpenseReportDateRangeType: setExpenseReportDateRangeType,
+    onSetStartDate: setStartDate,
+    onSetEndDate: setEndDate,
+    onSearch: search,
   }, dispatch);
 };
 
