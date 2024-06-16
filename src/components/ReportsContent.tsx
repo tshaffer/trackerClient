@@ -32,7 +32,7 @@ const ReportsContent: React.FC<ReportsContentProps> = ({ activeTab }) => {
     setEndDate(event.target.value);
   };
 
-  const handleStatementChange = (event: SelectChangeEvent) => {
+  const handleStatementChange = (event: SelectChangeEvent<string>) => {
     setSelectedStatement(event.target.value as string);
   };
 
