@@ -1,5 +1,6 @@
 import { StringToTransactionsLUT } from "./base";
 import { BankTransactionEntity, CategoryEntity, CategoryKeywordEntity } from "./entities";
+import { ExpenseReportDateRangeType } from "./enums";
 
 export interface TrackerState {
   appState: AppState;
@@ -12,6 +13,7 @@ export interface AppState {
 }
 
 export interface ReportDataState {
+  expenseReportDateRangeType: ExpenseReportDateRangeType;
   startDate: string;
   endDate: string;
   transactionsByCategory: StringToTransactionsLUT;

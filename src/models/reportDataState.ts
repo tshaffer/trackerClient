@@ -1,4 +1,4 @@
-import { BankTransactionEntity, ReportDataState, StringToTransactionsLUT } from '../types';
+import { BankTransactionEntity, ExpenseReportDateRangeType, ReportDataState, StringToTransactionsLUT } from '../types';
 import { TrackerModelBaseAction } from './baseAction';
 
 // ------------------------------------
@@ -7,6 +7,7 @@ import { TrackerModelBaseAction } from './baseAction';
 export const SET_STATEMENT_DATA = 'SET_STATEMENT_DATA';
 export const SET_TRANSACTIONS_BY_CATEGORY = 'SET_TRANSACTIONS_BY_CATEGORY';
 export const SET_UNIDENTIFIED_BANK_TRANSACTIONS  = 'SET_UNIDENTIFIED_BANK_TRANSACTIONS';
+export const SET_EXPENSE_REPORT_DATE_RANGE_TYPE = 'SET_EXPENSE_REPORT_DATE_RANGE_TYPE';
 
 // ------------------------------------
 // Actions
@@ -64,11 +65,26 @@ export const setUnidentifiedBankTransactions = (
   };
 };
 
+interface SetExpenseReportDateRangeTypePayload {
+  expenseReportDateRangeType: ExpenseReportDateRangeType
+}
+
+export const setExpenseReportDateRangeType = (
+  expenseReportDateRangeType: ExpenseReportDateRangeType
+): any => {
+  return {
+    type: SET_EXPENSE_REPORT_DATE_RANGE_TYPE,
+    payload: {
+      expenseReportDateRangeType,
+    },
+  };
+};
 // ------------------------------------
 // Reducer
 // ------------------------------------
 
 const initialState: ReportDataState = {
+  expenseReportDateRangeType: ExpenseReportDateRangeType.All,
   startDate: new Date().toISOString().split('T')[0],
   endDate: new Date().toISOString().split('T')[0],
   transactionsByCategory: {},
@@ -78,7 +94,7 @@ const initialState: ReportDataState = {
 
 export const reportDataStateReducer = (
   state: ReportDataState = initialState,
-  action: TrackerModelBaseAction<SetStatementDataPayload & SetTransactionsByCategoryPayload & SetUnidentifiedBankTransactionsPayload>
+  action: TrackerModelBaseAction<SetStatementDataPayload & SetTransactionsByCategoryPayload & SetUnidentifiedBankTransactionsPayload & SetExpenseReportDateRangeTypePayload>
 ): ReportDataState => {
   switch (action.type) {
     case SET_STATEMENT_DATA: {
@@ -89,7 +105,10 @@ export const reportDataStateReducer = (
     }
     case SET_UNIDENTIFIED_BANK_TRANSACTIONS: {
       return { ...state, unidentifiedBankTransactions: action.payload.unidentifiedBankTransactions };
-    } 
+    }
+    case SET_EXPENSE_REPORT_DATE_RANGE_TYPE: {
+      return { ...state, expenseReportDateRangeType: action.payload.expenseReportDateRangeType };
+    }
     default:
       return state;
   }
