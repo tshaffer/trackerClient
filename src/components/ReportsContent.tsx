@@ -1,20 +1,37 @@
 import React, { useState } from 'react';
 import { Tabs, Tab, Box, Typography, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, TextField, MenuItem, Select, InputLabel, SelectChangeEvent, Button } from '@mui/material';
+import { formatDate } from '../utilities';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { TrackerDispatch } from '../models';
+import { getStartDate, getEndDate, getTransactionsByCategory, getUnidentifiedBankTransactions } from '../selectors';
+import { StringToTransactionsLUT, BankTransactionEntity } from '../types';
+import dayjs, { Dayjs } from 'dayjs';
+import { isNil } from 'lodash';
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 interface ReportsContentProps {
   activeTab: number;
+  transactionsByCategory: StringToTransactionsLUT,
+  unidentifiedTransactions: BankTransactionEntity[],
+  startDate: string,
+  endDate: string,
 }
 
-const ReportsContent: React.FC<ReportsContentProps> = ({ activeTab }) => {
-  const [tabIndex, setTabIndex] = React.useState(activeTab);
+const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProps) => {
+  const [tabIndex, setTabIndex] = React.useState(props.activeTab);
   const [dateOption, setDateOption] = useState<string>('all');
-  const [startDate, setStartDate] = useState<string | null>(null);
-  const [endDate, setEndDate] = useState<string | null>(null);
+  // const [startDate, setStartDate] = useState<string | null>(null);
+  // const [endDate, setEndDate] = useState<string | null>(null);
   const [selectedStatement, setSelectedStatement] = useState<string>('');
+  const [startDate, setStartDate] = React.useState("2023-01-01");
+  const [endDate, setEndDate] = React.useState("2023-12-31");
 
   React.useEffect(() => {
-    setTabIndex(activeTab);
-  }, [activeTab]);
+    setTabIndex(props.activeTab);
+  }, [props.activeTab]);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);
@@ -24,13 +41,27 @@ const ReportsContent: React.FC<ReportsContentProps> = ({ activeTab }) => {
     setDateOption(event.target.value);
   };
 
-  const handleStartDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setStartDate(event.target.value);
+  const handleSetStartDate = (dateDayJs: Dayjs | null) => {
+    if (!isNil(dateDayJs)) {
+      const date: Date = dateDayJs.toDate();
+      setStartDate(date.toISOString());
+    }
   };
 
-  const handleEndDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEndDate(event.target.value);
+  const handleSetEndDate = (dateDayJs: Dayjs | null) => {
+    if (!isNil(dateDayJs)) {
+      const date: Date = dateDayJs.toDate();
+      setEndDate(date.toISOString());
+    }
   };
+
+  // const handleStartDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setStartDate(event.target.value);
+  // };
+
+  // const handleEndDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   setEndDate(event.target.value);
+  // };
 
   const handleStatementChange = (event: SelectChangeEvent<string>) => {
     setSelectedStatement(event.target.value as string);
@@ -41,14 +72,49 @@ const ReportsContent: React.FC<ReportsContentProps> = ({ activeTab }) => {
     console.log('Generating report with the following settings:');
     console.log('Date Option:', dateOption);
     if (dateOption === 'dateRange') {
-      console.log('Start Date:', startDate);
-      console.log('End Date:', endDate);
+      console.log('Start Date:', props.startDate);
+      console.log('End Date:', props.endDate);
     }
     if (dateOption === 'statement') {
       console.log('Selected Statement:', selectedStatement);
     }
   };
 
+  const renderStartDate = (): JSX.Element => {
+    return (
+      <React.Fragment>
+        <FormControl style={{ marginLeft: '6px', display: 'block' }}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={['DatePicker']}>
+              <DatePicker
+                label="Date"
+                value={dayjs(startDate)}
+                onChange={(newValue) => handleSetStartDate(newValue)}
+              />
+            </DemoContainer>
+          </LocalizationProvider>
+        </FormControl>
+      </React.Fragment>
+    );
+  };
+
+  const renderEndDate = (): JSX.Element => {
+    return (
+      <React.Fragment>
+        <FormControl style={{ marginLeft: '6px', display: 'block' }}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={['DatePicker']}>
+              <DatePicker
+                label="Date"
+                value={dayjs(endDate)}
+                onChange={(newValue) => handleSetEndDate(newValue)}
+              />
+            </DemoContainer>
+          </LocalizationProvider>
+        </FormControl>
+      </React.Fragment>
+    );
+  };
   return (
     <Box sx={{ width: '100%' }}>
       <Typography variant="h4">Reports</Typography>
@@ -69,7 +135,15 @@ const ReportsContent: React.FC<ReportsContentProps> = ({ activeTab }) => {
               </RadioGroup>
             </FormControl>
             <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
-              <TextField
+              {dateOption === 'dateRange' && (
+                <React.Fragment>
+                  {renderStartDate()}
+                  {renderEndDate()}
+                </React.Fragment>
+              )}
+              {/* Date Range: {formatDate(props.startDate)} to {formatDate(props.endDate)} */}
+
+              {/* <TextField
                 label="Start Date"
                 type="date"
                 value={startDate || ''}
@@ -88,7 +162,7 @@ const ReportsContent: React.FC<ReportsContentProps> = ({ activeTab }) => {
                   shrink: true,
                 }}
                 disabled={dateOption !== 'dateRange'}
-              />
+              /> */}
             </Box>
             <FormControl component="fieldset" sx={{ mt: 2 }}>
               <RadioGroup value={dateOption} onChange={handleDateOptionChange}>
@@ -122,4 +196,18 @@ const ReportsContent: React.FC<ReportsContentProps> = ({ activeTab }) => {
   );
 };
 
-export default ReportsContent;
+function mapStateToProps(state: any) {
+  return {
+    startDate: getStartDate(state),
+    endDate: getEndDate(state),
+    transactionsByCategory: getTransactionsByCategory(state),
+    unidentifiedTransactions: getUnidentifiedBankTransactions(state),
+  };
+}
+
+const mapDispatchToProps = (dispatch: TrackerDispatch) => {
+  return bindActionCreators({
+  }, dispatch);
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ReportsContent);

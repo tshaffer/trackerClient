@@ -69,8 +69,8 @@ export const setUnidentifiedBankTransactions = (
 // ------------------------------------
 
 const initialState: ReportDataState = {
-  startDate: '',
-  endDate: '',
+  startDate: new Date().toISOString().split('T')[0],
+  endDate: new Date().toISOString().split('T')[0],
   transactionsByCategory: {},
   unidentifiedBankTransactions: [],
   total: 0,
