@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Accordion, AccordionSummary, AccordionDetails, Button, Popper, MenuItem, Box, Typography } from '@mui/material';
+import { Accordion, AccordionSummary, AccordionDetails, Button, Popper, MenuItem, Box, Typography, Paper, ClickAwayListener, MenuList } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
@@ -24,7 +24,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
     setCurrentMenu(null);
   };
 
-  const handleMouseLeave = () => {
+  const handleClickAway = () => {
     setAnchorEl(null);
     setCurrentMenu(null);
   };
@@ -67,26 +67,29 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
             <span>Categories</span> <ChevronRightIcon />
           </Button>
           <Popper
-            id="categories-Popper"
+            id="categories-popper"
             open={Boolean(anchorEl) && currentMenu === 'Categories'}
             anchorEl={anchorEl}
-            placement='right'
-            // onClose={handleMouseLeave}
-            // anchorOrigin={{
-            //   vertical: 'top',
-            //   horizontal: 'right',
-            // }}
-            // transformOrigin={{
-            //   vertical: 'top',
-            //   horizontal: 'left',
-            // }}
-            // PaperProps={{
-            //   onMouseLeave: handleMouseLeave,
-            // }}
+            placement="right-start"
+            disablePortal={false}
+            modifiers={[
+              {
+                name: 'offset',
+                options: {
+                  offset: [0, 0],
+                },
+              },
+            ]}
           >
-            <MenuItem onClick={() => handleClose('List')}>List</MenuItem>
-            <MenuItem onClick={() => handleClose('Add')}>Add</MenuItem>
-            <MenuItem onClick={() => handleClose('Edit')}>Edit</MenuItem>
+            <Paper>
+              <ClickAwayListener onClickAway={handleClickAway}>
+                <MenuList>
+                  <MenuItem onClick={() => handleClose('List')}>List</MenuItem>
+                  <MenuItem onClick={() => handleClose('Add')}>Add</MenuItem>
+                  <MenuItem onClick={() => handleClose('Edit')}>Edit</MenuItem>
+                </MenuList>
+              </ClickAwayListener>
+            </Paper>
           </Popper>
 
           <Button
@@ -98,25 +101,28 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
             <span>Reports</span> <ChevronRightIcon />
           </Button>
           <Popper
-            id="reports-Popper"
+            id="reports-popper"
             open={Boolean(anchorEl) && currentMenu === 'Reports'}
             anchorEl={anchorEl}
-            placement='right'
-            // onClose={handleMouseLeave}
-            // anchorOrigin={{
-            //   vertical: 'top',
-            //   horizontal: 'right',
-            // }}
-            // transformOrigin={{
-            //   vertical: 'top',
-            //   horizontal: 'left',
-            // }}
-            // PaperProps={{
-            //   onMouseLeave: handleMouseLeave,
-            // }}
+            placement="right-start"
+            disablePortal={false}
+            modifiers={[
+              {
+                name: 'offset',
+                options: {
+                  offset: [0, 0],
+                },
+              },
+            ]}
           >
-            <MenuItem onClick={() => handleClose('Summary')}>Summary</MenuItem>
-            <MenuItem onClick={() => handleClose('Detailed')}>Detailed</MenuItem>
+            <Paper>
+              <ClickAwayListener onClickAway={handleClickAway}>
+                <MenuList>
+                  <MenuItem onClick={() => handleClose('Summary')}>Summary</MenuItem>
+                  <MenuItem onClick={() => handleClose('Detailed')}>Detailed</MenuItem>
+                </MenuList>
+              </ClickAwayListener>
+            </Paper>
           </Popper>
         </AccordionDetails>
       </Accordion>
