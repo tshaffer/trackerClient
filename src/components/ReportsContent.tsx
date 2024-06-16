@@ -47,12 +47,12 @@ const ReportsContent: React.FC<ReportsContentProps> = ({ activeTab }) => {
         {tabIndex === 0 && (
           <Box>
             <FormControl component="fieldset">
-              <FormLabel component="legend">Select Date Range</FormLabel>
+              <FormLabel component="legend">Specify Date Range</FormLabel>
               <RadioGroup value={dateOption} onChange={handleDateOptionChange}>
-                <FormControlLabel value="all" control={<Radio />} label="All Dates" />
-                <FormControlLabel value="ytd" control={<Radio />} label="Year to Date" />
-                <FormControlLabel value="lastYear" control={<Radio />} label="Last Year" />
-                <FormControlLabel value="dateRange" control={<Radio />} label="Date Range" />
+                <FormControlLabel value="all" control={<Radio />} label="All Dates" sx={{ maxHeight: '32px' }} />
+                <FormControlLabel value="ytd" control={<Radio />} label="Year to Date" sx={{ maxHeight: '32px' }} />
+                <FormControlLabel value="lastYear" control={<Radio />} label="Last Year" sx={{ maxHeight: '32px' }} />
+                <FormControlLabel value="dateRange" control={<Radio />} label="Date Range" sx={{ maxHeight: '32px' }} />
               </RadioGroup>
             </FormControl>
             <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
@@ -79,7 +79,7 @@ const ReportsContent: React.FC<ReportsContentProps> = ({ activeTab }) => {
             </Box>
             <FormControl component="fieldset" sx={{ mt: 2 }}>
               <RadioGroup value={dateOption} onChange={handleDateOptionChange}>
-                <FormControlLabel value="statement" control={<Radio />} label="From Statement" />
+                <FormControlLabel value="statement" control={<Radio />} label="From Statement" sx={{ maxHeight: '32px' }} />
               </RadioGroup>
               <FormControl fullWidth disabled={dateOption !== 'statement'} sx={{ mt: 2 }}>
                 <InputLabel id="statement-select-label">Statement</InputLabel>
