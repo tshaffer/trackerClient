@@ -78,6 +78,7 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
                 label="Date"
                 value={dayjs(startDate)}
                 onChange={(newValue) => handleSetStartDate(newValue)}
+                disabled={dateOption !== 'dateRange'}
               />
             </DemoContainer>
           </LocalizationProvider>
@@ -96,6 +97,7 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
                 label="Date"
                 value={dayjs(endDate)}
                 onChange={(newValue) => handleSetEndDate(newValue)}
+                disabled={dateOption !== 'dateRange'}
               />
             </DemoContainer>
           </LocalizationProvider>
@@ -123,12 +125,10 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
               </RadioGroup>
             </FormControl>
             <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
-              {dateOption === 'dateRange' && (
-                <React.Fragment>
-                  {renderStartDate()}
-                  {renderEndDate()}
-                </React.Fragment>
-              )}
+              <React.Fragment>
+                {renderStartDate()}
+                {renderEndDate()}
+              </React.Fragment>
             </Box>
             <FormControl component="fieldset" sx={{ mt: 2 }}>
               <RadioGroup value={dateOption} onChange={handleDateOptionChange}>
