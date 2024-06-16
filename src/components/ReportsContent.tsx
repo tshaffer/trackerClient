@@ -109,10 +109,11 @@ const ReportsContent: React.FC<ReportsContentProps> = ({ activeTab }) => {
                 </Select>
               </FormControl>
             </FormControl>
-            <br/>
-            <Button variant="contained" color="primary" sx={{ mt: 3 }} onClick={handleGenerateReport}>
-              Generate Expenses Report
-            </Button>
+            <Box sx={{ mt: 3 }}>
+              <Button variant="contained" color="primary" onClick={handleGenerateReport}>
+                Generate Expenses Report
+              </Button>
+            </Box>
           </Box>
         )}
         {tabIndex === 1 && <Typography>Assets Content</Typography>}
