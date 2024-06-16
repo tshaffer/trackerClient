@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Accordion, AccordionSummary, AccordionDetails, Button, Popover, MenuItem, Box, Typography } from '@mui/material';
+import { Accordion, AccordionSummary, AccordionDetails, Button, Popper, MenuItem, Box, Typography } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
@@ -66,27 +66,28 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
           >
             <span>Categories</span> <ChevronRightIcon />
           </Button>
-          <Popover
-            id="categories-popover"
+          <Popper
+            id="categories-Popper"
             open={Boolean(anchorEl) && currentMenu === 'Categories'}
             anchorEl={anchorEl}
-            onClose={handleMouseLeave}
-            anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'left',
-            }}
-            PaperProps={{
-              onMouseLeave: handleMouseLeave,
-            }}
+            placement='right'
+            // onClose={handleMouseLeave}
+            // anchorOrigin={{
+            //   vertical: 'top',
+            //   horizontal: 'right',
+            // }}
+            // transformOrigin={{
+            //   vertical: 'top',
+            //   horizontal: 'left',
+            // }}
+            // PaperProps={{
+            //   onMouseLeave: handleMouseLeave,
+            // }}
           >
             <MenuItem onClick={() => handleClose('List')}>List</MenuItem>
             <MenuItem onClick={() => handleClose('Add')}>Add</MenuItem>
             <MenuItem onClick={() => handleClose('Edit')}>Edit</MenuItem>
-          </Popover>
+          </Popper>
 
           <Button
             sx={buttonStyle}
@@ -96,26 +97,27 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
           >
             <span>Reports</span> <ChevronRightIcon />
           </Button>
-          <Popover
-            id="reports-popover"
+          <Popper
+            id="reports-Popper"
             open={Boolean(anchorEl) && currentMenu === 'Reports'}
             anchorEl={anchorEl}
-            onClose={handleMouseLeave}
-            anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'left',
-            }}
-            PaperProps={{
-              onMouseLeave: handleMouseLeave,
-            }}
+            placement='right'
+            // onClose={handleMouseLeave}
+            // anchorOrigin={{
+            //   vertical: 'top',
+            //   horizontal: 'right',
+            // }}
+            // transformOrigin={{
+            //   vertical: 'top',
+            //   horizontal: 'left',
+            // }}
+            // PaperProps={{
+            //   onMouseLeave: handleMouseLeave,
+            // }}
           >
             <MenuItem onClick={() => handleClose('Summary')}>Summary</MenuItem>
             <MenuItem onClick={() => handleClose('Detailed')}>Detailed</MenuItem>
-          </Popover>
+          </Popper>
         </AccordionDetails>
       </Accordion>
 
