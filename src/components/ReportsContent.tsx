@@ -53,50 +53,49 @@ const ReportsContent: React.FC<ReportsContentProps> = ({ activeTab }) => {
                 <FormControlLabel value="ytd" control={<Radio />} label="Year to Date" />
                 <FormControlLabel value="lastYear" control={<Radio />} label="Last Year" />
                 <FormControlLabel value="dateRange" control={<Radio />} label="Date Range" />
-                <FormControlLabel value="statement" control={<Radio />} label="From Statement" />
               </RadioGroup>
             </FormControl>
-            {dateOption === 'dateRange' && (
-              <Box sx={{ mt: 2 }}>
-                <TextField
-                  label="Start Date"
-                  type="date"
-                  value={startDate || ''}
-                  onChange={handleStartDateChange}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  sx={{ mr: 2 }}
-                />
-                <TextField
-                  label="End Date"
-                  type="date"
-                  value={endDate || ''}
-                  onChange={handleEndDateChange}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-              </Box>
-            )}
-            {dateOption === 'statement' && (
-              <Box sx={{ mt: 2 }}>
-                <FormControl fullWidth>
-                  <InputLabel id="statement-select-label">Statement</InputLabel>
-                  <Select
-                    labelId="statement-select-label"
-                    id="statement-select"
-                    value={selectedStatement}
-                    onChange={handleStatementChange}
-                    label="Statement"
-                  >
-                    <MenuItem value="statement1">Statement 1</MenuItem>
-                    <MenuItem value="statement2">Statement 2</MenuItem>
-                    <MenuItem value="statement3">Statement 3</MenuItem>
-                  </Select>
-                </FormControl>
-              </Box>
-            )}
+            <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
+              <TextField
+                label="Start Date"
+                type="date"
+                value={startDate || ''}
+                onChange={handleStartDateChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                disabled={dateOption !== 'dateRange'}
+              />
+              <TextField
+                label="End Date"
+                type="date"
+                value={endDate || ''}
+                onChange={handleEndDateChange}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                disabled={dateOption !== 'dateRange'}
+              />
+            </Box>
+            <FormControl component="fieldset" sx={{ mt: 2 }}>
+              <RadioGroup value={dateOption} onChange={handleDateOptionChange}>
+                <FormControlLabel value="statement" control={<Radio />} label="From Statement" />
+              </RadioGroup>
+              <FormControl fullWidth disabled={dateOption !== 'statement'} sx={{ mt: 2 }}>
+                <InputLabel id="statement-select-label">Statement</InputLabel>
+                <Select
+                  labelId="statement-select-label"
+                  id="statement-select"
+                  value={selectedStatement}
+                  onChange={handleStatementChange}
+                  label="Statement"
+                >
+                  <MenuItem value="statement1">Statement 1</MenuItem>
+                  <MenuItem value="statement2">Statement 2</MenuItem>
+                  <MenuItem value="statement3">Statement 3</MenuItem>
+                </Select>
+              </FormControl>
+            </FormControl>
           </Box>
         )}
         {tabIndex === 1 && <Typography>Assets Content</Typography>}
