@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { TrackerDispatch } from '../models';
 import { getStartDate, getEndDate, getTransactionsByCategory, getUnidentifiedBankTransactions } from '../selectors';
-import { StringToTransactionsLUT, BankTransactionEntity } from '../types';
+import { StringToTransactionsLUT, BankTransactionEntity, ExpenseReportDateRangeType } from '../types';
 import dayjs, { Dayjs } from 'dayjs';
 import { isNil } from 'lodash';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
@@ -21,7 +21,7 @@ interface ReportsContentProps {
 
 const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProps) => {
   const [tabIndex, setTabIndex] = React.useState(props.activeTab);
-  const [dateOption, setDateOption] = useState<string>('all');
+  const [dateOption, setDateOption] = useState<ExpenseReportDateRangeType>(ExpenseReportDateRangeType.All);
   const [selectedStatement, setSelectedStatement] = useState<string>('');
   const [startDate, setStartDate] = React.useState("2023-01-01");
   const [endDate, setEndDate] = React.useState("2023-12-31");
@@ -35,7 +35,7 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
   };
 
   const handleDateOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDateOption(event.target.value);
+    setDateOption(event.target.value as ExpenseReportDateRangeType);
   };
 
   const handleSetStartDate = (dateDayJs: Dayjs | null) => {
@@ -118,10 +118,10 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
             <FormControl component="fieldset">
               <FormLabel component="legend">Specify Date Range</FormLabel>
               <RadioGroup value={dateOption} onChange={handleDateOptionChange}>
-                <FormControlLabel value="all" control={<Radio />} label="All Dates" sx={{ maxHeight: '32px' }} />
-                <FormControlLabel value="ytd" control={<Radio />} label="Year to Date" sx={{ maxHeight: '32px' }} />
-                <FormControlLabel value="lastYear" control={<Radio />} label="Last Year" sx={{ maxHeight: '32px' }} />
-                <FormControlLabel value="dateRange" control={<Radio />} label="Date Range" sx={{ maxHeight: '32px' }} />
+                <FormControlLabel value={ExpenseReportDateRangeType.All} control={<Radio />} label="All Dates" sx={{ maxHeight: '32px' }} />
+                <FormControlLabel value={ExpenseReportDateRangeType.YearToDate} control={<Radio />} label="Year to Date" sx={{ maxHeight: '32px' }} />
+                <FormControlLabel value={ExpenseReportDateRangeType.LastYear} control={<Radio />} label="Last Year" sx={{ maxHeight: '32px' }} />
+                <FormControlLabel value={ExpenseReportDateRangeType.DateRange} control={<Radio />} label="Date Range" sx={{ maxHeight: '32px' }} />
               </RadioGroup>
             </FormControl>
             <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
@@ -132,7 +132,7 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
             </Box>
             <FormControl component="fieldset" sx={{ mt: 2 }}>
               <RadioGroup value={dateOption} onChange={handleDateOptionChange}>
-                <FormControlLabel value="statement" control={<Radio />} label="From Statement" sx={{ maxHeight: '32px' }} />
+                <FormControlLabel value={ExpenseReportDateRangeType.Statement} control={<Radio />} label="From Statement" sx={{ maxHeight: '32px' }} />
               </RadioGroup>
               <FormControl fullWidth disabled={dateOption !== 'statement'} sx={{ mt: 2 }}>
                 <InputLabel id="statement-select-label">Statement</InputLabel>

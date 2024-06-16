@@ -7,3 +7,11 @@ export enum DisregardLevel {
   None = 0,
   All = 1,
 }
+
+export enum ExpenseReportDateRangeType {
+  All = 'all',
+  YearToDate = 'ytd',
+  LastYear = 'lastYear',
+  DateRange = 'dateRange',
+  Statement = 'statement',
+}
