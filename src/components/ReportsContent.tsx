@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { Tabs, Tab, Box, Typography, Button } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 
 import { TrackerDispatch } from '../models';
 import { getStartDate, getEndDate } from '../selectors';
@@ -41,6 +42,10 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
     props.onSearch(props.startDate, props.endDate);
   }
 
+  function handleAddExpense(): void {
+    throw new Error('Function not implemented.');
+  }
+
   return (
     <Box sx={{ width: '100%' }}>
       <Typography variant="h4">Reports</Typography>
@@ -55,6 +60,11 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
             <Box sx={{ mt: 3 }}>
               <Button variant="contained" color="primary" onClick={handleGenerateReport}>
                 Generate Expenses Report
+              </Button>
+            </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+              <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={handleAddExpense}>
+                Expense
               </Button>
             </Box>
             <Box>
