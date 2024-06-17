@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Sidebar from './Sidebar';
 import CategoriesContent from './CategoriesContent';
 import ReportsContent from './ReportsContent';
+import StatementsContent from './StatementsContent';
 import { Box, Typography } from '@mui/material';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -53,7 +54,7 @@ const App = (props: AppProps) => {
       return <ReportsContent activeTab={activeTab} />;
     }
     else if (selectedMainButton === SidebarMenuButton.Statements) {
-      return <Typography variant="h4">Statements</Typography>;
+      return <StatementsContent activeTab={0} />;
     }
     else if (selectedMainButton === SidebarMenuButton.Categories) {
       let activeTab = 0;
