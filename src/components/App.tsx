@@ -8,6 +8,7 @@ import { bindActionCreators } from 'redux';
 import { loadCategories, loadCategoryKeywords, loadStatements } from '../controllers';
 import { TrackerDispatch, setAppInitialized } from '../models';
 import { getAppInitialized } from '../selectors';
+import { SidebarMenuButton } from '../types';
 
 export interface AppProps {
   appInitialized: boolean;
@@ -35,31 +36,36 @@ const App = (props: AppProps) => {
     }
   }, [props.appInitialized]);
 
-  const [selectedMainButton, setSelectedMainButton] = useState<string | null>('Reports');
-  const [selectedSubButton, setSelectedSubButton] = useState<string | null>('Expenses');
+  const [selectedMainButton, setSelectedMainButton] = useState<SidebarMenuButton>(SidebarMenuButton.Reports);
+  const [selectedSubButton, setSelectedSubButton] = useState<string | null>('Spending');
 
   const handleButtonClick = (label: string, subLabel?: string) => {
-    setSelectedMainButton(label);
+    setSelectedMainButton(label as SidebarMenuButton);
     setSelectedSubButton(subLabel || 'List');
   };
 
   const renderContent = () => {
-    if (selectedMainButton === 'Categories') {
+    if (selectedMainButton === SidebarMenuButton.Reports) {
+      let activeTab = 0;
+      if (selectedSubButton === 'Spending') activeTab = 0;
+      else if (selectedSubButton === 'Unidentified Transactions') activeTab = 1;
+
+      return <ReportsContent activeTab={activeTab} />;
+    }
+    else if (selectedMainButton === SidebarMenuButton.Statements) {
+      return <Typography variant="h4">Statements</Typography>;
+    }
+    else if (selectedMainButton === SidebarMenuButton.Categories) {
       let activeTab = 0;
       if (selectedSubButton === 'List') activeTab = 0;
       else if (selectedSubButton === 'Add') activeTab = 1;
       else if (selectedSubButton === 'Edit') activeTab = 2;
 
       return <CategoriesContent activeTab={activeTab} />;
-    } else if (selectedMainButton === 'Reports') {
-      let activeTab = 0;
-      if (selectedSubButton === 'Summary') activeTab = 0;
-      else if (selectedSubButton === 'Detailed') activeTab = 1;
-
-      return <ReportsContent activeTab={activeTab} />;
-    }
-    return <Typography variant="h4">Welcome</Typography>;
-  };
+    } else {
+      return <Typography variant="h4">Welcome</Typography>;
+    };
+  }
 
   if (!props.appInitialized) {
     return null;

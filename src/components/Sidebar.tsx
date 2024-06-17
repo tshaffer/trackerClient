@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Accordion, AccordionSummary, AccordionDetails, Button, Popper, MenuItem, Box, Typography, Paper, ClickAwayListener, MenuList } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { SidebarMenuButton } from '../types';
 
 interface SidebarProps {
   onButtonClick: (label: string, subLabel?: string) => void;
@@ -58,6 +59,40 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
           <Typography>Menu</Typography>
         </AccordionSummary>
         <AccordionDetails>
+
+          <Button
+            sx={buttonStyle}
+            aria-haspopup="true"
+            onMouseEnter={(e) => handleHover(e, SidebarMenuButton.Reports)}
+            onClick={() => handleClose('Spending')}
+          >
+            <span>Reports</span> <ChevronRightIcon />
+          </Button>
+          <Popper
+            id="reports-popper"
+            open={Boolean(anchorEl) && currentMenu === SidebarMenuButton.Reports}
+            anchorEl={anchorEl}
+            placement="right-start"
+            disablePortal={false}
+            modifiers={[
+              {
+                name: 'offset',
+                options: {
+                  offset: [0, 0],
+                },
+              },
+            ]}
+          >
+            <Paper>
+              <ClickAwayListener onClickAway={handleClickAway}>
+                <MenuList>
+                  <MenuItem onClick={() => handleClose('Spending')}>Spending</MenuItem>
+                  <MenuItem onClick={() => handleClose('Unidentified Transactions')}>Unidentified Transactions</MenuItem>
+                </MenuList>
+              </ClickAwayListener>
+            </Paper>
+          </Popper>
+
           <Button
             sx={buttonStyle}
             aria-haspopup="true"
@@ -95,14 +130,14 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
           <Button
             sx={buttonStyle}
             aria-haspopup="true"
-            onMouseEnter={(e) => handleHover(e, 'Reports')}
-            onClick={() => handleClose('Expenses')}
+            onMouseEnter={(e) => handleHover(e, SidebarMenuButton.Statements)}
+            onClick={() => handleClose('Statements')}
           >
-            <span>Reports</span> <ChevronRightIcon />
+            <span>Statements</span> <ChevronRightIcon />
           </Button>
           <Popper
             id="reports-popper"
-            open={Boolean(anchorEl) && currentMenu === 'Reports'}
+            open={Boolean(anchorEl) && currentMenu === SidebarMenuButton.Statements}
             anchorEl={anchorEl}
             placement="right-start"
             disablePortal={false}
@@ -118,12 +153,13 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
             <Paper>
               <ClickAwayListener onClickAway={handleClickAway}>
                 <MenuList>
-                  <MenuItem onClick={() => handleClose('Expenses')}>Expenses</MenuItem>
-                  <MenuItem onClick={() => handleClose('Assets')}>Assets</MenuItem>
+                  <MenuItem onClick={() => handleClose('All')}>All</MenuItem>
+                  <MenuItem onClick={() => handleClose('Credit Card')}>Credit Card</MenuItem>
                 </MenuList>
               </ClickAwayListener>
             </Paper>
           </Popper>
+
         </AccordionDetails>
       </Accordion>
 

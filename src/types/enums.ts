@@ -21,3 +21,9 @@ export enum StatementType {
   CreditCard = 'creditCard',
 }
 
+export enum SidebarMenuButton {
+  Reports = 'Reports',
+  Statements = 'Statements',
+  Categories = 'Categories',
+
+}
