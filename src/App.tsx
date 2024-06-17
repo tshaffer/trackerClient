@@ -6,8 +6,8 @@ import { Box, Typography } from '@mui/material';
 import './App.css';
 
 const App: React.FC = () => {
-  const [selectedMainButton, setSelectedMainButton] = useState<string | null>(null);
-  const [selectedSubButton, setSelectedSubButton] = useState<string | null>('List');
+  const [selectedMainButton, setSelectedMainButton] = useState<string | null>('Reports');
+  const [selectedSubButton, setSelectedSubButton] = useState<string | null>('Expenses');
 
   const handleButtonClick = (label: string, subLabel?: string) => {
     setSelectedMainButton(label);

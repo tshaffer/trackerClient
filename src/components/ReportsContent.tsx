@@ -11,6 +11,7 @@ import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { search } from '../controllers';
+import SpendingReportTable from './SpendingReportTable';
 
 export interface ReportsContentPropsFromParent {
   activeTab: number;
@@ -113,7 +114,7 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
       </React.Fragment>
     );
   };
-  
+
   return (
     <Box sx={{ width: '100%' }}>
       <Typography variant="h4">Reports</Typography>
@@ -162,6 +163,9 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
               <Button variant="contained" color="primary" onClick={handleGenerateReport}>
                 Generate Expenses Report
               </Button>
+            </Box>
+            <Box>
+              <SpendingReportTable />
             </Box>
           </Box>
         )}
