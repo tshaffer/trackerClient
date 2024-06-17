@@ -1,6 +1,6 @@
 export * from './AddCategoryDialog';
 export * from './AddRuleDialog';
-export * from '../App';
+export * from './App';
 export * from './CategoriesAccordion';
 export * from './CategoriesContent';
 export * from './CategoryKeywordsTable';

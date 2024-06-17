@@ -8,7 +8,7 @@ import { Provider } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
 import { rootReducer } from './models';
 
-import App from './App';
+import App from './components/App';
 
 import { composeWithDevTools } from 'redux-devtools-extension';
 

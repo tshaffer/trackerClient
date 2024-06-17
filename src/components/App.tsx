@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
-import Sidebar from './components/Sidebar';
-import CategoriesContent from './components/CategoriesContent';
-import ReportsContent from './components/ReportsContent';
+import Sidebar from './Sidebar';
+import CategoriesContent from './CategoriesContent';
+import ReportsContent from './ReportsContent';
 import { Box, Typography } from '@mui/material';
-import './App.css';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { loadCategories, loadCategoryKeywords } from './controllers';
-import { TrackerDispatch, setAppInitialized } from './models';
-import { getAppInitialized } from './selectors';
+import { loadCategories, loadCategoryKeywords } from '../controllers';
+import { TrackerDispatch, setAppInitialized } from '../models';
+import { getAppInitialized } from '../selectors';
 
 export interface AppProps {
   appInitialized: boolean;
