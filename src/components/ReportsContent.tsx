@@ -12,6 +12,7 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { search } from '../controllers';
 import SpendingReportTable from './SpendingReportTable';
+import DateRangeSpecifier from './DateRangeSpecifier';
 
 export interface ReportsContentPropsFromParent {
   activeTab: number;
@@ -119,8 +120,8 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
     <Box sx={{ width: '100%' }}>
       <Typography variant="h4">Reports</Typography>
       <Tabs value={tabIndex} onChange={handleTabChange} aria-label="Reports Tabs">
-        <Tab label="Expenses" />
-        <Tab label="Assets" />
+        <Tab label="Spending" />
+        <Tab label="Unidentified Transactions" />
       </Tabs>
       <Box sx={{ padding: '20px' }}>
         {tabIndex === 0 && (
@@ -169,7 +170,7 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
             </Box>
           </Box>
         )}
-        {tabIndex === 1 && <Typography>Assets Content</Typography>}
+        {tabIndex === 1 && <DateRangeSpecifier/>}
       </Box>
     </Box>
   );
