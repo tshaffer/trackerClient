@@ -2,7 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { Tabs, Tab, Box, Typography } from '@mui/material';
+import { Tabs, Tab, Box, Typography, IconButton, Tooltip } from '@mui/material';
+import UploadIcon from '@mui/icons-material/Upload';
 
 import { TrackerDispatch } from '../models';
 
@@ -26,6 +27,10 @@ const StatementsContent: React.FC<StatementsContentProps> = (props: StatementsCo
     setTabIndex(newValue);
   };
 
+  function handleUploadStatement(): void {
+    throw new Error('Function not implemented.');
+  }
+
   return (
     <Box sx={{ width: '100%' }}>
       <Typography variant="h4">Statements</Typography>
@@ -33,7 +38,12 @@ const StatementsContent: React.FC<StatementsContentProps> = (props: StatementsCo
         <Tab label="All" />
         <Tab label="Credit Card" />
       </Tabs>
-      <Box sx={{ padding: '20px' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+        <Tooltip title="Upload Statement" arrow>
+          <IconButton onClick={() => handleUploadStatement}><UploadIcon /></IconButton>
+        </Tooltip>
+      </Box>
+      <Box>
         {tabIndex === 0 && (
           <Box>
             <StatementsTable />
