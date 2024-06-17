@@ -1,4 +1,4 @@
-import { BankTransactionType, DisregardLevel } from "./enums";
+import { BankTransactionType, DisregardLevel, StatementType } from "./enums";
 
 export interface CategoryEntity {
   id: string;
@@ -55,5 +55,12 @@ export type CategoryExpensesData = {
   transactionCount: number,
   totalExpenses: number,
   percentageOfTotal: number,
+}
+
+export interface StatementEntity {
+  id: string;
+  type: StatementType;
+  startDate: string;
+  endDate: string;
 }
 

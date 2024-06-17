@@ -1,11 +1,12 @@
 import { StringToTransactionsLUT } from "./base";
-import { BankTransactionEntity, CategoryEntity, CategoryKeywordEntity } from "./entities";
+import { BankTransactionEntity, CategoryEntity, CategoryKeywordEntity, StatementEntity } from "./entities";
 import { ExpenseReportDateRangeType } from "./enums";
 
 export interface TrackerState {
   appState: AppState;
   categoryState: CategoryState;
   reportDataState: ReportDataState;
+  statementState: StatementState;
 }
 
 export interface AppState {
@@ -24,4 +25,8 @@ export interface ReportDataState {
 export interface CategoryState {
   categories: CategoryEntity[];
   categoryKeywords: CategoryKeywordEntity[];
+}
+
+export interface StatementState {
+  statements: StatementEntity[];
 }

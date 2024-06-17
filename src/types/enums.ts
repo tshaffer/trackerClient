@@ -15,3 +15,9 @@ export enum ExpenseReportDateRangeType {
   DateRange = 'dateRange',
   Statement = 'statement',
 }
+
+export enum StatementType {
+  Checking = 'checking',
+  CreditCard = 'creditCard',
+}
+

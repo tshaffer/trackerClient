@@ -5,7 +5,7 @@ import ReportsContent from './ReportsContent';
 import { Box, Typography } from '@mui/material';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { loadCategories, loadCategoryKeywords } from '../controllers';
+import { loadCategories, loadCategoryKeywords, loadStatements } from '../controllers';
 import { TrackerDispatch, setAppInitialized } from '../models';
 import { getAppInitialized } from '../selectors';
 
@@ -13,6 +13,7 @@ export interface AppProps {
   appInitialized: boolean;
   onLoadCategories: () => any;
   onLoadCategoryKeywords: () => any;
+  onLoadStatements: () => any;
   onSetAppInitialized: () => any;
 }
 
@@ -23,6 +24,9 @@ const App = (props: AppProps) => {
       props.onLoadCategories()
         .then(() => {
           return props.onLoadCategoryKeywords();
+        })
+        .then(() => {
+          return props.onLoadStatements();
         })
         .then(() => {
           console.log('invoke onSetAppInitialized');
@@ -82,6 +86,7 @@ const mapDispatchToProps = (dispatch: TrackerDispatch) => {
     onSetAppInitialized: setAppInitialized,
     onLoadCategories: loadCategories,
     onLoadCategoryKeywords: loadCategoryKeywords,
+    onLoadStatements: loadStatements
   }, dispatch);
 };
 
