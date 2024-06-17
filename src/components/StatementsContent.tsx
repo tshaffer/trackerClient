@@ -9,6 +9,7 @@ import { TrackerDispatch } from '../models';
 
 import StatementsTable from './StatementsTable';
 import UploadStatementDialog from './UploadStatementDialog';
+import { uploadFile } from '../controllers';
 
 export interface StatementsContentPropsFromParent {
   activeTab: number;
@@ -34,7 +35,7 @@ const StatementsContent: React.FC<StatementsContentProps> = (props: StatementsCo
     setShowUploadStatementDialog(false);
   };
 
-  const handleUploadStatement = (data: FormData): void => {
+  const handleUploadStatement = (selectedFile: any, data: FormData): void => {
     // const id: string = uuidv4();
     // const categoryEntity: CategoryEntity = {
     //   id,
@@ -42,7 +43,16 @@ const StatementsContent: React.FC<StatementsContentProps> = (props: StatementsCo
     //   disregardLevel: DisregardLevel.None,
     // };
     // props.onUploadStatement(categoryEntity);
-  };
+    console.log('handleUploadFile, selectedFile: ', selectedFile);
+    props.onUploadFile(data)
+      .then((response: any) => {
+        console.log(response);
+        console.log(response.statusText);
+      }).catch((err: any) => {
+        console.log('uploadFile returned error');
+        console.log(err);
+      });
+};
 
 
   return (
@@ -91,6 +101,7 @@ function mapStateToProps(state: any) {
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
+    onUploadFile: uploadFile,
   }, dispatch);
 };
 

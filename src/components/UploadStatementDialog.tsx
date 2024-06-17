@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import DialogTitle from '@mui/material/DialogTitle';
@@ -14,13 +14,15 @@ import { TrackerDispatch } from '../models';
 export interface UploadStatementDialogPropsFromParent {
   open: boolean;
   onClose: () => void;
-  onUploadStatement: (
-    data: FormData,
-  ) => any;
+  // onUploadFile: (formData: FormData) => any;
+  // onUploadStatement: (
+  //   data: FormData,
+  // ) => any;
 }
 
 export interface UploadStatementDialogProps extends UploadStatementDialogPropsFromParent {
   appInitialized: boolean;
+  onUploadFile: (formData: FormData) => any;
 }
 
 const UploadStatementDialog = (props: UploadStatementDialogProps) => {
@@ -41,12 +43,12 @@ const UploadStatementDialog = (props: UploadStatementDialogProps) => {
     setSelectedFile(e.target.files[0]);
   };
 
-  const handleUploadStatement = () => {
+  const handleUploadFile = () => {
     if (!isNil(selectedFile)) {
       const data = new FormData();
       data.append('file', selectedFile);
       console.log('handleUploadFile, selectedFile: ', selectedFile);
-      props.onUploadStatement(data)
+      props.onUploadFile(data)
         .then((response: any) => {
           console.log(response);
           console.log(response.statusText);
@@ -66,15 +68,13 @@ const UploadStatementDialog = (props: UploadStatementDialogProps) => {
           noValidate
           autoComplete="off"
         >
-          <input type="file" name="file" onChange={handleFileChangeHandler} />
+          <input type="file" name="file" style={{ width: '500px' }} onChange={handleFileChangeHandler} />
           <br />
         </Box>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
-        <Button onClick={handleUploadStatement} autoFocus variant="contained" color="primary">
-          Upload
-        </Button>
+        <Button onClick={handleUploadFile} autoFocus variant="contained" color="primary">Upload</Button>
       </DialogActions>
     </Dialog>
   );
@@ -89,6 +89,7 @@ function mapStateToProps(state: any) {
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
     // onUploadStatement: uploadFile,
+    onUploadFile: uploadFile,
   }, dispatch);
 };
 
