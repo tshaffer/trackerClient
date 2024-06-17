@@ -4,8 +4,34 @@ import CategoriesContent from './components/CategoriesContent';
 import ReportsContent from './components/ReportsContent';
 import { Box, Typography } from '@mui/material';
 import './App.css';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { loadCategories, loadCategoryKeywords } from './controllers';
+import { TrackerDispatch, setAppInitialized } from './models';
+import { getAppInitialized } from './selectors';
 
-const App: React.FC = () => {
+export interface AppProps {
+  appInitialized: boolean;
+  onLoadCategories: () => any;
+  onLoadCategoryKeywords: () => any;
+  onSetAppInitialized: () => any;
+}
+
+const App = (props: AppProps) => {
+
+  React.useEffect(() => {
+    if (!props.appInitialized) {
+      props.onLoadCategories()
+        .then(() => {
+          return props.onLoadCategoryKeywords();
+        })
+        .then(() => {
+          console.log('invoke onSetAppInitialized');
+          return props.onSetAppInitialized();
+        })
+    }
+  }, [props.appInitialized]);
+
   const [selectedMainButton, setSelectedMainButton] = useState<string | null>('Reports');
   const [selectedSubButton, setSelectedSubButton] = useState<string | null>('Expenses');
 
@@ -32,6 +58,10 @@ const App: React.FC = () => {
     return <Typography variant="h4">Welcome</Typography>;
   };
 
+  if (!props.appInitialized) {
+    return null;
+  }
+
   return (
     <Box sx={{ display: 'flex' }}>
       <Sidebar onButtonClick={handleButtonClick} />
@@ -42,4 +72,18 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+function mapStateToProps(state: any) {
+  return {
+    appInitialized: getAppInitialized(state),
+  };
+}
+
+const mapDispatchToProps = (dispatch: TrackerDispatch) => {
+  return bindActionCreators({
+    onSetAppInitialized: setAppInitialized,
+    onLoadCategories: loadCategories,
+    onLoadCategoryKeywords: loadCategoryKeywords,
+  }, dispatch);
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
