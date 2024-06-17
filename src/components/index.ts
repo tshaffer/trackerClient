@@ -13,4 +13,6 @@ export * from './ReportsContent';
 export * from './Sidebar';
 export * from './SpendingReportTable';
 export * from './UnidentifiedTransactionsTable';
+export * from './UploadStatementDialog';
+
 

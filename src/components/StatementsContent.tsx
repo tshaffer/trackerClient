@@ -8,6 +8,7 @@ import UploadIcon from '@mui/icons-material/Upload';
 import { TrackerDispatch } from '../models';
 
 import StatementsTable from './StatementsTable';
+import UploadStatementDialog from './UploadStatementDialog';
 
 export interface StatementsContentPropsFromParent {
   activeTab: number;
@@ -17,7 +18,9 @@ interface StatementsContentProps extends StatementsContentPropsFromParent {
 }
 
 const StatementsContent: React.FC<StatementsContentProps> = (props: StatementsContentProps) => {
+
   const [tabIndex, setTabIndex] = React.useState(props.activeTab);
+  const [showUploadStatementDialog, setShowUploadStatementDialog] = React.useState(false);
 
   React.useEffect(() => {
     setTabIndex(props.activeTab);
@@ -27,38 +30,57 @@ const StatementsContent: React.FC<StatementsContentProps> = (props: StatementsCo
     setTabIndex(newValue);
   };
 
-  function handleUploadStatement(): void {
-    throw new Error('Function not implemented.');
-  }
+  const handleCloseUploadStatementDialog = () => {
+    setShowUploadStatementDialog(false);
+  };
+
+  const handleUploadStatement = (data: FormData): void => {
+    // const id: string = uuidv4();
+    // const categoryEntity: CategoryEntity = {
+    //   id,
+    //   keyword: categoryLabel,
+    //   disregardLevel: DisregardLevel.None,
+    // };
+    // props.onUploadStatement(categoryEntity);
+  };
+
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Typography variant="h4">Statements</Typography>
-      <Tabs value={tabIndex} onChange={handleTabChange}>
-        <Tab label="All" />
-        <Tab label="Credit Card" />
-      </Tabs>
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2}}>
-        <Button
-          startIcon={<UploadIcon />}
-          onClick={handleUploadStatement}
-        >
-          Upload
-        </Button>
+    <div>
+      <UploadStatementDialog
+        open={showUploadStatementDialog}
+        onUploadStatement={handleUploadStatement}
+        onClose={handleCloseUploadStatementDialog}
+      />
+      <Box sx={{ width: '100%' }}>
+        <Typography variant="h4">Statements</Typography>
+        <Tabs value={tabIndex} onChange={handleTabChange}>
+          <Tab label="All" />
+          <Tab label="Credit Card" />
+        </Tabs>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+          <Button
+            startIcon={<UploadIcon />}
+            onClick={() => setShowUploadStatementDialog(true)}
+          >
+            Upload
+          </Button>
+        </Box>
+        <Box>
+          {tabIndex === 0 && (
+            <Box>
+              <StatementsTable />
+            </Box>
+          )}
+          {tabIndex === 1 && (
+            <Box>
+              <StatementsTable />
+            </Box>
+          )}
+        </Box>
       </Box>
-      <Box>
-        {tabIndex === 0 && (
-          <Box>
-            <StatementsTable />
-          </Box>
-        )}
-        {tabIndex === 1 && (
-          <Box>
-            <StatementsTable />
-          </Box>
-        )}
-      </Box>
-    </Box>
+    </div>
+
   );
 };
 
