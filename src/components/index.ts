@@ -5,6 +5,7 @@ export * from './CategoriesAccordion';
 export * from './CategoriesContent';
 export * from './CategoryKeywordsTable';
 export * from './CategoryList';
+export * from './CategoriesTable';
 export * from './DateRangeSpecifier';
 export * from './ExpensesReportTable';
 export * from './MainContent';

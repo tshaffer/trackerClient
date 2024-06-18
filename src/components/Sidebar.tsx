@@ -101,31 +101,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
           >
             <span>Categories</span> <ChevronRightIcon />
           </Button>
-          <Popper
-            id="categories-popper"
-            open={Boolean(anchorEl) && currentMenu === 'Categories'}
-            anchorEl={anchorEl}
-            placement="right-start"
-            disablePortal={false}
-            modifiers={[
-              {
-                name: 'offset',
-                options: {
-                  offset: [0, 0],
-                },
-              },
-            ]}
-          >
-            <Paper>
-              <ClickAwayListener onClickAway={handleClickAway}>
-                <MenuList>
-                  <MenuItem onClick={() => handleClose('List')}>List</MenuItem>
-                  <MenuItem onClick={() => handleClose('Add')}>Add</MenuItem>
-                  <MenuItem onClick={() => handleClose('Edit')}>Edit</MenuItem>
-                </MenuList>
-              </ClickAwayListener>
-            </Paper>
-          </Popper>
 
           <Button
             sx={buttonStyle}

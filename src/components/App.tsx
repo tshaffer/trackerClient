@@ -10,6 +10,7 @@ import { loadCategories, loadCategoryKeywords, loadStatements } from '../control
 import { TrackerDispatch, setAppInitialized } from '../models';
 import { getAppInitialized } from '../selectors';
 import { SidebarMenuButton } from '../types';
+import CategoriesTable from './CategoriesTable';
 
 export interface AppProps {
   appInitialized: boolean;
@@ -57,12 +58,7 @@ const App = (props: AppProps) => {
       return <StatementsContent activeTab={0} />;
     }
     else if (selectedMainButton === SidebarMenuButton.Categories) {
-      let activeTab = 0;
-      if (selectedSubButton === 'List') activeTab = 0;
-      else if (selectedSubButton === 'Add') activeTab = 1;
-      else if (selectedSubButton === 'Edit') activeTab = 2;
-
-      return <CategoriesContent activeTab={activeTab} />;
+      return <CategoriesTable />;
     } else {
       return <Typography variant="h4">Welcome</Typography>;
     };
