@@ -11,6 +11,7 @@ import { TrackerDispatch, setAppInitialized } from '../models';
 import { getAppInitialized } from '../selectors';
 import { SidebarMenuButton } from '../types';
 import CategoriesTable from './CategoriesTable';
+import CategoryKeywordsTable from './CategoryKeywordsTable';
 
 export interface AppProps {
   appInitialized: boolean;
@@ -56,8 +57,9 @@ const App = (props: AppProps) => {
     }
     else if (selectedMainButton === SidebarMenuButton.Statements) {
       return <StatementsContent activeTab={0} />;
-    }
-    else if (selectedMainButton === SidebarMenuButton.Categories) {
+    } else if (selectedMainButton === SidebarMenuButton.Aliases) {
+      return <CategoryKeywordsTable />;
+    } else if (selectedMainButton === SidebarMenuButton.Categories) {
       return <CategoriesTable />;
     } else {
       return <Typography variant="h4">Welcome</Typography>;

@@ -66,7 +66,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
             onMouseEnter={(e) => handleHover(e, SidebarMenuButton.Reports)}
             onClick={() => handleClose('Spending')}
           >
-            <span>Reports</span> <ChevronRightIcon />
+            <span>Reports</span><ChevronRightIcon />
           </Button>
           <Popper
             id="reports-popper"
@@ -96,10 +96,19 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
           <Button
             sx={buttonStyle}
             aria-haspopup="true"
+            onMouseEnter={(e) => handleHover(e, 'Aliases')}
+            onClick={() => handleClose('List')}
+          >
+            <span>Aliases</span><ChevronRightIcon />
+          </Button>
+
+          <Button
+            sx={buttonStyle}
+            aria-haspopup="true"
             onMouseEnter={(e) => handleHover(e, 'Categories')}
             onClick={() => handleClose('List')}
           >
-            <span>Categories</span> <ChevronRightIcon />
+            <span>Categories</span><ChevronRightIcon />
           </Button>
 
           <Button
@@ -108,7 +117,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
             onMouseEnter={(e) => handleHover(e, SidebarMenuButton.Statements)}
             onClick={() => handleClose('Statements')}
           >
-            <span>Statements</span> <ChevronRightIcon />
+            <span>Statements</span><ChevronRightIcon />
           </Button>
           <Popper
             id="reports-popper"
