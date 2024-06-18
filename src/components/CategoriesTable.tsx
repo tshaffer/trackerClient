@@ -25,7 +25,6 @@ const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableP
 
   return (
     <Box sx={{ width: '100%' }}>
-      <h3>Categories</h3>
       <div className="table-container">
         <div className="table-header">
           <div className="table-row">

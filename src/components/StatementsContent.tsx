@@ -36,26 +36,6 @@ const StatementsContent: React.FC<StatementsContentProps> = (props: StatementsCo
     setShowUploadStatementDialog(false);
   };
 
-  const handleUploadStatement = (selectedFile: any, data: FormData): void => {
-    // const id: string = uuidv4();
-    // const categoryEntity: CategoryEntity = {
-    //   id,
-    //   keyword: categoryLabel,
-    //   disregardLevel: DisregardLevel.None,
-    // };
-    // props.onUploadStatement(categoryEntity);
-    console.log('handleUploadFile, selectedFile: ', selectedFile);
-    props.onUploadFile(data)
-      .then((response: any) => {
-        console.log(response);
-        console.log(response.statusText);
-      }).catch((err: any) => {
-        console.log('uploadFile returned error');
-        console.log(err);
-      });
-};
-
-
   return (
     <div>
       <UploadStatementDialog

@@ -60,7 +60,7 @@ const App = (props: AppProps) => {
     } else if (selectedMainButton === SidebarMenuButton.Aliases) {
       return <CategoryKeywordsTable />;
     } else if (selectedMainButton === SidebarMenuButton.Categories) {
-      return <CategoriesTable />;
+      return <CategoriesContent />;
     } else {
       return <Typography variant="h4">Welcome</Typography>;
     };

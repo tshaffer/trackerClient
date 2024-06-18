@@ -1,36 +1,75 @@
 import React from 'react';
-import { Tabs, Tab, Box, Typography } from '@mui/material';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+
+import { v4 as uuidv4 } from 'uuid';
+
+import { Box, Typography, Button } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+
+import { TrackerDispatch } from '../models';
+import { CategoryEntity, DisregardLevel } from '../types';
+import AddCategoryDialog from './AddCategoryDialog';
+import CategoriesTable from './CategoriesTable';
+import { addCategoryServerAndRedux } from '../controllers';
 
 interface CategoriesContentProps {
-  activeTab: number;
+  onAddCategory: (categoryEntity: CategoryEntity) => any;
 }
 
-const CategoriesContent: React.FC<CategoriesContentProps> = ({ activeTab }) => {
-  const [tabIndex, setTabIndex] = React.useState(activeTab);
+const CategoriesContent: React.FC<CategoriesContentProps> = (props: CategoriesContentProps) => {
 
-  React.useEffect(() => {
-    setTabIndex(activeTab);
-  }, [activeTab]);
+  const [showAddCategoryDialog, setShowAddCategoryDialog] = React.useState(false);
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setTabIndex(newValue);
+  const handleAddCategory = (categoryLabel: string): void => {
+    const id: string = uuidv4();
+    const categoryEntity: CategoryEntity = {
+      id,
+      keyword: categoryLabel,
+      disregardLevel: DisregardLevel.None,
+    };
+    props.onAddCategory(categoryEntity);
+  };
+
+  const handleCloseAddCategoryDialog = () => {
+    setShowAddCategoryDialog(false);
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Typography variant="h4">Categories</Typography>
-      <Tabs value={tabIndex} onChange={handleTabChange} aria-label="Categories Tabs">
-        <Tab label="List" />
-        <Tab label="Add" />
-        <Tab label="Edit" />
-      </Tabs>
-      <Box sx={{ padding: '20px' }}>
-        {tabIndex === 0 && <Typography>List Content</Typography>}
-        {tabIndex === 1 && <Typography>Add Content</Typography>}
-        {tabIndex === 2 && <Typography>Edit Content</Typography>}
+    <div>
+      <AddCategoryDialog
+        open={showAddCategoryDialog}
+        onAddCategory={handleAddCategory}
+        onClose={handleCloseAddCategoryDialog}
+      />
+
+      <Box sx={{ width: '100%' }}>
+        <Typography variant="h4">Categories</Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+          <Button
+            startIcon={<AddIcon />}
+            onClick={() => setShowAddCategoryDialog(true)}
+          >
+            Add
+          </Button>
+        </Box>
+        <Box>
+          <CategoriesTable />
+        </Box>
       </Box>
-    </Box>
+    </div>
   );
 };
 
-export default CategoriesContent;
+function mapStateToProps(state: any) {
+  return {
+  };
+}
+
+const mapDispatchToProps = (dispatch: TrackerDispatch) => {
+  return bindActionCreators({
+    onAddCategory: addCategoryServerAndRedux,
+  }, dispatch);
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(CategoriesContent);
