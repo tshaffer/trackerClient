@@ -16,6 +16,7 @@ export interface StatementsContentPropsFromParent {
 }
 
 interface StatementsContentProps extends StatementsContentPropsFromParent {
+  onUploadFile: (data: FormData) => any;
 }
 
 const StatementsContent: React.FC<StatementsContentProps> = (props: StatementsContentProps) => {
@@ -59,7 +60,6 @@ const StatementsContent: React.FC<StatementsContentProps> = (props: StatementsCo
     <div>
       <UploadStatementDialog
         open={showUploadStatementDialog}
-        onUploadStatement={handleUploadStatement}
         onClose={handleCloseUploadStatementDialog}
       />
       <Box sx={{ width: '100%' }}>

@@ -14,15 +14,11 @@ import { TrackerDispatch } from '../models';
 export interface UploadStatementDialogPropsFromParent {
   open: boolean;
   onClose: () => void;
-  // onUploadFile: (formData: FormData) => any;
-  // onUploadStatement: (
-  //   data: FormData,
-  // ) => any;
 }
 
 export interface UploadStatementDialogProps extends UploadStatementDialogPropsFromParent {
   appInitialized: boolean;
-  onUploadFile: (formData: FormData) => any;
+  onUploadFile: (data: FormData) => any;
 }
 
 const UploadStatementDialog = (props: UploadStatementDialogProps) => {
@@ -88,7 +84,6 @@ function mapStateToProps(state: any) {
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
-    // onUploadStatement: uploadFile,
     onUploadFile: uploadFile,
   }, dispatch);
 };
