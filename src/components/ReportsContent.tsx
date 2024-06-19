@@ -54,7 +54,7 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
             <DateRangeSpecifier />
             <Box sx={{ mt: 3 }}>
               <Button variant="contained" color="primary" onClick={handleGenerateReport}>
-                Generate Expenses Report
+                Generate Report
               </Button>
             </Box>
             <Box>
@@ -67,7 +67,7 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
             <DateRangeSpecifier />
             <Box sx={{ mt: 3 }}>
               <Button variant="contained" color="primary" onClick={handleGenerateUnidentifiedTransactionsGenerateReport}>
-                Generate Unidentified Transactions Report
+                Generate  Report
               </Button>
             </Box>
             <Box>
