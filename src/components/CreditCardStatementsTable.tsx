@@ -5,10 +5,10 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { isEmpty } from 'lodash';
 
-import { CreditCardStatementEntity, StatementType } from '../types';
+import { CreditCardStatementEntity } from '../types';
 import { TrackerDispatch } from '../models';
 import { getCreditCardStatements } from '../selectors';
-import { formatDate } from '../utilities';
+import { formatCurrency, formatDate } from '../utilities';
 
 interface CreditCardStatementsTableProps {
   statements: CreditCardStatementEntity[];
@@ -26,9 +26,11 @@ const CreditCardStatementsTable: React.FC<CreditCardStatementsTableProps> = (pro
         <div className="table-header">
           <div className="table-row">
             <div className="table-cell"></div>
+            <div className="table-cell">Name</div>
             <div className="table-cell">Start Date</div>
             <div className="table-cell">End Date</div>
-            <div className="table-cell">Type</div>
+            <div className="table-cell">Transaction Count</div>
+            <div className="table-cell">Net Spent</div>
           </div>
         </div>
         <div className="table-body">
@@ -36,9 +38,11 @@ const CreditCardStatementsTable: React.FC<CreditCardStatementsTableProps> = (pro
             <React.Fragment key={statement.id}>
               <div className="table-row">
                 <div className="table-cell"></div>
+                <div className="table-cell">{statement.fileName}</div>
                 <div className="table-cell">{formatDate(statement.startDate)}</div>
                 <div className="table-cell">{formatDate(statement.endDate)}</div>
-                <div className="table-cell">{statement.type === StatementType.Checking ? 'Checking Account' : 'Credit Card'}</div>
+                <div className="table-cell">{statement.transactionCount}</div>
+                <div className="table-cell">{formatCurrency(statement.netSpent)}</div>
               </div>
             </React.Fragment>
           ))}
