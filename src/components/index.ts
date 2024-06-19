@@ -5,7 +5,6 @@ export * from './CategoriesContent';
 export * from './CategoryKeywordsTable';
 export * from './CategoriesTable';
 export * from './DateRangeSpecifier';
-export * from './MainContent';
 export * from './ReportsContent';
 export * from './Sidebar';
 export * from './SpendingReportTable';
