@@ -12,16 +12,17 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import AddRuleDialog from './AddRuleDialog';
 import { addCategoryKeywordServerAndRedux, search } from '../controllers';
 import { TrackerDispatch } from '../models';
+import { getStartDate, getEndDate, getUnidentifiedBankTransactions } from '../selectors';
 
-interface UnidentifiedTransactionsTableProps {
-  unidentifiedBankTransactions: BankTransactionEntity[];
+interface NotIdentifiedTransactionTableProps {
   startDate: string;
   endDate: string;
+  unidentifiedBankTransactions: BankTransactionEntity[];
   onAddCategoryKeyword: (categoryKeywordEntity: CategoryKeywordEntity) => any;
   onSearch: (startDate: string, endDate: string) => any;
 }
 
-const UnidentifiedTransactionsTable: React.FC<UnidentifiedTransactionsTableProps> = (props: UnidentifiedTransactionsTableProps) => {
+const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps> = (props: NotIdentifiedTransactionTableProps) => {
 
   const [unidentifiedBankTransactionId, setUnidentifiedBankTransactionId] = React.useState('');
   const [showAddRuleDialog, setShowAddRuleDialog] = React.useState(false);
@@ -59,12 +60,16 @@ const UnidentifiedTransactionsTable: React.FC<UnidentifiedTransactionsTableProps
       .then(() => {
         props.onSearch(props.startDate, props.endDate);
       }
-    );
+      );
   }
 
   const handleCloseAddRuleDialog = () => {
     setShowAddRuleDialog(false);
   };
+
+  if (props.unidentifiedBankTransactions.length === 0) {
+    return null;
+  }
 
   return (
     <React.Fragment>
@@ -107,6 +112,9 @@ const UnidentifiedTransactionsTable: React.FC<UnidentifiedTransactionsTableProps
 
 function mapStateToProps(state: any) {
   return {
+    startDate: getStartDate(state),
+    endDate: getEndDate(state),
+    unidentifiedBankTransactions: getUnidentifiedBankTransactions(state),
   };
 }
 
@@ -117,5 +125,5 @@ const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   }, dispatch);
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(UnidentifiedTransactionsTable);
+export default connect(mapStateToProps, mapDispatchToProps)(UnIdentifiedTransactionTable);
 

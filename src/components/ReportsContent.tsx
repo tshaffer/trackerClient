@@ -10,7 +10,7 @@ import { search } from '../controllers';
 
 import DateRangeSpecifier from './DateRangeSpecifier';
 import SpendingReportTable from './SpendingReportTable';
-import NotIdentifiedTransactionTable from './NotIdentifiedTransactionTable';
+import UnIdentifiedTransactionTable from './UnidentifiedTransactionTable';
 
 export interface ReportsContentPropsFromParent {
   activeTab: number;
@@ -71,7 +71,7 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
               </Button>
             </Box>
             <Box>
-              <NotIdentifiedTransactionTable />
+              <UnIdentifiedTransactionTable />
             </Box>
           </Box>
         )}
