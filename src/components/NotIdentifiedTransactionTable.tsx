@@ -67,6 +67,10 @@ const NotIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps
     setShowAddRuleDialog(false);
   };
 
+  if (props.unidentifiedBankTransactions.length === 0) {
+    return null;
+  }
+
   return (
     <React.Fragment>
       <AddRuleDialog

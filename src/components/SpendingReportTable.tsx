@@ -79,7 +79,6 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
     return null;
   }
 
-
   const handleButtonClick = (rowId: string) => {
     setSelectedRowId(prevRowId => (prevRowId === rowId ? null : rowId));
   };
