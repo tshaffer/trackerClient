@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
 import Sidebar from './Sidebar';
-import CategoriesContent from './CategoriesContent';
-import ReportsContent from './ReportsContent';
-import StatementsContent from './StatementsContent';
 import { Box, Typography } from '@mui/material';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
+import { SidebarMenuButton } from '../types';
 import { loadCategories, loadCategoryKeywords, loadStatements } from '../controllers';
 import { TrackerDispatch, setAppInitialized } from '../models';
 import { getAppInitialized } from '../selectors';
-import { SidebarMenuButton } from '../types';
-import CategoriesTable from './CategoriesTable';
+
 import CategoryKeywordsTable from './CategoryKeywordsTable';
+import CategoriesContent from './CategoriesContent';
+import ReportsContent from './ReportsContent';
+import StatementsContent from './StatementsContent';
 
 export interface AppProps {
   appInitialized: boolean;
