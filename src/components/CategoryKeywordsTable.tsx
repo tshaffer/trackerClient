@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 
 import '../styles/Tracker.css';
 import { CategoryEntity, CategoryKeywordEntity } from '../types';
-import { Box, IconButton, MenuItem, TextField, Typography } from '@mui/material';
+import { Box, IconButton, MenuItem, TextField, Tooltip, Typography } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -209,11 +209,11 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
 
   return (
     <Box sx={{ width: '100%' }}>
-        <Typography variant="h5" style={{ marginBottom: '8px' }}>Aliases</Typography>
-        <div className="table-container">
+      <Typography variant="h5" style={{ marginBottom: '8px' }}>Aliases</Typography>
+      <div className="table-container">
         <div className="table-header">
           <div className="table-row">
-            <div className="table-cell-keyword">Keyword</div>
+            <div className="table-cell-keyword">Pattern</div>
             <div className="table-cell-keyword">Category</div>
             <div className="table-cell"></div>
           </div>
@@ -225,7 +225,7 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
                 <TextField
                   value={categoryKeywordById[categoryKeywordEntity.id].keyword}
                   onChange={(event) => handleCategoryKeywordChange(categoryKeywordEntity, event.target.value)}
-                  style={{ marginLeft: '16px', minWidth: '400px' }}
+                  style={{ minWidth: '400px' }}
                   helperText="Edit the keyword"
                 />
               </div>
@@ -245,15 +245,17 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
                   ))}
                 </TextField>
               </div>
-              <div className="table-cell-keyword">
-                <IconButton onClick={() => handleSaveCategoryKeyword(categoryKeywordEntity.id)}>
-                  <SaveIcon />
-                </IconButton>
-                <IconButton
-                  onClick={() => handleDeleteCategoryKeyword(categoryKeywordEntity.id) }>
-                  <DeleteIcon />
-                </IconButton>
-
+              <div className="table-cell-keyword" style={{ marginLeft: '32px' }}>
+                <Tooltip title="Save" arrow>
+                  <IconButton onClick={() => handleSaveCategoryKeyword(categoryKeywordEntity.id)}>
+                    <SaveIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Delete" arrow>
+                  <IconButton onClick={() => handleDeleteCategoryKeyword(categoryKeywordEntity.id)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </Tooltip>
               </div>
             </div>
           ))}
