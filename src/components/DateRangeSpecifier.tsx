@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Box, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, MenuItem, Select, InputLabel, SelectChangeEvent } from '@mui/material';
+import { Box, FormControl, RadioGroup, FormControlLabel, Radio, MenuItem, Select, InputLabel, SelectChangeEvent, Accordion, AccordionDetails, AccordionSummary, Typography } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { TrackerDispatch, setEndDate, setExpenseReportDateRangeType, setStartDate } from '../models';
@@ -85,9 +87,22 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
 
   return (
     <Box sx={{ width: '100%' }}>
+      <Accordion defaultExpanded>
+        <AccordionSummary
+          style={{ 
+            minHeight: '0px', 
+            maxHeight: '22px', 
+            // marginBottom: '4px',
+            marginTop: '14px',
+            paddingBottom: '0px',
+          }}
+          expandIcon={<ExpandMoreIcon />}
+        >
+          <Typography>Specify Date Range</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
 
         <FormControl component="fieldset">
-          <FormLabel component="legend">Specify Date Range</FormLabel>
           <RadioGroup value={props.expenseReportDateRangeType} onChange={handleDateOptionChange}>
             <FormControlLabel value={ExpenseReportDateRangeType.All} control={<Radio />} label="All Dates" sx={{ maxHeight: '32px' }} />
             <FormControlLabel value={ExpenseReportDateRangeType.YearToDate} control={<Radio />} label="Year to Date" sx={{ maxHeight: '32px' }} />
@@ -120,6 +135,8 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
             </Select>
           </FormControl>
         </FormControl>
+        </AccordionDetails>
+      </Accordion>
       </Box>
   );
 };
