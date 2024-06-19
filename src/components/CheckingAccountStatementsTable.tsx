@@ -8,7 +8,7 @@ import { isEmpty } from 'lodash';
 import { CheckingAccountStatementEntity, StatementType } from '../types';
 import { TrackerDispatch } from '../models';
 import { getCheckingAccountStatements } from '../selectors';
-import { formatDate } from '../utilities';
+import { formatCurrency, formatDate } from '../utilities';
 
 interface CheckingAccountStatementsTableProps {
   statements: CheckingAccountStatementEntity[];
@@ -26,9 +26,13 @@ const CheckingAccountStatementsTable: React.FC<CheckingAccountStatementsTablePro
         <div className="table-header">
           <div className="table-row">
             <div className="table-cell"></div>
+            <div className="table-cell">Name</div>
             <div className="table-cell">Start Date</div>
             <div className="table-cell">End Date</div>
-            <div className="table-cell">Type</div>
+            <div className="table-cell">Transaction Count</div>
+            <div className="table-cell">Net Spent</div>
+            <div className="table-cell"># of checks</div>
+            <div className="table-cell"># of ATM withdrawals</div>
           </div>
         </div>
         <div className="table-body">
@@ -36,9 +40,13 @@ const CheckingAccountStatementsTable: React.FC<CheckingAccountStatementsTablePro
             <React.Fragment key={statement.id}>
               <div className="table-row">
                 <div className="table-cell"></div>
+                <div className="table-cell">{statement.fileName}</div>
                 <div className="table-cell">{formatDate(statement.startDate)}</div>
                 <div className="table-cell">{formatDate(statement.endDate)}</div>
-                <div className="table-cell">{statement.type === StatementType.Checking ? 'Checking Account' : 'Credit Card'}</div>
+                <div className="table-cell">{statement.transactionCount}</div>
+                <div className="table-cell">{formatCurrency(statement.netSpent)}</div>
+                <div className="table-cell">{statement.checkCount}</div>
+                <div className="table-cell">{statement.atmWithdrawalCount}</div>
               </div>
             </React.Fragment>
           ))}
