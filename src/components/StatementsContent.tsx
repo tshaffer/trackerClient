@@ -43,7 +43,7 @@ const StatementsContent: React.FC<StatementsContentProps> = (props: StatementsCo
         onClose={handleCloseUploadStatementDialog}
       />
       <Box sx={{ width: '100%' }}>
-        <Typography variant="h4">Statements</Typography>
+        <Typography variant="h5">Statements</Typography>
         <Tabs value={tabIndex} onChange={handleTabChange}>
           <Tab label="All" />
           <Tab label="Credit Card" />

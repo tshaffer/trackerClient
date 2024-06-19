@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 
 import '../styles/Tracker.css';
 import { CategoryEntity, CategoryKeywordEntity } from '../types';
-import { IconButton, MenuItem, TextField } from '@mui/material';
+import { Box, IconButton, MenuItem, TextField, Typography } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -208,8 +208,9 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
   }
 
   return (
-    <React.Fragment>
-      <div className="table-container">
+    <Box sx={{ width: '100%' }}>
+        <Typography variant="h5" style={{ marginBottom: '8px' }}>Aliases</Typography>
+        <div className="table-container">
         <div className="table-header">
           <div className="table-row">
             <div className="table-cell-keyword">Keyword</div>
@@ -258,7 +259,7 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
           ))}
         </div>
       </div>
-    </React.Fragment>
+    </Box>
   );
 }
 

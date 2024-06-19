@@ -50,12 +50,21 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
         flexDirection: 'column',
       }}
     >
-      <Typography variant="h5" component="div" sx={{ marginBottom: '20px', textAlign: 'center' }}>
+      {/* <Typography variant="h5" component="div" sx={{ marginBottom: '20px', textAlign: 'center' }}>
         Expense Tracker
-      </Typography>
+      </Typography> */}
 
       <Accordion defaultExpanded>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+        <AccordionSummary
+          style={{ 
+            minHeight: '0px', 
+            maxHeight: '22px', 
+            // marginBottom: '4px',
+            marginTop: '14px',
+            paddingBottom: '0px',
+          }}
+          expandIcon={<ExpandMoreIcon />}
+        >
           <Typography>Menu</Typography>
         </AccordionSummary>
         <AccordionDetails>
@@ -96,19 +105,19 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
           <Button
             sx={buttonStyle}
             aria-haspopup="true"
-            onMouseEnter={(e) => handleHover(e, 'Aliases')}
+            onMouseEnter={(e) => handleHover(e, 'Categories')}
             onClick={() => handleClose('List')}
           >
-            <span>Aliases</span><ChevronRightIcon />
+            <span>Categories</span><ChevronRightIcon />
           </Button>
 
           <Button
             sx={buttonStyle}
             aria-haspopup="true"
-            onMouseEnter={(e) => handleHover(e, 'Categories')}
+            onMouseEnter={(e) => handleHover(e, 'Aliases')}
             onClick={() => handleClose('List')}
           >
-            <span>Categories</span><ChevronRightIcon />
+            <span>Aliases</span><ChevronRightIcon />
           </Button>
 
           <Button

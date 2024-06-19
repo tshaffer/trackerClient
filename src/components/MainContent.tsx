@@ -9,7 +9,7 @@ interface MainContentProps {
 const MainContent: React.FC<MainContentProps> = ({ content }) => {
   return (
     <Box sx={{ padding: '20px', flexGrow: 1 }}>
-      <Typography variant="h4">{content}</Typography>
+      <Typography variant="h5">{content}</Typography>
     </Box>
   );
 };

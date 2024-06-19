@@ -43,7 +43,7 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Typography variant="h4">Reports</Typography>
+      <Typography variant="h5">Reports</Typography>
       <Tabs value={tabIndex} onChange={handleTabChange} aria-label="Reports Tabs">
         <Tab label="Spending" />
         <Tab label="Unidentified Transactions" />

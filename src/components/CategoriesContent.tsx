@@ -44,7 +44,7 @@ const CategoriesContent: React.FC<CategoriesContentProps> = (props: CategoriesCo
       />
 
       <Box sx={{ width: '100%' }}>
-        <Typography variant="h4">Categories</Typography>
+        <Typography variant="h5">Categories</Typography>
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
           <Button
             startIcon={<AddIcon />}
