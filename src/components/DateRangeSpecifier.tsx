@@ -94,29 +94,21 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
           <FormControlLabel value={ExpenseReportDateRangeType.Statement} control={<Radio />} label="From Statement" sx={{ maxHeight: '32px' }} />
         </RadioGroup>
       </FormControl>
+      <Select
+        labelId="statement-select-label"
+        id="statement-select"
+        value={selectedStatement}
+        onChange={handleStatementChange}
+        label="Statement"
+      >
+        <MenuItem value="statement1">Statement 1</MenuItem>
+        <MenuItem value="statement2">Statement 2</MenuItem>
+        <MenuItem value="statement3">Statement 3</MenuItem>
+      </Select>
       <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
         {renderStartDate()}
         {renderEndDate()}
       </Box>
-      {/* <FormControl component="fieldset" sx={{ mt: 2 }}>
-        <RadioGroup row value={props.expenseReportDateRangeType} onChange={handleDateOptionChange}>
-          <FormControlLabel value={ExpenseReportDateRangeType.Statement} control={<Radio />} label="From Statement" sx={{ maxHeight: '32px' }} />
-        </RadioGroup>
-        <FormControl fullWidth disabled={props.expenseReportDateRangeType !== 'statement'} sx={{ mt: 2 }}>
-          <InputLabel id="statement-select-label">Statement</InputLabel>
-          <Select
-            labelId="statement-select-label"
-            id="statement-select"
-            value={selectedStatement}
-            onChange={handleStatementChange}
-            label="Statement"
-          >
-            <MenuItem value="statement1">Statement 1</MenuItem>
-            <MenuItem value="statement2">Statement 2</MenuItem>
-            <MenuItem value="statement3">Statement 3</MenuItem>
-          </Select>
-        </FormControl>
-      </FormControl> */}
     </Box>
   );
 };
