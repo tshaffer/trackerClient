@@ -1,6 +1,7 @@
 import React from 'react';
 
-import '../styles/Tracker.css';
+import '../styles/Grid.css';
+
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { isEmpty } from 'lodash';
@@ -22,33 +23,29 @@ const CreditCardStatementsTable: React.FC<CreditCardStatementsTableProps> = (pro
 
   return (
     <React.Fragment>
-      <div className="table-container">
-        <div className="table-header">
-          <div className="table-row">
-            <div className="table-cell"></div>
-            <div className="table-cell">Name</div>
-            <div className="table-cell">Start Date</div>
-            <div className="table-cell">End Date</div>
-            <div className="table-cell">Transaction Count</div>
-            <div className="table-cell">Net Spent</div>
-          </div>
+      <div className="grid-table-container">
+        <div className="grid-table-header">
+          <div className="grid-table-cell"></div>
+          <div className="grid-table-cell">Name</div>
+          <div className="grid-table-cell">Start Date</div>
+          <div className="grid-table-cell">End Date</div>
+          <div className="grid-table-cell">Transaction Count</div>
+          <div className="grid-table-cell">Net Spent</div>
         </div>
-        <div className="table-body">
+        <div className="grid-table-body">
           {props.statements.map((statement: CreditCardStatementEntity) => (
-            <React.Fragment key={statement.id}>
-              <div className="table-row">
-                <div className="table-cell"></div>
-                <div className="table-cell">{statement.fileName}</div>
-                <div className="table-cell">{formatDate(statement.startDate)}</div>
-                <div className="table-cell">{formatDate(statement.endDate)}</div>
-                <div className="table-cell">{statement.transactionCount}</div>
-                <div className="table-cell">{formatCurrency(statement.netSpent)}</div>
-              </div>
-            </React.Fragment>
+            <div className="grid-table-row" key={statement.id}>
+              <div className="grid-table-cell"></div>
+              <div className="grid-table-cell">{statement.fileName}</div>
+              <div className="grid-table-cell">{formatDate(statement.startDate)}</div>
+              <div className="grid-table-cell">{formatDate(statement.endDate)}</div>
+              <div className="grid-table-cell">{statement.transactionCount}</div>
+              <div className="grid-table-cell">{formatCurrency(statement.netSpent)}</div>
+            </div>
           ))}
         </div>
       </div>
-    </React.Fragment >
+    </React.Fragment>
   );
 };
 
