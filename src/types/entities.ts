@@ -57,10 +57,19 @@ export type CategoryExpensesData = {
   percentageOfTotal: number,
 }
 
-export interface StatementEntity {
+interface StatementEntity {
   id: string;
+  fileName: string;
   type: StatementType;
   startDate: string;
   endDate: string;
+  transactionCount: number;
+  netSpent: number;
 }
 
+export type CreditCardStatementEntity = StatementEntity
+
+export interface CheckingAccountStatementEntity extends StatementEntity {
+  checkCount: number;
+  atmWithdrawalCount: number;
+}

@@ -146,8 +146,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
             <Paper>
               <ClickAwayListener onClickAway={handleClickAway}>
                 <MenuList>
-                  <MenuItem onClick={() => handleClose('All')}>All</MenuItem>
                   <MenuItem onClick={() => handleClose('Credit Card')}>Credit Card</MenuItem>
+                  <MenuItem onClick={() => handleClose('Checking Account')}>Checking Account</MenuItem>
                 </MenuList>
               </ClickAwayListener>
             </Paper>

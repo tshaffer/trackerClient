@@ -5,16 +5,16 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { isEmpty } from 'lodash';
 
-import { StatementEntity, StatementType } from '../types';
+import { CheckingAccountStatementEntity, StatementType } from '../types';
 import { TrackerDispatch } from '../models';
-import { getStatements } from '../selectors';
+import { getCheckingAccountStatements } from '../selectors';
 import { formatDate } from '../utilities';
 
-interface StatementsTableProps {
-  statements: StatementEntity[];
+interface CheckingAccountStatementsTableProps {
+  statements: CheckingAccountStatementEntity[];
 }
 
-const StatementsTable: React.FC<StatementsTableProps> = (props: StatementsTableProps) => {
+const CheckingAccountStatementsTable: React.FC<CheckingAccountStatementsTableProps> = (props: CheckingAccountStatementsTableProps) => {
 
   if (isEmpty(props.statements)) {
     return null;
@@ -32,13 +32,13 @@ const StatementsTable: React.FC<StatementsTableProps> = (props: StatementsTableP
           </div>
         </div>
         <div className="table-body">
-          {props.statements.map((statement: StatementEntity) => (
+          {props.statements.map((statement: CheckingAccountStatementEntity) => (
             <React.Fragment key={statement.id}>
               <div className="table-row">
                 <div className="table-cell"></div>
                 <div className="table-cell">{formatDate(statement.startDate)}</div>
                 <div className="table-cell">{formatDate(statement.endDate)}</div>
-                <div className="table-cell">{statement.type === StatementType.Checking ? 'Checking' : 'Credit Card'}</div>
+                <div className="table-cell">{statement.type === StatementType.Checking ? 'Checking Account' : 'Credit Card'}</div>
               </div>
             </React.Fragment>
           ))}
@@ -51,7 +51,7 @@ const StatementsTable: React.FC<StatementsTableProps> = (props: StatementsTableP
 
 function mapStateToProps(state: any) {
   return {
-    statements: getStatements(state),
+    statements: getCheckingAccountStatements(state),
   };
 }
 
@@ -60,4 +60,4 @@ const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   }, dispatch);
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(StatementsTable);
+export default connect(mapStateToProps, mapDispatchToProps)(CheckingAccountStatementsTable);

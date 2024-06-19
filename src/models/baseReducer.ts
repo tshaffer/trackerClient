@@ -6,7 +6,8 @@ import { TrackerState } from '../types';
 import { appStateReducer } from './appState';
 import { reportDataStateReducer } from './reportDataState';
 import { categoryStateReducer } from './categoryState';
-import { statementStateReducer } from './statementState';
+import { checkingAccountStatementStateReducer } from './checkingAccountStatementState';
+import { creditCardStatementStateReducer } from './creditCardStatementState';
 
 // -----------------------------------------------------------------------
 // Reducers
@@ -15,7 +16,8 @@ export const rootReducer = combineReducers<TrackerState>({
   appState: appStateReducer,
   reportDataState: reportDataStateReducer,
   categoryState: categoryStateReducer,
-  statementState: statementStateReducer,
+  checkingAccountStatementState: checkingAccountStatementStateReducer,
+  creditCardStatementState: creditCardStatementStateReducer,
 });
 
 // -----------------------------------------------------------------------

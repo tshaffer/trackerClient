@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { SidebarMenuButton } from '../types';
-import { loadCategories, loadCategoryKeywords, loadStatements } from '../controllers';
+import { loadCategories, loadCategoryKeywords, loadCheckingAccountStatements, loadCreditCardStatements } from '../controllers';
 import { TrackerDispatch, setAppInitialized } from '../models';
 import { getAppInitialized } from '../selectors';
 
@@ -18,7 +18,8 @@ export interface AppProps {
   appInitialized: boolean;
   onLoadCategories: () => any;
   onLoadCategoryKeywords: () => any;
-  onLoadStatements: () => any;
+  onCreditCardLoadStatements: () => any;
+  onCheckingAccountLoadStatements: () => any;
   onSetAppInitialized: () => any;
 }
 
@@ -31,7 +32,10 @@ const App = (props: AppProps) => {
           return props.onLoadCategoryKeywords();
         })
         .then(() => {
-          return props.onLoadStatements();
+          return props.onCreditCardLoadStatements();
+        })
+        .then(() => {
+          return props.onCheckingAccountLoadStatements();
         })
         .then(() => {
           console.log('invoke onSetAppInitialized');
@@ -57,7 +61,11 @@ const App = (props: AppProps) => {
       return <ReportsContent activeTab={activeTab} />;
     }
     else if (selectedMainButton === SidebarMenuButton.Statements) {
-      return <StatementsContent activeTab={0} />;
+      let activeTab = 0;
+      if (selectedSubButton === 'Credit Card') activeTab = 0;
+      else if (selectedSubButton === 'Checking Account') activeTab = 1;
+
+      return <StatementsContent activeTab={activeTab} />;
     } else if (selectedMainButton === SidebarMenuButton.Aliases) {
       return <CategoryKeywordsTable />;
     } else if (selectedMainButton === SidebarMenuButton.Categories) {
@@ -92,7 +100,8 @@ const mapDispatchToProps = (dispatch: TrackerDispatch) => {
     onSetAppInitialized: setAppInitialized,
     onLoadCategories: loadCategories,
     onLoadCategoryKeywords: loadCategoryKeywords,
-    onLoadStatements: loadStatements
+    onCreditCardLoadStatements: loadCreditCardStatements,
+    onCheckingAccountLoadStatements: loadCheckingAccountStatements,
   }, dispatch);
 };
 

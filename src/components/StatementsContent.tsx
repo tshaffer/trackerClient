@@ -7,9 +7,10 @@ import UploadIcon from '@mui/icons-material/Upload';
 
 import { TrackerDispatch } from '../models';
 
-import StatementsTable from './StatementsTable';
 import UploadStatementDialog from './UploadStatementDialog';
 import { uploadFile } from '../controllers';
+import CheckingAccountStatementsTable from './CheckingAccountStatementsTable';
+import CreditCardStatementsTable from './CreditCardStatementsTable';
 
 export interface StatementsContentPropsFromParent {
   activeTab: number;
@@ -45,8 +46,8 @@ const StatementsContent: React.FC<StatementsContentProps> = (props: StatementsCo
       <Box sx={{ width: '100%' }}>
         <Typography variant="h5">Statements</Typography>
         <Tabs value={tabIndex} onChange={handleTabChange}>
-          <Tab label="All" />
           <Tab label="Credit Card" />
+          <Tab label="Checking Account" />
         </Tabs>
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
           <Button
@@ -59,12 +60,12 @@ const StatementsContent: React.FC<StatementsContentProps> = (props: StatementsCo
         <Box>
           {tabIndex === 0 && (
             <Box>
-              <StatementsTable />
+              <CreditCardStatementsTable />
             </Box>
           )}
           {tabIndex === 1 && (
             <Box>
-              <StatementsTable />
+              <CheckingAccountStatementsTable />
             </Box>
           )}
         </Box>
