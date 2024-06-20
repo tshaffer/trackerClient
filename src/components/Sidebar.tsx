@@ -50,18 +50,13 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
         flexDirection: 'column',
       }}
     >
-      {/* <Typography variant="h5" component="div" sx={{ marginBottom: '20px', textAlign: 'center' }}>
-        Expense Tracker
-      </Typography> */}
 
       <Accordion defaultExpanded>
         <AccordionSummary
           style={{ 
             minHeight: '0px', 
             maxHeight: '22px', 
-            // marginBottom: '4px',
             marginTop: '14px',
-            paddingBottom: '0px',
           }}
           expandIcon={<ExpandMoreIcon />}
         >
@@ -156,7 +151,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
         </AccordionDetails>
       </Accordion>
 
-      {/* Add other main buttons here in a similar way */}
     </Box>
   );
 };

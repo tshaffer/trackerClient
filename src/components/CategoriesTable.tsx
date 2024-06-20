@@ -32,7 +32,7 @@ const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableP
             <div className="table-cell">Category</div>
           </div>
         </div>
-        <div className="table-body">
+        <div className="catalog-table-body">
           {categoryEntities.map((categoryEntity: CategoryEntity) => (
             <React.Fragment key={categoryEntity.id}>
               <div className="table-row">
