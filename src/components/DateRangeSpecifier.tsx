@@ -21,7 +21,7 @@ interface DateRangeSpecifierProps {
 }
 
 const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeSpecifierProps) => {
-  const [selectedStatement, setSelectedStatement] = useState<string>('');
+  const [selectedStatement, setSelectedStatement] = useState<string>('statement1');
 
   const handleDateOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     props.onSetExpenseReportDateRangeType(event.target.value as ExpenseReportDateRangeType);
@@ -83,6 +83,28 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
     );
   };
 
+  const renderStatementSelect = (): JSX.Element => {
+    if (props.expenseReportDateRangeType !== ExpenseReportDateRangeType.Statement) {
+      return <React.Fragment />;
+    }
+    return (
+      <FormControl>
+        <InputLabel id="statement-select-label">Name</InputLabel>
+        <Select
+          labelId="statement-select-label"
+          id="statement-select"
+          value={selectedStatement}
+          onChange={handleStatementChange}
+          label="Statement"
+          disabled={props.expenseReportDateRangeType !== ExpenseReportDateRangeType.Statement}
+        >
+          <MenuItem value="statement1">Statement 1</MenuItem>
+          <MenuItem value="statement2">Statement 2</MenuItem>
+          <MenuItem value="statement3">Statement 3</MenuItem>
+        </Select>
+      </FormControl>
+    );
+  }
   return (
     <Box sx={{ width: '100%' }}>
       <FormControl component="fieldset">
@@ -94,17 +116,7 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
           <FormControlLabel value={ExpenseReportDateRangeType.Statement} control={<Radio />} label="From Statement" sx={{ maxHeight: '32px' }} />
         </RadioGroup>
       </FormControl>
-      <Select
-        labelId="statement-select-label"
-        id="statement-select"
-        value={selectedStatement}
-        onChange={handleStatementChange}
-        label="Statement"
-      >
-        <MenuItem value="statement1">Statement 1</MenuItem>
-        <MenuItem value="statement2">Statement 2</MenuItem>
-        <MenuItem value="statement3">Statement 3</MenuItem>
-      </Select>
+      {renderStatementSelect()}
       <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
         {renderStartDate()}
         {renderEndDate()}
