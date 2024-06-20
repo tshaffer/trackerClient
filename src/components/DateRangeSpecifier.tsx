@@ -88,7 +88,7 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
       return <React.Fragment />;
     }
     return (
-      <FormControl>
+      <FormControl sx={{ ml: 2, minWidth: 120 }}>
         <InputLabel id="statement-select-label">Name</InputLabel>
         <Select
           labelId="statement-select-label"
@@ -96,27 +96,29 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
           value={selectedStatement}
           onChange={handleStatementChange}
           label="Statement"
-          disabled={props.expenseReportDateRangeType !== ExpenseReportDateRangeType.Statement}
         >
           <MenuItem value="statement1">Statement 1</MenuItem>
           <MenuItem value="statement2">Statement 2</MenuItem>
           <MenuItem value="statement3">Statement 3</MenuItem>
         </Select>
       </FormControl>
+
     );
   }
   return (
     <Box sx={{ width: '100%' }}>
-      <FormControl component="fieldset">
-        <RadioGroup row value={props.expenseReportDateRangeType} onChange={handleDateOptionChange}>
-          <FormControlLabel value={ExpenseReportDateRangeType.All} control={<Radio />} label="All Dates" sx={{ maxHeight: '32px' }} />
-          <FormControlLabel value={ExpenseReportDateRangeType.YearToDate} control={<Radio />} label="Year to Date" sx={{ maxHeight: '32px' }} />
-          <FormControlLabel value={ExpenseReportDateRangeType.LastYear} control={<Radio />} label="Last Year" sx={{ maxHeight: '32px' }} />
-          <FormControlLabel value={ExpenseReportDateRangeType.DateRange} control={<Radio />} label="Date Range" sx={{ maxHeight: '32px' }} />
-          <FormControlLabel value={ExpenseReportDateRangeType.Statement} control={<Radio />} label="From Statement" sx={{ maxHeight: '32px' }} />
-        </RadioGroup>
-      </FormControl>
-      {renderStatementSelect()}
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <FormControl component="fieldset">
+          <RadioGroup row value={props.expenseReportDateRangeType} onChange={handleDateOptionChange}>
+            <FormControlLabel value={ExpenseReportDateRangeType.All} control={<Radio />} label="All Dates" sx={{ maxHeight: '32px' }} />
+            <FormControlLabel value={ExpenseReportDateRangeType.YearToDate} control={<Radio />} label="Year to Date" sx={{ maxHeight: '32px' }} />
+            <FormControlLabel value={ExpenseReportDateRangeType.LastYear} control={<Radio />} label="Last Year" sx={{ maxHeight: '32px' }} />
+            <FormControlLabel value={ExpenseReportDateRangeType.DateRange} control={<Radio />} label="Date Range" sx={{ maxHeight: '32px' }} />
+            <FormControlLabel value={ExpenseReportDateRangeType.Statement} control={<Radio />} label="From Statement" sx={{ maxHeight: '32px' }} />
+          </RadioGroup>
+        </FormControl>
+        {renderStatementSelect()}
+      </Box>
       <Box sx={{ mt: 2, display: 'flex', gap: 2 }}>
         {renderStartDate()}
         {renderEndDate()}
