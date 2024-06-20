@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
-import { Button, DialogActions, DialogContent } from '@mui/material';
+import { Alert, Button, DialogActions, DialogContent } from '@mui/material';
 import { getAppInitialized } from '../selectors';
 import { isNil } from 'lodash';
 import { bindActionCreators } from 'redux';
@@ -26,12 +26,14 @@ const UploadStatementDialog = (props: UploadStatementDialogProps) => {
   const { open, onClose } = props;
 
   const [selectedFile, setSelectedFile] = React.useState(null);
+  const [uploadStatus, setUploadStatus] = React.useState<any>(null); // null, 'success', or 'failure'
 
   if (!open) {
     return null;
   }
 
   const handleClose = () => {
+    setUploadStatus(null);
     onClose();
   };
 
@@ -48,9 +50,12 @@ const UploadStatementDialog = (props: UploadStatementDialogProps) => {
         .then((response: any) => {
           console.log(response);
           console.log(response.statusText);
+          setUploadStatus('success');
+
         }).catch((err: any) => {
           console.log('uploadFile returned error');
           console.log(err);
+          setUploadStatus('failure');
         });
     }
   };
@@ -70,8 +75,24 @@ const UploadStatementDialog = (props: UploadStatementDialogProps) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
-        <Button onClick={handleUploadFile} autoFocus variant="contained" color="primary">Upload</Button>
+        <Button onClick={handleUploadFile} autoFocus variant="contained" color="primary" disabled={!selectedFile}>Upload</Button>
       </DialogActions>
+      {uploadStatus && (
+        <Dialog open={true} onClose={handleClose}>
+          <DialogContent>
+            {uploadStatus === 'success' ? (
+              <Alert severity="success">Upload Successful</Alert>
+            ) : (
+              <Alert severity="error">Upload Failed: Please try again.</Alert>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} color="primary">
+              OK
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
     </Dialog>
   );
 };
