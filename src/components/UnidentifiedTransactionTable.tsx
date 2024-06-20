@@ -90,7 +90,7 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
             <div className="table-cell">Amount</div>
           </div>
         </div>
-        <div className="table-body">
+        <div className="unidentified-report-table-body">
           {props.unidentifiedBankTransactions.map((unidentifiedBankTransaction: BankTransactionEntity) => (
             <div className="table-row" key={unidentifiedBankTransaction.id}>
               <div className="table-cell">

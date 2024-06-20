@@ -81,3 +81,23 @@
   overflow-y: auto; /* Add vertical scrollbar */
 }
 
+.spending-report-table-body {
+  display: flex;
+  flex-direction: column;
+  max-height: 46vh;
+  overflow-y: auto; /* Add vertical scrollbar */
+}
+
+.unidentified-report-table-body {
+  display: flex;
+  flex-direction: column;
+  max-height: 58vh;
+  overflow-y: auto; /* Add vertical scrollbar */
+}
+
+.category-keywords-table-body {
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh;
+  overflow-y: auto; /* Add vertical scrollbar */
+}

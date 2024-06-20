@@ -218,7 +218,7 @@ const CategoryKeywordsTable: React.FC<CategoryKeywordsTableProps> = (props: Cate
             <div className="table-cell"></div>
           </div>
         </div>
-        <div className="table-body">
+        <div className="category-keywords-table-body">
           {Object.values(categoryKeywordById).map((categoryKeywordEntity: CategoryKeywordEntity) => (
             <div className="table-row" key={categoryKeywordEntity.id}>
               <div className="table-cell-keyword">

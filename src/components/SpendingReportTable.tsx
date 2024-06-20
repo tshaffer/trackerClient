@@ -106,7 +106,7 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
           <div className="table-cell">Percentage of Total</div>
         </div>
       </div>
-      <div className="table-body">
+      <div className="spending-report-table-body">
         {sortedRows.map((categoryExpenses: CategoryExpensesData) => (
           <React.Fragment key={categoryExpenses.id}>
             <div className="table-row">
