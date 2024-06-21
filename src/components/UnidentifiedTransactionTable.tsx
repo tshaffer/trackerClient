@@ -5,12 +5,12 @@ import { bindActionCreators } from 'redux';
 import { v4 as uuidv4 } from 'uuid';
 
 import '../styles/Tracker.css';
-import { BankTransactionEntity, BankTransactionType, CategoryKeywordEntity, CheckingAccountTransactionEntity, CreditCardTransactionEntity } from '../types';
+import { BankTransactionEntity, BankTransactionType, CategoryEntity, CategoryKeywordEntity, CheckingAccountTransactionEntity, CreditCardTransactionEntity, DisregardLevel } from '../types';
 import { formatCurrency, formatDate } from '../utilities';
 import { IconButton } from '@mui/material';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import AddRuleDialog from './AddRuleDialog';
-import { addCategoryKeywordServerAndRedux, search } from '../controllers';
+import { addCategoryKeywordServerAndRedux, addCategoryServerAndRedux, search } from '../controllers';
 import { TrackerDispatch } from '../models';
 import { getStartDate, getEndDate, getUnidentifiedBankTransactions } from '../selectors';
 
@@ -18,6 +18,7 @@ interface NotIdentifiedTransactionTableProps {
   startDate: string;
   endDate: string;
   unidentifiedBankTransactions: BankTransactionEntity[];
+  onAddCategory: (categoryEntity: CategoryEntity) => any;
   onAddCategoryKeyword: (categoryKeywordEntity: CategoryKeywordEntity) => any;
   onSearch: (startDate: string, endDate: string) => any;
 }
@@ -63,6 +64,17 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
       );
   }
 
+  const handleAddCategory = (categoryLabel: string): void => {
+    const id: string = uuidv4();
+    const categoryEntity: CategoryEntity = {
+      id,
+      keyword: categoryLabel,
+      disregardLevel: DisregardLevel.None,
+    };
+    props.onAddCategory(categoryEntity);
+  };
+
+
   const handleCloseAddRuleDialog = () => {
     setShowAddRuleDialog(false);
   };
@@ -75,6 +87,7 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
     <React.Fragment>
       <AddRuleDialog
         open={showAddRuleDialog}
+        onAddCategory={handleAddCategory}
         onAddRule={handleAddRule}
         onClose={handleCloseAddRuleDialog}
         unidentifiedBankTransactionId={unidentifiedBankTransactionId}
@@ -120,6 +133,7 @@ function mapStateToProps(state: any) {
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
+    onAddCategory: addCategoryServerAndRedux,
     onAddCategoryKeyword: addCategoryKeywordServerAndRedux,
     onSearch: search,
   }, dispatch);

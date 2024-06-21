@@ -1,4 +1,5 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
+
 import { connect } from 'react-redux';
 
 import DialogTitle from '@mui/material/DialogTitle';
@@ -18,6 +19,9 @@ export interface AddRuleDialogPropsFromParent {
     categoryKeyword: string,
     categoryId: string,
   ) => void;
+  onAddCategory: (
+    categoryLabel: string,
+  ) => void;
   onClose: () => void;
 }
 
@@ -28,6 +32,9 @@ export interface AddRuleDialogProps extends AddRuleDialogPropsFromParent {
 }
 
 const AddRuleDialog = (props: AddRuleDialogProps) => {
+
+  const [newCategoryDialogOpen, setNewCategoryDialogOpen] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
 
   const getTransactionDetails = (bankTransactionEntity: BankTransactionEntity | null): string => {
     if (isNil(bankTransactionEntity)) {
@@ -107,6 +114,21 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
     setSelectedCategoryId(event.target.value as string);
   }
 
+  const handleOpenNewCategoryDialog = () => {
+    setNewCategoryDialogOpen(true);
+  };
+
+  const handleCloseNewCategoryDialog = () => {
+    setNewCategoryDialogOpen(false);
+    setNewCategoryName('');
+  };
+
+  const handleAddNewCategory = () => {
+    props.onAddCategory(newCategoryName);
+    setNewCategoryDialogOpen(false);
+    setNewCategoryName('');
+  };
+
   const renderUnidentifiedBankTransaction = (): JSX.Element => {
     if (isNil(props.unidentifiedBankTransaction)) {
       return <></>;
@@ -123,18 +145,19 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
   alphabetizedCategoryEntities = sortCategoryEntities(alphabetizedCategoryEntities);
 
   return (
-    <Dialog onClose={handleClose} open={open}>
-      <DialogTitle>Add Category Keyword</DialogTitle>
-      <DialogContent style={{ paddingBottom: '0px' }}>
-        <Box
-          component="form"
-          noValidate
-          autoComplete="off"
-          onKeyDown={handleKeyDown}
-          sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '300px' }}
-        >
-          {renderUnidentifiedBankTransaction()}
-          <TextField
+    <>
+      <Dialog onClose={handleClose} open={open}>
+        <DialogTitle>Add Category Keyword</DialogTitle>
+        <DialogContent style={{ paddingBottom: '0px' }}>
+          <Box
+            component="form"
+            noValidate
+            autoComplete="off"
+            onKeyDown={handleKeyDown}
+            sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '300px' }}
+          >
+            {renderUnidentifiedBankTransaction()}
+            <TextField
               margin="normal"
               label="Category Keyword"
               variant="outlined"
@@ -142,7 +165,7 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
               onChange={handleCategoryKeywordChange}
               inputRef={textFieldRef}
               fullWidth
-          />
+            />
             <div>
               <TextField
                 id="category"
@@ -158,19 +181,42 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
                     {category.keyword}
                   </MenuItem>
                 ))}
+                <MenuItem onClick={handleOpenNewCategoryDialog}>
+                  <Button fullWidth>Add New Category</Button>
+                </MenuItem>
               </TextField>
             </div>
-        </Box>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
-        <Tooltip title="Press Enter to add the category keyword" arrow>
-          <Button onClick={handleAddRule} autoFocus variant="contained" color="primary">
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Tooltip title="Press Enter to add the category keyword" arrow>
+            <Button onClick={handleAddRule} autoFocus variant="contained" color="primary">
+              Add
+            </Button>
+          </Tooltip>
+        </DialogActions>
+      </Dialog>
+      <Dialog onClose={handleCloseNewCategoryDialog} open={newCategoryDialogOpen}>
+        <DialogTitle>Add New Category</DialogTitle>
+        <DialogContent>
+          <TextField
+            margin="normal"
+            label="New Category Name"
+            variant="outlined"
+            value={newCategoryName}
+            onChange={(e) => setNewCategoryName(e.target.value)}
+            fullWidth
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseNewCategoryDialog}>Cancel</Button>
+          <Button onClick={handleAddNewCategory} variant="contained" color="primary">
             Add
           </Button>
-        </Tooltip>
-      </DialogActions>
-    </Dialog>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };
 
