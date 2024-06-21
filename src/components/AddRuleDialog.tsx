@@ -2,15 +2,20 @@ import React, { useRef, useEffect, useState } from 'react';
 
 import { connect } from 'react-redux';
 
+import { v4 as uuidv4 } from 'uuid';
+
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Button, DialogActions, DialogContent, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Tooltip } from '@mui/material';
 import { getAppInitialized, getUnidentifiedBankTransactionById } from '../selectors';
-import { BankTransactionEntity, BankTransactionType, CategoryEntity, CheckingAccountTransactionEntity, CreditCardTransactionEntity } from '../types';
+import { BankTransactionEntity, BankTransactionType, CategoryEntity, CheckingAccountTransactionEntity, CreditCardTransactionEntity, DisregardLevel } from '../types';
 import { getCategories } from '../selectors/categoryState';
 import { cloneDeep, isNil } from 'lodash';
+import { bindActionCreators } from 'redux';
+import { addCategoryServerAndRedux } from '../controllers';
+import { TrackerDispatch } from '../models';
 
 export interface AddRuleDialogPropsFromParent {
   open: boolean;
@@ -19,9 +24,6 @@ export interface AddRuleDialogPropsFromParent {
     categoryKeyword: string,
     categoryId: string,
   ) => void;
-  onAddCategory: (
-    categoryLabel: string,
-  ) => void;
   onClose: () => void;
 }
 
@@ -29,6 +31,7 @@ export interface AddRuleDialogProps extends AddRuleDialogPropsFromParent {
   appInitialized: boolean;
   unidentifiedBankTransaction: BankTransactionEntity | null;
   categoryEntities: CategoryEntity[];
+  onAddCategory: (categoryEntity: CategoryEntity) => any;
 }
 
 const AddRuleDialog = (props: AddRuleDialogProps) => {
@@ -123,11 +126,21 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
     setNewCategoryName('');
   };
 
-  const handleAddNewCategory = () => {
-    props.onAddCategory(newCategoryName);
+  const handleAddNewCategory = (): void => {
+    const id: string = uuidv4();
+    const categoryEntity: CategoryEntity = {
+      id,
+      keyword: newCategoryName,
+      disregardLevel: DisregardLevel.None,
+    };
     setNewCategoryDialogOpen(false);
     setNewCategoryName('');
+    const addedCategoryEntity: CategoryEntity = props.onAddCategory(categoryEntity);
+    console.log('addedCategoryEntity: ', addedCategoryEntity);
+    setSelectedCategoryId(categoryEntity.id);
+
   };
+
 
   const renderUnidentifiedBankTransaction = (): JSX.Element => {
     if (isNil(props.unidentifiedBankTransaction)) {
@@ -197,6 +210,7 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
           </Tooltip>
         </DialogActions>
       </Dialog>
+
       <Dialog onClose={handleCloseNewCategoryDialog} open={newCategoryDialogOpen}>
         <DialogTitle>Add New Category</DialogTitle>
         <DialogContent>
@@ -216,6 +230,7 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
           </Button>
         </DialogActions>
       </Dialog>
+
     </>
   );
 };
@@ -228,4 +243,10 @@ function mapStateToProps(state: any, ownProps: AddRuleDialogPropsFromParent) {
   };
 }
 
-export default connect(mapStateToProps)(AddRuleDialog);
+const mapDispatchToProps = (dispatch: TrackerDispatch) => {
+  return bindActionCreators({
+    onAddCategory: addCategoryServerAndRedux,
+  }, dispatch);
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddRuleDialog);

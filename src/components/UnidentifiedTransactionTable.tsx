@@ -64,17 +64,6 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
       );
   }
 
-  const handleAddCategory = (categoryLabel: string): void => {
-    const id: string = uuidv4();
-    const categoryEntity: CategoryEntity = {
-      id,
-      keyword: categoryLabel,
-      disregardLevel: DisregardLevel.None,
-    };
-    props.onAddCategory(categoryEntity);
-  };
-
-
   const handleCloseAddRuleDialog = () => {
     setShowAddRuleDialog(false);
   };
@@ -87,7 +76,6 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
     <React.Fragment>
       <AddRuleDialog
         open={showAddRuleDialog}
-        onAddCategory={handleAddCategory}
         onAddRule={handleAddRule}
         onClose={handleCloseAddRuleDialog}
         unidentifiedBankTransactionId={unidentifiedBankTransactionId}

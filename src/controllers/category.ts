@@ -53,8 +53,11 @@ export const addCategoryServerAndRedux = (categoryEntity: CategoryEntity): Track
       path,
       addCategoryBody
     ).then((response) => {
+      console.log('addCategoryServerAndRedux');
+      console.log(response);
+      console.log(response.data);
       dispatch(addCategoryRedux(categoryEntity));
-      return Promise.resolve();
+      return Promise.resolve(response.data as CategoryEntity);
     }).catch((error) => {
       console.log('error');
       console.log(error);
