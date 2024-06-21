@@ -40,9 +40,7 @@ export const creditCardStatementStateReducer = (
 ): CreditCardStatementState => {
   switch (action.type) {
     case ADD_CREDIT_CARD_STATEMENTS: {
-      const newState = cloneDeep(state) as CreditCardStatementState;
-      newState.creditCardStatements = newState.creditCardStatements.concat(action.payload.creditCardStatements);
-      return newState;
+      return { ...state, creditCardStatements: action.payload.creditCardStatements };
     }
     default:
       return state;

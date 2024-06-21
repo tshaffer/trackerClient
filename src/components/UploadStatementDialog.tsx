@@ -8,7 +8,7 @@ import { Alert, Button, DialogActions, DialogContent } from '@mui/material';
 import { getAppInitialized } from '../selectors';
 import { isNil } from 'lodash';
 import { bindActionCreators } from 'redux';
-import { uploadFile } from '../controllers';
+import { loadCategories, loadCheckingAccountStatements, loadCreditCardStatements, uploadFile } from '../controllers';
 import { TrackerDispatch } from '../models';
 
 export interface UploadStatementDialogPropsFromParent {
@@ -19,6 +19,9 @@ export interface UploadStatementDialogPropsFromParent {
 export interface UploadStatementDialogProps extends UploadStatementDialogPropsFromParent {
   appInitialized: boolean;
   onUploadFile: (data: FormData) => any;
+  onLoadCategories: () => any;
+  onLoadCreditCardStatements: () => any;
+  onLoadCheckingAccountStatements: () => any;
 }
 
 const UploadStatementDialog = (props: UploadStatementDialogProps) => {
@@ -52,6 +55,14 @@ const UploadStatementDialog = (props: UploadStatementDialogProps) => {
           console.log(response.statusText);
           setUploadStatus('success');
 
+          props.onLoadCategories()
+          .then(() => {
+            return props.onLoadCreditCardStatements();
+          })
+          .then(() => {
+            return props.onLoadCheckingAccountStatements();
+          })
+  
         }).catch((err: any) => {
           console.log('uploadFile returned error');
           console.log(err);
@@ -106,6 +117,9 @@ function mapStateToProps(state: any) {
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
     onUploadFile: uploadFile,
+    onLoadCategories: loadCategories,
+    onLoadCreditCardStatements: loadCreditCardStatements,
+    onLoadCheckingAccountStatements: loadCheckingAccountStatements,
   }, dispatch);
 };
 

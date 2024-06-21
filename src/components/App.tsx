@@ -18,8 +18,8 @@ export interface AppProps {
   appInitialized: boolean;
   onLoadCategories: () => any;
   onLoadCategoryKeywords: () => any;
-  onCreditCardLoadStatements: () => any;
-  onCheckingAccountLoadStatements: () => any;
+  onLoadCreditCardStatements: () => any;
+  onLoadCheckingAccountStatements: () => any;
   onSetAppInitialized: () => any;
 }
 
@@ -32,10 +32,10 @@ const App = (props: AppProps) => {
           return props.onLoadCategoryKeywords();
         })
         .then(() => {
-          return props.onCreditCardLoadStatements();
+          return props.onLoadCreditCardStatements();
         })
         .then(() => {
-          return props.onCheckingAccountLoadStatements();
+          return props.onLoadCheckingAccountStatements();
         })
         .then(() => {
           console.log('invoke onSetAppInitialized');
@@ -100,8 +100,8 @@ const mapDispatchToProps = (dispatch: TrackerDispatch) => {
     onSetAppInitialized: setAppInitialized,
     onLoadCategories: loadCategories,
     onLoadCategoryKeywords: loadCategoryKeywords,
-    onCreditCardLoadStatements: loadCreditCardStatements,
-    onCheckingAccountLoadStatements: loadCheckingAccountStatements,
+    onLoadCreditCardStatements: loadCreditCardStatements,
+    onLoadCheckingAccountStatements: loadCheckingAccountStatements,
   }, dispatch);
 };
 

@@ -141,9 +141,7 @@ export const categoryStateReducer = (
       };
     }
     case ADD_CATEGORIES: {
-      const newState = cloneDeep(state) as CategoryState;
-      newState.categories = newState.categories.concat(action.payload.categories);
-      return newState;
+      return { ...state, categories: action.payload.categories };
     }
     case ADD_CATEGORY_KEYWORDS: {
       const newState = cloneDeep(state) as CategoryState;

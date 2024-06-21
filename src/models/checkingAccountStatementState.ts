@@ -40,9 +40,7 @@ export const checkingAccountStatementStateReducer = (
 ): CheckingAccountStatementState => {
   switch (action.type) {
     case ADD_CHECKING_ACCOUNT_STATEMENTS: {
-      const newState = cloneDeep(state) as CheckingAccountStatementState;
-      newState.checkingAccountStatements = newState.checkingAccountStatements.concat(action.payload.checkingAccountStatements);
-      return newState;
+      return { ...state, checkingAccountStatements: action.payload.checkingAccountStatements };
     }
     default:
       return state;
