@@ -175,7 +175,13 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
           <p>
             In some cases, you may want to override the default category assignment by specifying rules based on text patterns found in the transaction's description or existing category. When a transaction matches one of these patterns, it will be assigned the associated category you have specified.
           </p>
-          <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+          <Box
+            component="form"
+            noValidate
+            autoComplete="off"
+            onKeyDown={handleKeyDown}
+            sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '300px' }}
+          >
             {renderUnidentifiedBankTransaction()}
             <TextField
               label="Pattern"
@@ -183,19 +189,6 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
               onChange={(e) => setPattern(e.target.value)}
               fullWidth
             />
-            {/* <FormControl fullWidth>
-              <InputLabel id="category-label">Category</InputLabel>
-              <Select
-                labelId="category-label"
-                value={pattern}
-                onChange={(e) => setPattern(e.target.value as string)}
-                label="Category"
-              >
-                <MenuItem value="Beverages">Beverages</MenuItem>
-                <MenuItem value="Food">Food</MenuItem>
-                <MenuItem value="Transport">Transport</MenuItem>
-              </Select>
-            </FormControl> */}
             <div>
               <TextField
                 id="category"
@@ -220,7 +213,7 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Tooltip title="Press Enter to add the category keyword" arrow>
+          <Tooltip title="Press Enter to add the category assignment rule" arrow>
             <Button onClick={handleAddRule} autoFocus variant="contained" color="primary">
               Add
             </Button>
