@@ -24,6 +24,11 @@ interface DateRangeSpecifierProps {
 const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeSpecifierProps) => {
   const [selectedStatement, setSelectedStatement] = useState<string>('statement1');
 
+  React.useEffect(() => {
+    props.onSetStartDate(props.minMaxTransactionDates.minDate);
+    props.onSetEndDate(props.minMaxTransactionDates.maxDate);
+  }, []);
+
   const getISODateString = (date: Date): string => {
     return date.toISOString().split('T')[0];
   };
