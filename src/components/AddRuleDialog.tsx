@@ -180,7 +180,7 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
             noValidate
             autoComplete="off"
             onKeyDown={handleKeyDown}
-            sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '300px' }}
+            sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '500px' }}
           >
             {renderUnidentifiedBankTransaction()}
             <TextField
@@ -188,6 +188,10 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
               value={pattern}
               onChange={(e) => setPattern(e.target.value)}
               fullWidth
+              margin="normal"
+              variant="outlined"
+              inputRef={textFieldRef}
+
             />
             <div>
               <TextField
