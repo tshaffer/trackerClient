@@ -8,7 +8,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { Button, DialogActions, DialogContent, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Tooltip } from '@mui/material';
+import { Button, DialogActions, DialogContent, DialogContentText, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Tooltip } from '@mui/material';
 import { getAppInitialized, getUnidentifiedBankTransactionById } from '../selectors';
 import { BankTransactionEntity, BankTransactionType, CategoryEntity, CheckingAccountTransactionEntity, CreditCardTransactionEntity, DisregardLevel } from '../types';
 import { getCategories } from '../selectors/categoryState';
@@ -35,6 +35,7 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
 
   const [newCategoryDialogOpen, setNewCategoryDialogOpen] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
+  const [alertDialogOpen, setAlertDialogOpen] = useState(false);
 
   const getTransactionDetails = (bankTransactionEntity: BankTransactionEntity | null): string => {
     if (isNil(bankTransactionEntity)) {
@@ -93,6 +94,10 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
   };
 
   const handleAddRule = (): void => {
+    if (selectedCategoryId === '') {
+      setAlertDialogOpen(true);
+      return;
+    }
     if (categoryKeyword !== '') {
       props.onAddRule(categoryKeyword, selectedCategoryId);
       props.onClose();
@@ -122,6 +127,10 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
   const handleCloseNewCategoryDialog = () => {
     setNewCategoryDialogOpen(false);
     setNewCategoryName('');
+  };
+
+  const handleCloseAlertDialog = () => {
+    setAlertDialogOpen(false);
   };
 
   const handleAddNewCategory = (): void => {
@@ -228,7 +237,20 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
           </Button>
         </DialogActions>
       </Dialog>
-
+      <Dialog onClose={handleCloseAlertDialog} open={alertDialogOpen} 
+      >
+        <DialogTitle id="alert-dialog-title">
+          {'Category Required'}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Please select a category for the rule.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseAlertDialog}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
