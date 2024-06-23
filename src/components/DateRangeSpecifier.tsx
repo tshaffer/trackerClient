@@ -23,9 +23,67 @@ interface DateRangeSpecifierProps {
 const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeSpecifierProps) => {
   const [selectedStatement, setSelectedStatement] = useState<string>('statement1');
 
-  const handleDateOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    props.onSetExpenseReportDateRangeType(event.target.value as ExpenseReportDateRangeType);
+  const getISODateString = (date: Date): string => {
+    return date.toISOString().split('T')[0];
   };
+
+  const getFirstDayOfCurrentYear = (): string => {
+    const now = new Date();
+    const firstDayOfCurrentYear = new Date(now.getFullYear(), 0, 1);
+    return getISODateString(firstDayOfCurrentYear);
+  };
+  
+  const getCurrentDate = (): string => {
+    const now = new Date();
+    return getISODateString(now);
+  };
+  
+  const getFirstDayOfLastYear = (): string => {
+    const now = new Date();
+    const firstDayOfLastYear = new Date(now.getFullYear() - 1, 0, 1);
+    return getISODateString(firstDayOfLastYear);
+  };
+  
+  const getLastDayOfLastYear = (): string => {
+    const now = new Date();
+    const lastDayOfLastYear = new Date(now.getFullYear() - 1, 11, 31);
+    return getISODateString(lastDayOfLastYear);
+  };
+
+  const getStartDate = (expenseReportDateRangeType: ExpenseReportDateRangeType): string => {
+    switch (expenseReportDateRangeType) {
+      case ExpenseReportDateRangeType.All:
+        return '';
+      case ExpenseReportDateRangeType.YearToDate:
+        return getFirstDayOfCurrentYear();
+      case ExpenseReportDateRangeType.LastYear:
+        return getFirstDayOfLastYear();
+      default:
+        return props.startDate;
+    }
+  }
+
+  const getEndDate = (expenseReportDateRangeType: ExpenseReportDateRangeType): string => {
+    switch (expenseReportDateRangeType) {
+      case ExpenseReportDateRangeType.All:
+        return '';
+      case ExpenseReportDateRangeType.YearToDate:
+        return getCurrentDate();
+      case ExpenseReportDateRangeType.LastYear:
+        return getLastDayOfLastYear();
+      default:
+        return props.endDate;
+    }
+  }
+
+  const handleDateOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newExpenseReportDateRangeType = event.target.value as ExpenseReportDateRangeType;
+    props.onSetExpenseReportDateRangeType(newExpenseReportDateRangeType);
+    const newStartDate = getStartDate(newExpenseReportDateRangeType);
+    const newEndDate = getEndDate(newExpenseReportDateRangeType);
+    props.onSetStartDate(newStartDate);
+    props.onSetEndDate(newEndDate);
+  }
 
   const handleSetStartDate = (dateDayJs: Dayjs | null) => {
     if (!isNil(dateDayJs)) {

@@ -20,10 +20,7 @@ import { TrackerDispatch } from '../models';
 export interface AddRuleDialogPropsFromParent {
   open: boolean;
   unidentifiedBankTransactionId: string;
-  onAddRule: (
-    categoryKeyword: string,
-    categoryId: string,
-  ) => void;
+  onAddRule: (categoryKeyword: string, categoryId: string) => void;
   onClose: () => void;
 }
 
@@ -114,6 +111,7 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
   };
 
   function handleCategoryChange(event: React.ChangeEvent<HTMLInputElement>): void {
+    console.log('handleCategoryChange event: ', event.target.value);
     setSelectedCategoryId(event.target.value as string);
   }
 
