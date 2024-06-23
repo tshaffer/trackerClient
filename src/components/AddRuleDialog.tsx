@@ -20,7 +20,7 @@ import { TrackerDispatch } from '../models';
 export interface AddRuleDialogPropsFromParent {
   open: boolean;
   unidentifiedBankTransactionId: string;
-  onAddRule: (categoryKeyword: string, categoryId: string) => void;
+  onAddRule: (pattern: string, categoryId: string) => void;
   onClose: () => void;
 }
 
@@ -51,12 +51,12 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
 
   const { open, onClose } = props;
 
-  const [categoryKeyword, setCategoryKeyword] = React.useState(getTransactionDetails(props.unidentifiedBankTransaction));
+  const [pattern, setPattern] = React.useState(getTransactionDetails(props.unidentifiedBankTransaction));
   const [selectedCategoryId, setSelectedCategoryId] = React.useState<string>('');
   const textFieldRef = useRef(null);
 
   useEffect(() => {
-    setCategoryKeyword(getTransactionDetails(props.unidentifiedBankTransaction));
+    setPattern(getTransactionDetails(props.unidentifiedBankTransaction));
   }, [props.open, props.unidentifiedBankTransactionId, props.unidentifiedBankTransaction]);
 
   useEffect(() => {
@@ -98,8 +98,8 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
       setAlertDialogOpen(true);
       return;
     }
-    if (categoryKeyword !== '') {
-      props.onAddRule(categoryKeyword, selectedCategoryId);
+    if (pattern !== '') {
+      props.onAddRule(pattern, selectedCategoryId);
       props.onClose();
     }
   };
@@ -112,7 +112,7 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
   };
 
   const handleCategoryKeywordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCategoryKeyword(event.target.value);
+    setPattern(event.target.value);
   };
 
   function handleCategoryChange(event: React.ChangeEvent<HTMLInputElement>): void {
@@ -166,31 +166,41 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
 
   return (
     <>
-      <Dialog onClose={handleClose} open={open}>
-        <DialogTitle>Add Category Keyword</DialogTitle>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Category Assignment Rules</DialogTitle>
         <DialogContent style={{ paddingBottom: '0px' }}>
-          <Box
-            component="form"
-            noValidate
-            autoComplete="off"
-            onKeyDown={handleKeyDown}
-            sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '300px' }}
-          >
+          <p>
+            Each transaction will automatically be assigned a category based on the existing category associated with it, if available.
+          </p>
+          <p>
+            In some cases, you may want to override the default category assignment by specifying rules based on text patterns found in the transaction's description or existing category. When a transaction matches one of these patterns, it will be assigned the associated category you have specified.
+          </p>
+          <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
             {renderUnidentifiedBankTransaction()}
             <TextField
-              margin="normal"
-              label="Category Keyword"
-              variant="outlined"
-              value={categoryKeyword}
-              onChange={handleCategoryKeywordChange}
-              inputRef={textFieldRef}
+              label="Pattern"
+              value={pattern}
+              onChange={(e) => setPattern(e.target.value)}
               fullWidth
             />
+            {/* <FormControl fullWidth>
+              <InputLabel id="category-label">Category</InputLabel>
+              <Select
+                labelId="category-label"
+                value={pattern}
+                onChange={(e) => setPattern(e.target.value as string)}
+                label="Category"
+              >
+                <MenuItem value="Beverages">Beverages</MenuItem>
+                <MenuItem value="Food">Food</MenuItem>
+                <MenuItem value="Transport">Transport</MenuItem>
+              </Select>
+            </FormControl> */}
             <div>
               <TextField
                 id="category"
                 select
-                label="Select"
+                label="Category"
                 value={selectedCategoryId}
                 helperText="Select the associated category"
                 variant="standard"
@@ -237,7 +247,7 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
           </Button>
         </DialogActions>
       </Dialog>
-      <Dialog onClose={handleCloseAlertDialog} open={alertDialogOpen} 
+      <Dialog onClose={handleCloseAlertDialog} open={alertDialogOpen}
       >
         <DialogTitle id="alert-dialog-title">
           {'Category Required'}
