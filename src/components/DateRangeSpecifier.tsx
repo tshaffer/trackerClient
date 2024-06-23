@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Box, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, MenuItem, Select, InputLabel, SelectChangeEvent } from '@mui/material';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { TrackerDispatch, setEndDate, setExpenseReportDateRangeType, setStartDate } from '../models';
-import { getStartDate, getEndDate, getExpenseReportDateRangeType, getMinMaxTransactionDates } from '../selectors';
-import { ExpenseReportDateRangeType, MinMaxStartDates } from '../types';
+import { TrackerDispatch, setEndDate, setDateRangeType, setStartDate } from '../models';
+import { getStartDate, getEndDate, getDateRangeType, getMinMaxTransactionDates } from '../selectors';
+import { DateRangeType, MinMaxDates } from '../types';
 import dayjs, { Dayjs } from 'dayjs';
 import { isNil } from 'lodash';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
@@ -12,11 +12,11 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 interface DateRangeSpecifierProps {
-  expenseReportDateRangeType: ExpenseReportDateRangeType;
+  dateRangeType: DateRangeType;
   startDate: string,
   endDate: string,
-  minMaxTransactionDates: MinMaxStartDates,
-  onSetExpenseReportDateRangeType: (dateRangeType: ExpenseReportDateRangeType) => any;
+  minMaxTransactionDates: MinMaxDates,
+  onSetDateRangeType: (dateRangeType: DateRangeType) => any;
   onSetStartDate: (startDate: string) => any;
   onSetEndDate: (endDate: string) => any;
 }
@@ -33,44 +33,44 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
     const firstDayOfCurrentYear = new Date(now.getFullYear(), 0, 1);
     return getISODateString(firstDayOfCurrentYear);
   };
-  
+
   const getCurrentDate = (): string => {
     const now = new Date();
     return getISODateString(now);
   };
-  
+
   const getFirstDayOfLastYear = (): string => {
     const now = new Date();
     const firstDayOfLastYear = new Date(now.getFullYear() - 1, 0, 1);
     return getISODateString(firstDayOfLastYear);
   };
-  
+
   const getLastDayOfLastYear = (): string => {
     const now = new Date();
     const lastDayOfLastYear = new Date(now.getFullYear() - 1, 11, 31);
     return getISODateString(lastDayOfLastYear);
   };
 
-  const getStartDate = (expenseReportDateRangeType: ExpenseReportDateRangeType): string => {
-    switch (expenseReportDateRangeType) {
-      case ExpenseReportDateRangeType.All:
+  const getStartDate = (dateRangeType: DateRangeType): string => {
+    switch (dateRangeType) {
+      case DateRangeType.All:
         return props.minMaxTransactionDates.minDate;
-      case ExpenseReportDateRangeType.YearToDate:
+      case DateRangeType.YearToDate:
         return getFirstDayOfCurrentYear();
-      case ExpenseReportDateRangeType.LastYear:
+      case DateRangeType.LastYear:
         return getFirstDayOfLastYear();
       default:
         return props.startDate;
     }
   }
 
-  const getEndDate = (expenseReportDateRangeType: ExpenseReportDateRangeType): string => {
-    switch (expenseReportDateRangeType) {
-      case ExpenseReportDateRangeType.All:
+  const getEndDate = (dateRangeType: DateRangeType): string => {
+    switch (dateRangeType) {
+      case DateRangeType.All:
         return props.minMaxTransactionDates.maxDate;
-      case ExpenseReportDateRangeType.YearToDate:
+      case DateRangeType.YearToDate:
         return getCurrentDate();
-      case ExpenseReportDateRangeType.LastYear:
+      case DateRangeType.LastYear:
         return getLastDayOfLastYear();
       default:
         return props.endDate;
@@ -78,10 +78,10 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
   }
 
   const handleDateOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newExpenseReportDateRangeType = event.target.value as ExpenseReportDateRangeType;
-    props.onSetExpenseReportDateRangeType(newExpenseReportDateRangeType);
-    const newStartDate = getStartDate(newExpenseReportDateRangeType);
-    const newEndDate = getEndDate(newExpenseReportDateRangeType);
+    const newDateRangeType = event.target.value as DateRangeType;
+    props.onSetDateRangeType(newDateRangeType);
+    const newStartDate = getStartDate(newDateRangeType);
+    const newEndDate = getEndDate(newDateRangeType);
     props.onSetStartDate(newStartDate);
     props.onSetEndDate(newEndDate);
   }
@@ -114,7 +114,7 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
                 label="Start date"
                 value={dayjs(props.startDate)}
                 onChange={(newValue) => handleSetStartDate(newValue)}
-                disabled={props.expenseReportDateRangeType !== ExpenseReportDateRangeType.DateRange}
+                disabled={props.dateRangeType !== DateRangeType.DateRange}
               />
             </DemoContainer>
           </LocalizationProvider>
@@ -133,7 +133,7 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
                 label="End date"
                 value={dayjs(props.endDate)}
                 onChange={(newValue) => handleSetEndDate(newValue)}
-                disabled={props.expenseReportDateRangeType !== ExpenseReportDateRangeType.DateRange}
+                disabled={props.dateRangeType !== DateRangeType.DateRange}
               />
             </DemoContainer>
           </LocalizationProvider>
@@ -143,7 +143,7 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
   };
 
   const renderStatementSelect = (): JSX.Element => {
-    if (props.expenseReportDateRangeType !== ExpenseReportDateRangeType.Statement) {
+    if (props.dateRangeType !== DateRangeType.Statement) {
       return <React.Fragment />;
     }
     return (
@@ -168,12 +168,12 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
     <Box sx={{ width: '100%' }}>
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <FormControl component="fieldset">
-          <RadioGroup row value={props.expenseReportDateRangeType} onChange={handleDateOptionChange}>
-            <FormControlLabel value={ExpenseReportDateRangeType.All} control={<Radio />} label="All Dates" sx={{ maxHeight: '32px' }} />
-            <FormControlLabel value={ExpenseReportDateRangeType.YearToDate} control={<Radio />} label="Year to Date" sx={{ maxHeight: '32px' }} />
-            <FormControlLabel value={ExpenseReportDateRangeType.LastYear} control={<Radio />} label="Last Year" sx={{ maxHeight: '32px' }} />
-            <FormControlLabel value={ExpenseReportDateRangeType.DateRange} control={<Radio />} label="Date Range" sx={{ maxHeight: '32px' }} />
-            <FormControlLabel value={ExpenseReportDateRangeType.Statement} control={<Radio />} label="From Statement" sx={{ maxHeight: '32px' }} />
+          <RadioGroup row value={props.dateRangeType} onChange={handleDateOptionChange}>
+            <FormControlLabel value={DateRangeType.All} control={<Radio />} label="All Dates" sx={{ maxHeight: '32px' }} />
+            <FormControlLabel value={DateRangeType.YearToDate} control={<Radio />} label="Year to Date" sx={{ maxHeight: '32px' }} />
+            <FormControlLabel value={DateRangeType.LastYear} control={<Radio />} label="Last Year" sx={{ maxHeight: '32px' }} />
+            <FormControlLabel value={DateRangeType.DateRange} control={<Radio />} label="Date Range" sx={{ maxHeight: '32px' }} />
+            <FormControlLabel value={DateRangeType.Statement} control={<Radio />} label="From Statement" sx={{ maxHeight: '32px' }} />
           </RadioGroup>
         </FormControl>
         {renderStatementSelect()}
@@ -188,7 +188,7 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
 
 function mapStateToProps(state: any) {
   return {
-    expenseReportDateRangeType: getExpenseReportDateRangeType(state),
+    dateRangeType: getDateRangeType(state),
     startDate: getStartDate(state),
     endDate: getEndDate(state),
     minMaxTransactionDates: getMinMaxTransactionDates(state),
@@ -197,7 +197,7 @@ function mapStateToProps(state: any) {
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
-    onSetExpenseReportDateRangeType: setExpenseReportDateRangeType,
+    onSetDateRangeType: setDateRangeType,
     onSetStartDate: setStartDate,
     onSetEndDate: setEndDate,
   }, dispatch);

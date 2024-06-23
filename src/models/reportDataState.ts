@@ -1,4 +1,4 @@
-import { BankTransactionEntity, ExpenseReportDateRangeType, MinMaxStartDates, ReportDataState, StringToTransactionsLUT } from '../types';
+import { BankTransactionEntity, DateRangeType, MinMaxDates, ReportDataState, StringToTransactionsLUT } from '../types';
 import { TrackerModelBaseAction } from './baseAction';
 
 // ------------------------------------
@@ -7,7 +7,7 @@ import { TrackerModelBaseAction } from './baseAction';
 export const SET_STATEMENT_DATA = 'SET_STATEMENT_DATA';
 export const SET_TRANSACTIONS_BY_CATEGORY = 'SET_TRANSACTIONS_BY_CATEGORY';
 export const SET_UNIDENTIFIED_BANK_TRANSACTIONS = 'SET_UNIDENTIFIED_BANK_TRANSACTIONS';
-export const SET_EXPENSE_REPORT_DATE_RANGE_TYPE = 'SET_EXPENSE_REPORT_DATE_RANGE_TYPE';
+export const SET_DATE_RANGE_TYPE = 'SET_DATE_RANGE_TYPE';
 export const SET_START_DATE = 'SET_START_DATE';
 export const SET_END_DATE = 'SET_END_DATE';
 export const SET_MIN_MAX_TRANSACTION_DATES = 'SET_MIN_MAX_TRANSACTION_DATES';
@@ -68,17 +68,17 @@ export const setUnidentifiedBankTransactions = (
   };
 };
 
-interface SetExpenseReportDateRangeTypePayload {
-  expenseReportDateRangeType: ExpenseReportDateRangeType
+interface SetDateRangeTypePayload {
+  dateRangeType: DateRangeType
 }
 
-export const setExpenseReportDateRangeType = (
-  expenseReportDateRangeType: ExpenseReportDateRangeType
+export const setDateRangeType = (
+  dateRangeType: DateRangeType
 ): any => {
   return {
-    type: SET_EXPENSE_REPORT_DATE_RANGE_TYPE,
+    type: SET_DATE_RANGE_TYPE,
     payload: {
-      expenseReportDateRangeType,
+      dateRangeType,
     },
   };
 };
@@ -114,11 +114,11 @@ export const setEndDate = (
 };
 
 interface SetMinMaxTransactionDatesPayload {
-  minMaxTransactionDates: MinMaxStartDates;
+  minMaxTransactionDates: MinMaxDates;
 }
 
 export const setMinMaxTransactionDates = (
-  minMaxTransactionDates: MinMaxStartDates
+  minMaxTransactionDates: MinMaxDates
 ): any => {
   return {
     type: SET_MIN_MAX_TRANSACTION_DATES,
@@ -134,7 +134,7 @@ export const setMinMaxTransactionDates = (
 // ------------------------------------
 
 const initialState: ReportDataState = {
-  expenseReportDateRangeType: ExpenseReportDateRangeType.All,
+  dateRangeType: DateRangeType.All,
   startDate: new Date().toISOString().split('T')[0],
   endDate: new Date().toISOString().split('T')[0],
   transactionsByCategory: {},
@@ -145,7 +145,7 @@ const initialState: ReportDataState = {
 
 export const reportDataStateReducer = (
   state: ReportDataState = initialState,
-  action: TrackerModelBaseAction<SetStatementDataPayload & SetTransactionsByCategoryPayload & SetUnidentifiedBankTransactionsPayload & SetExpenseReportDateRangeTypePayload & SetStartDatePayload & SetEndDatePayload & SetMinMaxTransactionDatesPayload>
+  action: TrackerModelBaseAction<SetStatementDataPayload & SetTransactionsByCategoryPayload & SetUnidentifiedBankTransactionsPayload & SetDateRangeTypePayload & SetStartDatePayload & SetEndDatePayload & SetMinMaxTransactionDatesPayload>
 ): ReportDataState => {
   switch (action.type) {
     case SET_STATEMENT_DATA: {
@@ -157,8 +157,8 @@ export const reportDataStateReducer = (
     case SET_UNIDENTIFIED_BANK_TRANSACTIONS: {
       return { ...state, unidentifiedBankTransactions: action.payload.unidentifiedBankTransactions };
     }
-    case SET_EXPENSE_REPORT_DATE_RANGE_TYPE: {
-      return { ...state, expenseReportDateRangeType: action.payload.expenseReportDateRangeType };
+    case SET_DATE_RANGE_TYPE: {
+      return { ...state, dateRangeType: action.payload.dateRangeType };
     }
     case SET_START_DATE: {
       return { ...state, startDate: action.payload.startDate };

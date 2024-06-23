@@ -8,7 +8,7 @@ export enum DisregardLevel {
   All = 1,
 }
 
-export enum ExpenseReportDateRangeType {
+export enum DateRangeType {
   All = 'all',
   YearToDate = 'ytd',
   LastYear = 'lastYear',

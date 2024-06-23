@@ -1,6 +1,6 @@
 import { StringToTransactionsLUT } from "./base";
-import { BankTransactionEntity, CategoryEntity, CategoryKeywordEntity, CheckingAccountStatementEntity, CreditCardStatementEntity, MinMaxStartDates } from "./entities";
-import { ExpenseReportDateRangeType } from "./enums";
+import { BankTransactionEntity, CategoryEntity, CategoryKeywordEntity, CheckingAccountStatementEntity, CreditCardStatementEntity, MinMaxDates } from "./entities";
+import { DateRangeType } from "./enums";
 
 export interface TrackerState {
   appState: AppState;
@@ -15,13 +15,13 @@ export interface AppState {
 }
 
 export interface ReportDataState {
-  expenseReportDateRangeType: ExpenseReportDateRangeType;
+  dateRangeType: DateRangeType;
   startDate: string;
   endDate: string;
   transactionsByCategory: StringToTransactionsLUT;
   unidentifiedBankTransactions: BankTransactionEntity[];
   total: number;
-  minMaxTransactionDates: MinMaxStartDates;
+  minMaxTransactionDates: MinMaxDates;
 }
 
 export interface CategoryState {

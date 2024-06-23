@@ -5,7 +5,7 @@ import {
   BankTransactionType,
   CategorizedStatementData,
   CategorizedTransactionEntity,
-  MinMaxStartDates,
+  MinMaxDates,
   serverUrl,
   StringToTransactionsLUT,
 } from "../types";
@@ -37,13 +37,13 @@ const getMaxDate = (date1: string, date2: string): string => {
   return getISODateString(maxDate);
 };
 
-export const loadAccountMinMaxTransactionDates = (endpoint: string): Promise<MinMaxStartDates> => {
+export const loadAccountMinMaxTransactionDates = (endpoint: string): Promise<MinMaxDates> => {
 
   const path = serverUrl + apiUrlFragment + endpoint;
 
   return axios.get(path)
     .then((response: any) => {
-      const minMaxStartDates: MinMaxStartDates = response.data;
+      const minMaxStartDates: MinMaxDates = response.data;
       return Promise.resolve(minMaxStartDates);
     }).catch((error) => {
       console.log('error');
@@ -66,7 +66,7 @@ export const loadMinMaxTransactionDates = (): TrackerAnyPromiseThunkAction => {
         const minDate = getMinDate(results[0].minDate, results[1].minDate);
         const maxDate = getMaxDate(results[0].maxDate, results[0].maxDate);
 
-        const minMaxStartDates: MinMaxStartDates = {
+        const minMaxStartDates: MinMaxDates = {
           minDate,
           maxDate,
         };

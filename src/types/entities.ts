@@ -74,7 +74,7 @@ export interface CheckingAccountStatementEntity extends StatementEntity {
   atmWithdrawalCount: number;
 }
 
-export interface MinMaxStartDates {
+export interface MinMaxDates {
   minDate: string;
   maxDate: string;
 }
