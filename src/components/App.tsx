@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { SidebarMenuButton } from '../types';
-import { loadCategories, loadCategoryKeywords, loadCheckingAccountStatements, loadCreditCardStatements } from '../controllers';
+import { loadCategories, loadCategoryKeywords, loadCheckingAccountStatements, loadCreditCardStatements, loadMinMaxTransactionDates } from '../controllers';
 import { TrackerDispatch, setAppInitialized } from '../models';
 import { getAppInitialized } from '../selectors';
 
@@ -20,6 +20,7 @@ export interface AppProps {
   onLoadCategoryKeywords: () => any;
   onLoadCreditCardStatements: () => any;
   onLoadCheckingAccountStatements: () => any;
+  onLoadMinMaxTransactionDates: () => any;
   onSetAppInitialized: () => any;
 }
 
@@ -36,6 +37,9 @@ const App = (props: AppProps) => {
         })
         .then(() => {
           return props.onLoadCheckingAccountStatements();
+        })
+        .then(() => {
+          return props.onLoadMinMaxTransactionDates();
         })
         .then(() => {
           console.log('invoke onSetAppInitialized');
@@ -102,6 +106,7 @@ const mapDispatchToProps = (dispatch: TrackerDispatch) => {
     onLoadCategoryKeywords: loadCategoryKeywords,
     onLoadCreditCardStatements: loadCreditCardStatements,
     onLoadCheckingAccountStatements: loadCheckingAccountStatements,
+    onLoadMinMaxTransactionDates: loadMinMaxTransactionDates
   }, dispatch);
 };
 

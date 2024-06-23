@@ -1,4 +1,4 @@
-import { BankTransactionEntity, ExpenseReportDateRangeType, ReportDataState, StringToTransactionsLUT } from '../types';
+import { BankTransactionEntity, ExpenseReportDateRangeType, MinMaxStartDates, ReportDataState, StringToTransactionsLUT } from '../types';
 import { TrackerModelBaseAction } from './baseAction';
 
 // ------------------------------------
@@ -10,6 +10,7 @@ export const SET_UNIDENTIFIED_BANK_TRANSACTIONS = 'SET_UNIDENTIFIED_BANK_TRANSAC
 export const SET_EXPENSE_REPORT_DATE_RANGE_TYPE = 'SET_EXPENSE_REPORT_DATE_RANGE_TYPE';
 export const SET_START_DATE = 'SET_START_DATE';
 export const SET_END_DATE = 'SET_END_DATE';
+export const SET_MIN_MAX_TRANSACTION_DATES = 'SET_MIN_MAX_TRANSACTION_DATES';
 
 // ------------------------------------
 // Actions
@@ -112,6 +113,22 @@ export const setEndDate = (
   };
 };
 
+interface SetMinMaxTransactionDatesPayload {
+  minMaxTransactionDates: MinMaxStartDates;
+}
+
+export const setMinMaxTransactionDates = (
+  minMaxTransactionDates: MinMaxStartDates
+): any => {
+  return {
+    type: SET_MIN_MAX_TRANSACTION_DATES,
+    payload: {
+      minMaxTransactionDates
+    }
+  };
+};
+
+
 // ------------------------------------
 // Reducer
 // ------------------------------------
@@ -123,11 +140,12 @@ const initialState: ReportDataState = {
   transactionsByCategory: {},
   unidentifiedBankTransactions: [],
   total: 0,
+  minMaxTransactionDates: { minDate: '', maxDate: '' },
 };
 
 export const reportDataStateReducer = (
   state: ReportDataState = initialState,
-  action: TrackerModelBaseAction<SetStatementDataPayload & SetTransactionsByCategoryPayload & SetUnidentifiedBankTransactionsPayload & SetExpenseReportDateRangeTypePayload & SetStartDatePayload & SetEndDatePayload>
+  action: TrackerModelBaseAction<SetStatementDataPayload & SetTransactionsByCategoryPayload & SetUnidentifiedBankTransactionsPayload & SetExpenseReportDateRangeTypePayload & SetStartDatePayload & SetEndDatePayload & SetMinMaxTransactionDatesPayload>
 ): ReportDataState => {
   switch (action.type) {
     case SET_STATEMENT_DATA: {
@@ -147,6 +165,9 @@ export const reportDataStateReducer = (
     }
     case SET_END_DATE: {
       return { ...state, endDate: action.payload.endDate };
+    }
+    case SET_MIN_MAX_TRANSACTION_DATES: {
+      return { ...state, minMaxTransactionDates: action.payload.minMaxTransactionDates };
     }
     default:
       return state;

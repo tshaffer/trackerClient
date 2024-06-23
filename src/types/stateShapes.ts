@@ -1,5 +1,5 @@
 import { StringToTransactionsLUT } from "./base";
-import { BankTransactionEntity, CategoryEntity, CategoryKeywordEntity, CheckingAccountStatementEntity, CreditCardStatementEntity } from "./entities";
+import { BankTransactionEntity, CategoryEntity, CategoryKeywordEntity, CheckingAccountStatementEntity, CreditCardStatementEntity, MinMaxStartDates } from "./entities";
 import { ExpenseReportDateRangeType } from "./enums";
 
 export interface TrackerState {
@@ -21,6 +21,7 @@ export interface ReportDataState {
   transactionsByCategory: StringToTransactionsLUT;
   unidentifiedBankTransactions: BankTransactionEntity[];
   total: number;
+  minMaxTransactionDates: MinMaxStartDates;
 }
 
 export interface CategoryState {
