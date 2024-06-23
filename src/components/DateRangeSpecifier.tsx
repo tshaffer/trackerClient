@@ -3,8 +3,8 @@ import { Box, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, MenuI
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { TrackerDispatch, setEndDate, setExpenseReportDateRangeType, setStartDate } from '../models';
-import { getStartDate, getEndDate, getExpenseReportDateRangeType } from '../selectors';
-import { ExpenseReportDateRangeType } from '../types';
+import { getStartDate, getEndDate, getExpenseReportDateRangeType, getMinMaxTransactionDates } from '../selectors';
+import { ExpenseReportDateRangeType, MinMaxStartDates } from '../types';
 import dayjs, { Dayjs } from 'dayjs';
 import { isNil } from 'lodash';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
@@ -15,6 +15,7 @@ interface DateRangeSpecifierProps {
   expenseReportDateRangeType: ExpenseReportDateRangeType;
   startDate: string,
   endDate: string,
+  minMaxTransactionDates: MinMaxStartDates,
   onSetExpenseReportDateRangeType: (dateRangeType: ExpenseReportDateRangeType) => any;
   onSetStartDate: (startDate: string) => any;
   onSetEndDate: (endDate: string) => any;
@@ -53,7 +54,7 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
   const getStartDate = (expenseReportDateRangeType: ExpenseReportDateRangeType): string => {
     switch (expenseReportDateRangeType) {
       case ExpenseReportDateRangeType.All:
-        return '';
+        return props.minMaxTransactionDates.minDate;
       case ExpenseReportDateRangeType.YearToDate:
         return getFirstDayOfCurrentYear();
       case ExpenseReportDateRangeType.LastYear:
@@ -66,7 +67,7 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
   const getEndDate = (expenseReportDateRangeType: ExpenseReportDateRangeType): string => {
     switch (expenseReportDateRangeType) {
       case ExpenseReportDateRangeType.All:
-        return '';
+        return props.minMaxTransactionDates.maxDate;
       case ExpenseReportDateRangeType.YearToDate:
         return getCurrentDate();
       case ExpenseReportDateRangeType.LastYear:
@@ -190,6 +191,7 @@ function mapStateToProps(state: any) {
     expenseReportDateRangeType: getExpenseReportDateRangeType(state),
     startDate: getStartDate(state),
     endDate: getEndDate(state),
+    minMaxTransactionDates: getMinMaxTransactionDates(state),
   };
 }
 
