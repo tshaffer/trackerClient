@@ -40,7 +40,6 @@ export const loadCategoryKeywords = (): TrackerAnyPromiseThunkAction => {
   };
 };
 
-
 export const addCategoryServerAndRedux = (categoryEntity: CategoryEntity): TrackerAnyPromiseThunkAction => {
 
   return (dispatch: TrackerDispatch, getState: any) => {

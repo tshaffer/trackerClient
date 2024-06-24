@@ -13,9 +13,11 @@ import CategoryKeywordsTable from './CategoryKeywordsTable';
 import CategoriesContent from './CategoriesContent';
 import ReportsContent from './ReportsContent';
 import StatementsContent from './StatementsContent';
+import { initializeServer } from '../controllers/app';
 
 export interface AppProps {
   appInitialized: boolean;
+  onInitializeServer: () => any;
   onLoadCategories: () => any;
   onLoadCategoryKeywords: () => any;
   onLoadCreditCardStatements: () => any;
@@ -28,7 +30,10 @@ const App = (props: AppProps) => {
 
   React.useEffect(() => {
     if (!props.appInitialized) {
-      props.onLoadCategories()
+      props.onInitializeServer()
+        .then(() => {
+          return props.onLoadCategories();
+        })
         .then(() => {
           return props.onLoadCategoryKeywords();
         })
@@ -102,6 +107,7 @@ function mapStateToProps(state: any) {
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
     onSetAppInitialized: setAppInitialized,
+    onInitializeServer: initializeServer,
     onLoadCategories: loadCategories,
     onLoadCategoryKeywords: loadCategoryKeywords,
     onLoadCreditCardStatements: loadCreditCardStatements,
