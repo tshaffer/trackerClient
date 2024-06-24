@@ -1,4 +1,4 @@
-import { BankTransactionEntity, DateRangeType, MinMaxDates, ReportDataState, StringToTransactionsLUT, TrackerState } from "../types";
+import { BankTransaction, DateRangeType, MinMaxDates, ReportDataState, StringToTransactionsLUT, TrackerState } from "../types";
 
 export const getReportDataState = (state: TrackerState): ReportDataState => {
   return state.reportDataState;
@@ -20,12 +20,12 @@ export const getTransactionsByCategory = (state: TrackerState): StringToTransact
   return state.reportDataState.transactionsByCategory;
 };
 
-export const getUnidentifiedBankTransactions = (state: TrackerState): BankTransactionEntity[] => {
+export const getUnidentifiedBankTransactions = (state: TrackerState): BankTransaction[] => {
   return state.reportDataState.unidentifiedBankTransactions;
 };
 
-export const getUnidentifiedBankTransactionById = (state: TrackerState, unidentifiedBankTransactionId: string): BankTransactionEntity | null => {
-  return state.reportDataState.unidentifiedBankTransactions.find((unidentifiedBankTransaction: BankTransactionEntity) => unidentifiedBankTransaction.id === unidentifiedBankTransactionId) || null;
+export const getUnidentifiedBankTransactionById = (state: TrackerState, unidentifiedBankTransactionId: string): BankTransaction | null => {
+  return state.reportDataState.unidentifiedBankTransactions.find((unidentifiedBankTransaction: BankTransaction) => unidentifiedBankTransaction.id === unidentifiedBankTransactionId) || null;
 };
 
 export const getDateRangeType = (state: TrackerState): DateRangeType => {

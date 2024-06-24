@@ -1,6 +1,6 @@
-import { CreditCardStatementEntity, TrackerState } from '../types';
+import { CreditCardStatement, TrackerState } from '../types';
 
-export const getCreditCardStatements = (state: TrackerState): CreditCardStatementEntity[] => {
+export const getCreditCardStatements = (state: TrackerState): CreditCardStatement[] => {
   return state.creditCardStatementState.creditCardStatements;
 };
 

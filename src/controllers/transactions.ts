@@ -1,10 +1,9 @@
 import axios from "axios";
 import {
   apiUrlFragment,
-  BankTransactionEntity,
-  BankTransactionType,
+  BankTransaction,
   CategorizedStatementData,
-  CategorizedTransactionEntity,
+  CategorizedTransaction,
   MinMaxDates,
   serverUrl,
   StringToTransactionsLUT,
@@ -91,11 +90,11 @@ export const search = (startDate: string, endDate: string): TrackerVoidPromiseTh
     return axios.get(path)
       .then((transactionsResponse: any) => {
         const categorizedStatementData: CategorizedStatementData = (transactionsResponse as any).data;
-        const transactions: CategorizedTransactionEntity[] = categorizedStatementData.transactions;
-        const unidentifiedBankTransactions: BankTransactionEntity[] = categorizedStatementData.unidentifiedBankTransactions;
+        const transactions: CategorizedTransaction[] = categorizedStatementData.transactions;
+        const unidentifiedBankTransactions: BankTransaction[] = categorizedStatementData.unidentifiedBankTransactions;
         const transactionsByCategory: StringToTransactionsLUT = {};
-        transactions.forEach((transaction: CategorizedTransactionEntity) => {
-          const category: string = transaction.categoryEntity.keyword;
+        transactions.forEach((transaction: CategorizedTransaction) => {
+          const category: string = transaction.category.name;
           if (!transactionsByCategory[category]) {
             transactionsByCategory[category] = [];
           }

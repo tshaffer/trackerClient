@@ -1,71 +1,71 @@
 import { cloneDeep } from 'lodash';
-import { CategoryEntity, CategoryKeywordEntity, CategoryState } from '../types';
+import { Category, CategoryAssignmentRule, CategoryState } from '../types';
 import { TrackerModelBaseAction } from './baseAction';
 
 // ------------------------------------
 // Constants
 // ------------------------------------
 export const ADD_CATEGORY = 'ADD_CATEGORY';
-export const ADD_CATEGORY_KEYWORD = 'ADD_CATEGORY_KEYWORD';
+export const ADD_CATEGORY_ASSIGNMENT_RULE = 'ADD_CATEGORY_ASSIGNMENT_RULE';
 export const ADD_CATEGORIES = 'ADD_CATEGORIES';
-export const ADD_CATEGORY_KEYWORDS = 'ADD_CATEGORY_KEYWORDS';
-export const UPDATE_CATEGORY_KEYWORD = 'UPDATE_CATEGORY_KEYWORD';
-export const DELETE_CATEGORY_KEYWORD = 'DELETE_CATEGORY_KEYWORD';
+export const ADD_CATEGORY_ASSIGNMENT_RULES = 'ADD_CATEGORY_ASSIGNMENT_RULES';
+export const UPDATE_CATEGORY_ASSIGNMENT_RULE = 'UPDATE_CATEGORY_ASSIGNMENT_RULE';
+export const DELETE_CATEGORY_ASSIGNMENT_RULE = 'DELETE_CATEGORY_ASSIGNMENT_RULE';
 
 // ------------------------------------
 // Actions
 // ------------------------------------
 
 interface AddCategoryPayload {
-  categoryEntity: CategoryEntity,
+  category: Category,
 }
 
-export const addCategoryRedux = (categoryEntity: CategoryEntity): any => {
+export const addCategoryRedux = (category: Category): any => {
   return {
     type: ADD_CATEGORY,
     payload: {
-      categoryEntity
+      category
     }
   };
 };
 
-interface AddCategoryKeywordPayload {
-  categoryKeywordEntity: CategoryKeywordEntity,
+interface AddCategoryAssignmentRulePayload {
+  categoryAssignmentRule: CategoryAssignmentRule,
 }
 
-export const addCategoryKeywordRedux = (categoryKeywordEntity: CategoryKeywordEntity): any => {
+export const addCategoryAssignmentRuleRedux = (categoryAssignmentRule: CategoryAssignmentRule): any => {
   return {
-    type: ADD_CATEGORY_KEYWORD,
+    type: ADD_CATEGORY_ASSIGNMENT_RULE,
     payload: {
-      categoryKeywordEntity
+      categoryAssignmentRule
     }
   };
 }
 
-export const updateCategoryKeywordRedux = (categoryKeywordEntity: CategoryKeywordEntity): any => {
+export const updateCategoryAssignmentRuleRedux = (categoryAssignmentRule: CategoryAssignmentRule): any => {
   return {
-    type: UPDATE_CATEGORY_KEYWORD,
+    type: UPDATE_CATEGORY_ASSIGNMENT_RULE,
     payload: {
-      categoryKeywordEntity
+      categoryAssignmentRule
     }
   };
 }
 
-export const deleteCategoryKeywordRedux = (categoryKeywordEntity: CategoryKeywordEntity): any => {
+export const deleteCategoryAssignmentRuleRedux = (categoryAssignmentRule: CategoryAssignmentRule): any => {
   return {
-    type: DELETE_CATEGORY_KEYWORD,
+    type: DELETE_CATEGORY_ASSIGNMENT_RULE,
     payload: {
-      categoryKeywordEntity
+      categoryAssignmentRule
     }
   };
 }
 
 interface AddCategoriesPayload {
-  categories: CategoryEntity[];
+  categories: Category[];
 }
 
 export const addCategories = (
-  categories: CategoryEntity[],
+  categories: Category[],
 ): any => {
   return {
     type: ADD_CATEGORIES,
@@ -75,17 +75,17 @@ export const addCategories = (
   };
 };
 
-interface AddCategoryKeywordsPayload {
-  categoryKeywordEntities: CategoryKeywordEntity[];
+interface AddCategoryAssignmentRulesPayload {
+  categoryAssignmentRules: CategoryAssignmentRule[];
 }
 
-export const addCategoryKeywords = (
-  categoryKeywordEntities: CategoryKeywordEntity[],
+export const addCategoryAssignmentRules = (
+  categoryAssignmentRules: CategoryAssignmentRule[],
 ): any => {
   return {
-    type: ADD_CATEGORY_KEYWORDS,
+    type: ADD_CATEGORY_ASSIGNMENT_RULES,
     payload: {
-      categoryKeywordEntities
+      categoryAssignmentRules
     }
   };
 };
@@ -96,12 +96,12 @@ export const addCategoryKeywords = (
 
 const initialState: CategoryState = {
   categories: [],
-  categoryKeywords: [],
+  categoryAssignmentRules: [],
 };
 
 export const categoryStateReducer = (
   state: CategoryState = initialState,
-  action: TrackerModelBaseAction<AddCategoryPayload & AddCategoryKeywordPayload & AddCategoriesPayload & AddCategoryKeywordsPayload>
+  action: TrackerModelBaseAction<AddCategoryPayload & AddCategoryAssignmentRulePayload & AddCategoriesPayload & AddCategoryAssignmentRulesPayload>
 ): CategoryState => {
   switch (action.type) {
     case ADD_CATEGORY: {
@@ -109,33 +109,33 @@ export const categoryStateReducer = (
         ...state,
         categories: [
           ...state.categories,
-          action.payload.categoryEntity,
+          action.payload.category,
         ],
       };
     }
-    case ADD_CATEGORY_KEYWORD: {
+    case ADD_CATEGORY_ASSIGNMENT_RULE: {
       return {
         ...state,
-        categoryKeywords: [
-          ...state.categoryKeywords,
-          action.payload.categoryKeywordEntity,
+        categoryAssignmentRules: [
+          ...state.categoryAssignmentRules,
+          action.payload.categoryAssignmentRule,
         ],
       };
     }
-    case UPDATE_CATEGORY_KEYWORD: {
-      const updatedKeyword = action.payload.categoryKeywordEntity;
+    case UPDATE_CATEGORY_ASSIGNMENT_RULE: {
+      const updatedKeyword = action.payload.categoryAssignmentRule;
       return {
         ...state,
-        categoryKeywords: state.categoryKeywords.map((keyword) =>
+        categoryAssignmentRules: state.categoryAssignmentRules.map((keyword) =>
           keyword.id === updatedKeyword.id ? updatedKeyword : keyword
         ),
       };
     }
-    case DELETE_CATEGORY_KEYWORD: {
-      const deletedKeyword = action.payload.categoryKeywordEntity;
+    case DELETE_CATEGORY_ASSIGNMENT_RULE: {
+      const deletedKeyword = action.payload.categoryAssignmentRule;
       return {
         ...state,
-        categoryKeywords: state.categoryKeywords.filter((keyword) =>
+        categoryAssignmentRules: state.categoryAssignmentRules.filter((keyword) =>
           keyword.id !== deletedKeyword.id
         ),
       };
@@ -143,9 +143,9 @@ export const categoryStateReducer = (
     case ADD_CATEGORIES: {
       return { ...state, categories: action.payload.categories };
     }
-    case ADD_CATEGORY_KEYWORDS: {
+    case ADD_CATEGORY_ASSIGNMENT_RULES: {
       const newState = cloneDeep(state) as CategoryState;
-      newState.categoryKeywords = newState.categoryKeywords.concat(action.payload.categoryKeywordEntities);
+      newState.categoryAssignmentRules = newState.categoryAssignmentRules.concat(action.payload.categoryAssignmentRules);
       return newState;
     }
     default:

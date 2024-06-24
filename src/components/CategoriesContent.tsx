@@ -8,13 +8,13 @@ import { Box, Typography, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
 import { TrackerDispatch } from '../models';
-import { CategoryEntity, DisregardLevel } from '../types';
+import { Category, DisregardLevel } from '../types';
 import AddCategoryDialog from './AddCategoryDialog';
 import CategoriesTable from './CategoriesTable';
 import { addCategoryServerAndRedux } from '../controllers';
 
 interface CategoriesContentProps {
-  onAddCategory: (categoryEntity: CategoryEntity) => any;
+  onAddCategory: (category: Category) => any;
 }
 
 const CategoriesContent: React.FC<CategoriesContentProps> = (props: CategoriesContentProps) => {
@@ -23,12 +23,12 @@ const CategoriesContent: React.FC<CategoriesContentProps> = (props: CategoriesCo
 
   const handleAddCategory = (categoryLabel: string): void => {
     const id: string = uuidv4();
-    const categoryEntity: CategoryEntity = {
+    const category: Category = {
       id,
-      keyword: categoryLabel,
+      name: categoryLabel,
       disregardLevel: DisregardLevel.None,
     };
-    props.onAddCategory(categoryEntity);
+    props.onAddCategory(category);
   };
 
   const handleCloseAddCategoryDialog = () => {

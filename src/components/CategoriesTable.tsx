@@ -1,7 +1,7 @@
 import React from 'react';
 
 import '../styles/Tracker.css';
-import { CategoryEntity } from '../types';
+import { Category } from '../types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { TrackerDispatch } from '../models';
@@ -10,7 +10,7 @@ import { Box } from '@mui/material';
 
 interface CategoriesTableProps {
   appInitialized: boolean;
-  categoryEntities: CategoryEntity[];
+  categories: Category[];
 }
 
 const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableProps) => {
@@ -19,9 +19,9 @@ const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableP
     return null;
   }
 
-  const categoryEntities: CategoryEntity[] = props.categoryEntities
-    .map((categoryEntity: CategoryEntity) => categoryEntity)
-    .sort((a, b) => (a.keyword).localeCompare(b.keyword));
+  const categories: Category[] = props.categories
+    .map((category: Category) => category)
+    .sort((a, b) => (a.name).localeCompare(b.name));
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -33,11 +33,11 @@ const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableP
           </div>
         </div>
         <div className="catalog-table-body">
-          {categoryEntities.map((categoryEntity: CategoryEntity) => (
-            <React.Fragment key={categoryEntity.id}>
+          {categories.map((category: Category) => (
+            <React.Fragment key={category.id}>
               <div className="table-row">
                 <div className="table-cell"></div>
-                <div className="table-cell">{categoryEntity.keyword}</div>
+                <div className="table-cell">{category.name}</div>
               </div>
             </React.Fragment>
           ))}
@@ -51,7 +51,7 @@ const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableP
 function mapStateToProps(state: any) {
   return {
     appInitialized: getAppInitialized(state),
-    categoryEntities: getCategories(state),
+    categories: getCategories(state),
   }
 }
 

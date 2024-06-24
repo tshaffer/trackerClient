@@ -5,21 +5,21 @@ import { bindActionCreators } from 'redux';
 import { v4 as uuidv4 } from 'uuid';
 
 import '../styles/Tracker.css';
-import { BankTransactionEntity, BankTransactionType, CategoryEntity, CategoryKeywordEntity, CheckingAccountTransactionEntity, CreditCardTransactionEntity, DisregardLevel } from '../types';
+import { BankTransaction, BankTransactionType, Category, CategoryAssignmentRule, CheckingAccountTransaction, CreditCardTransaction, DisregardLevel } from '../types';
 import { formatCurrency, formatDate } from '../utilities';
 import { IconButton } from '@mui/material';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import AddRuleDialog from './AddRuleDialog';
-import { addCategoryKeywordServerAndRedux, addCategoryServerAndRedux, search } from '../controllers';
+import AddRuleDialog from './AddCategoryAssignmentRuleDialog';
+import { addCategoryAssignmentRuleServerAndRedux, addCategoryServerAndRedux, search } from '../controllers';
 import { TrackerDispatch } from '../models';
 import { getStartDate, getEndDate, getUnidentifiedBankTransactions } from '../selectors';
 
 interface NotIdentifiedTransactionTableProps {
   startDate: string;
   endDate: string;
-  unidentifiedBankTransactions: BankTransactionEntity[];
-  onAddCategory: (categoryEntity: CategoryEntity) => any;
-  onAddCategoryKeyword: (categoryKeywordEntity: CategoryKeywordEntity) => any;
+  unidentifiedBankTransactions: BankTransaction[];
+  onAddCategory: (category: Category) => any;
+  onAddCategoryAssignmentRule: (categoryAssignmentRule: CategoryAssignmentRule) => any;
   onSearch: (startDate: string, endDate: string) => any;
 }
 
@@ -36,28 +36,28 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
     }
   }
 
-  const getTransactionDetails = (bankTransactionEntity: BankTransactionEntity): string => {
-    if (bankTransactionEntity.bankTransactionType === BankTransactionType.CreditCard) {
-      return (bankTransactionEntity as CreditCardTransactionEntity).description;
+  const getTransactionDetails = (bankTransaction: BankTransaction): string => {
+    if (bankTransaction.bankTransactionType === BankTransactionType.CreditCard) {
+      return (bankTransaction as CreditCardTransaction).description;
     } else {
-      return (bankTransactionEntity as CheckingAccountTransactionEntity).name;
+      return (bankTransaction as CheckingAccountTransaction).name;
     }
   }
 
-  const handleButtonClick = (unidentifiedBankTransaction: BankTransactionEntity) => {
+  const handleButtonClick = (unidentifiedBankTransaction: BankTransaction) => {
     setUnidentifiedBankTransactionId(unidentifiedBankTransaction.id);
     setShowAddRuleDialog(true);
   };
 
-  const handleAddRule = (categoryKeyword: string, categoryId: string): void => {
+  const handleAddRule = (pattern: string, categoryId: string): void => {
     const id: string = uuidv4();
-    const categoryKeywordEntity: CategoryKeywordEntity = {
+    const categoryAssignmentRule: CategoryAssignmentRule = {
       id,
-      keyword: categoryKeyword,
+      pattern,
       categoryId
     };
-    console.log('handleAddRule: ', categoryKeyword, categoryKeywordEntity);
-    props.onAddCategoryKeyword(categoryKeywordEntity)
+    console.log('handleAddRule: ', categoryAssignmentRule, categoryAssignmentRule);
+    props.onAddCategoryAssignmentRule(categoryAssignmentRule)
       .then(() => {
         props.onSearch(props.startDate, props.endDate);
       }
@@ -92,7 +92,7 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
           </div>
         </div>
         <div className="unidentified-report-table-body">
-          {props.unidentifiedBankTransactions.map((unidentifiedBankTransaction: BankTransactionEntity) => (
+          {props.unidentifiedBankTransactions.map((unidentifiedBankTransaction: BankTransaction) => (
             <div className="table-row" key={unidentifiedBankTransaction.id}>
               <div className="table-cell">
                 <IconButton onClick={() => handleButtonClick(unidentifiedBankTransaction)}>
@@ -122,7 +122,7 @@ function mapStateToProps(state: any) {
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
     onAddCategory: addCategoryServerAndRedux,
-    onAddCategoryKeyword: addCategoryKeywordServerAndRedux,
+    onAddCategoryAssignmentRule: addCategoryAssignmentRuleServerAndRedux,
     onSearch: search,
   }, dispatch);
 };

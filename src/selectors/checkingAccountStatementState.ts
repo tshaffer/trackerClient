@@ -1,6 +1,6 @@
-import { CheckingAccountStatementEntity, TrackerState } from '../types';
+import { CheckingAccountStatement, TrackerState } from '../types';
 
-export const getCheckingAccountStatements = (state: TrackerState): CheckingAccountStatementEntity[] => {
+export const getCheckingAccountStatements = (state: TrackerState): CheckingAccountStatement[] => {
   return state.checkingAccountStatementState.checkingAccountStatements;
 };
 

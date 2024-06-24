@@ -4,7 +4,7 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
 import '../styles/Tracker.css';
-import { BankTransactionEntity, BankTransactionType, CategorizedTransactionEntity, CategoryExpensesData, CheckingAccountTransactionEntity, CreditCardTransactionEntity, StringToTransactionsLUT } from '../types';
+import { BankTransaction, BankTransactionType, CategorizedTransaction, CategoryExpensesData, CheckingAccountTransaction, CreditCardTransaction, StringToTransactionsLUT } from '../types';
 import { formatCurrency, formatPercentage, formatDate, expensesPerMonth, roundTo } from '../utilities';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -19,7 +19,7 @@ interface SpendingReportTableProps {
 }
 
 const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: SpendingReportTableProps) => {
-  
+
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
   const sortCategoriesByTotalExpenses = (categoryExpenses: CategoryExpensesData[]): CategoryExpensesData[] => {
@@ -34,14 +34,14 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
     });
   };
 
-  const getTransactionDetails = (bankTransactionEntity: BankTransactionEntity): string => {
-    if (bankTransactionEntity.bankTransactionType === BankTransactionType.CreditCard) {
-      return (bankTransactionEntity as CreditCardTransactionEntity).description;
+  const getTransactionDetails = (bankTransaction: BankTransaction): string => {
+    if (bankTransaction.bankTransactionType === BankTransactionType.CreditCard) {
+      return (bankTransaction as CreditCardTransaction).description;
     } else {
-      return (bankTransactionEntity as CheckingAccountTransactionEntity).name;
+      return (bankTransaction as CheckingAccountTransaction).name;
     }
   }
-  
+
   const getRows = (): CategoryExpensesData[] => {
 
     const rows: CategoryExpensesData[] = [];
@@ -50,8 +50,8 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
 
     for (const categoryName in props.transactionsByCategory) {
       if (Object.prototype.hasOwnProperty.call(props.transactionsByCategory, categoryName)) {
-        const transactions: CategorizedTransactionEntity[] = props.transactionsByCategory[categoryName];
-        const totalExpenses = -1 * roundTo((transactions.reduce((sum, transaction) => sum + transaction.bankTransactionEntity.amount, 0)), 2);
+        const transactions: CategorizedTransaction[] = props.transactionsByCategory[categoryName];
+        const totalExpenses = -1 * roundTo((transactions.reduce((sum, transaction) => sum + transaction.bankTransaction.amount, 0)), 2);
 
         const categoryRow: CategoryExpensesData = {
           id: categoryRowIndex.toString(),
@@ -97,55 +97,55 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
       <h4>Total Amount: {formatCurrency(totalAmount)}</h4>
       <h4>Per Month: {expensesPerMonth(totalAmount, props.startDate, props.endDate)}</h4>
       <div className="table-container">
-      <div className="table-header">
-        <div className="table-row">
-          <div className="table-cell"></div>
-          <div className="table-cell">Category</div>
-          <div className="table-cell">Transaction Count</div>
-          <div className="table-cell">Total Amount</div>
-          <div className="table-cell">Percentage of Total</div>
+        <div className="table-header">
+          <div className="table-row">
+            <div className="table-cell"></div>
+            <div className="table-cell">Category</div>
+            <div className="table-cell">Transaction Count</div>
+            <div className="table-cell">Total Amount</div>
+            <div className="table-cell">Percentage of Total</div>
+          </div>
         </div>
-      </div>
-      <div className="spending-report-table-body">
-        {sortedRows.map((categoryExpenses: CategoryExpensesData) => (
-          <React.Fragment key={categoryExpenses.id}>
-            <div className="table-row">
-              <div className="table-cell">
-                <IconButton onClick={() => handleButtonClick(categoryExpenses.id)}>
-                  {selectedRowId === categoryExpenses.id ? <RemoveIcon /> : <AddIcon />}
-                </IconButton>
+        <div className="spending-report-table-body">
+          {sortedRows.map((categoryExpenses: CategoryExpensesData) => (
+            <React.Fragment key={categoryExpenses.id}>
+              <div className="table-row">
+                <div className="table-cell">
+                  <IconButton onClick={() => handleButtonClick(categoryExpenses.id)}>
+                    {selectedRowId === categoryExpenses.id ? <RemoveIcon /> : <AddIcon />}
+                  </IconButton>
+                </div>
+                <div className="table-cell">{categoryExpenses.categoryName}</div>
+                <div className="table-cell">{categoryExpenses.transactionCount}</div>
+                <div className="table-cell">{formatCurrency(categoryExpenses.totalExpenses)}</div>
+                <div className="table-cell">{formatPercentage(categoryExpenses.percentageOfTotal)}</div>
               </div>
-              <div className="table-cell">{categoryExpenses.categoryName}</div>
-              <div className="table-cell">{categoryExpenses.transactionCount}</div>
-              <div className="table-cell">{formatCurrency(categoryExpenses.totalExpenses)}</div>
-              <div className="table-cell">{formatPercentage(categoryExpenses.percentageOfTotal)}</div>
-            </div>
-            {selectedRowId === categoryExpenses.id && (
-              <div className="details-table-container">
-                <div className="table-header">
-                  <div className="table-row">
-                    <div className="table-cell"></div>
-                    <div className="table-cell">Date</div>
-                    <div className="table-cell">Amount</div>
-                    <div className="table-cell">Description</div>
+              {selectedRowId === categoryExpenses.id && (
+                <div className="details-table-container">
+                  <div className="table-header">
+                    <div className="table-row">
+                      <div className="table-cell"></div>
+                      <div className="table-cell">Date</div>
+                      <div className="table-cell">Amount</div>
+                      <div className="table-cell">Description</div>
+                    </div>
+                  </div>
+                  <div className="table-body">
+                    {categoryExpenses.transactions.map((transaction: CategorizedTransaction) => (
+                      <div className="table-row" key={transaction.bankTransaction.id}>
+                        <div className="table-cell"></div>
+                        <div className="table-cell">{formatDate(transaction.bankTransaction.transactionDate)}</div>
+                        <div className="table-cell">{formatCurrency(-transaction.bankTransaction.amount)}</div>
+                        <div className="table-cell">{getTransactionDetails(transaction.bankTransaction)}</div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-                <div className="table-body">
-                  {categoryExpenses.transactions.map((transaction: CategorizedTransactionEntity) => (
-                    <div className="table-row" key={transaction.bankTransactionEntity.id}>
-                      <div className="table-cell"></div>
-                      <div className="table-cell">{formatDate(transaction.bankTransactionEntity.transactionDate)}</div>
-                      <div className="table-cell">{formatCurrency(-transaction.bankTransactionEntity.amount)}</div>
-                      <div className="table-cell">{getTransactionDetails(transaction.bankTransactionEntity)}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </React.Fragment>
-        ))}
+              )}
+            </React.Fragment>
+          ))}
+        </div>
       </div>
-    </div>
     </React.Fragment >
   );
 };

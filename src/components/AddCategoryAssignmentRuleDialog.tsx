@@ -10,7 +10,7 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Button, DialogActions, DialogContent, DialogContentText, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Tooltip } from '@mui/material';
 import { getAppInitialized, getUnidentifiedBankTransactionById } from '../selectors';
-import { BankTransactionEntity, BankTransactionType, CategoryEntity, CheckingAccountTransactionEntity, CreditCardTransactionEntity, DisregardLevel } from '../types';
+import { BankTransaction, BankTransactionType, Category, CheckingAccountTransaction, CreditCardTransaction, DisregardLevel } from '../types';
 import { getCategories } from '../selectors/categoryState';
 import { cloneDeep, isNil } from 'lodash';
 import { bindActionCreators } from 'redux';
@@ -26,9 +26,9 @@ export interface AddRuleDialogPropsFromParent {
 
 export interface AddRuleDialogProps extends AddRuleDialogPropsFromParent {
   appInitialized: boolean;
-  unidentifiedBankTransaction: BankTransactionEntity | null;
-  categoryEntities: CategoryEntity[];
-  onAddCategory: (categoryEntity: CategoryEntity) => any;
+  unidentifiedBankTransaction: BankTransaction | null;
+  categories: Category[];
+  onAddCategory: (category: Category) => any;
 }
 
 const AddRuleDialog = (props: AddRuleDialogProps) => {
@@ -37,15 +37,15 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
   const [newCategoryName, setNewCategoryName] = useState('');
   const [alertDialogOpen, setAlertDialogOpen] = useState(false);
 
-  const getTransactionDetails = (bankTransactionEntity: BankTransactionEntity | null): string => {
-    if (isNil(bankTransactionEntity)) {
+  const getTransactionDetails = (bankTransaction: BankTransaction | null): string => {
+    if (isNil(bankTransaction)) {
       // debugger;
       return '';
     }
-    if (bankTransactionEntity.bankTransactionType === BankTransactionType.CreditCard) {
-      return (bankTransactionEntity as CreditCardTransactionEntity).description;
+    if (bankTransaction.bankTransactionType === BankTransactionType.CreditCard) {
+      return (bankTransaction as CreditCardTransaction).description;
     } else {
-      return (bankTransactionEntity as CheckingAccountTransactionEntity).name;
+      return (bankTransaction as CheckingAccountTransaction).name;
     }
   }
 
@@ -77,12 +77,12 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
     return null;
   }
 
-  const sortCategoryEntities = (categoryEntities: CategoryEntity[]): CategoryEntity[] => {
-    return categoryEntities.sort((a, b) => {
-      if (a.keyword < b.keyword) {
+  const sortCategories = (categories: Category[]): Category[] => {
+    return categories.sort((a, b) => {
+      if (a.name < b.name) {
         return -1;
       }
-      if (a.keyword > b.keyword) {
+      if (a.name > b.name) {
         return 1;
       }
       return 0;
@@ -135,16 +135,16 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
 
   const handleAddNewCategory = (): void => {
     const id: string = uuidv4();
-    const categoryEntity: CategoryEntity = {
+    const category: Category = {
       id,
-      keyword: newCategoryName,
+      name: newCategoryName,
       disregardLevel: DisregardLevel.None,
     };
     setNewCategoryDialogOpen(false);
     setNewCategoryName('');
-    const addedCategoryEntity: CategoryEntity = props.onAddCategory(categoryEntity);
-    console.log('addedCategoryEntity: ', addedCategoryEntity);
-    setSelectedCategoryId(categoryEntity.id);
+    const addedCategory: Category = props.onAddCategory(category);
+    console.log('addedCategory: ', addedCategory);
+    setSelectedCategoryId(category.id);
 
   };
 
@@ -161,8 +161,8 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
     }
   }
 
-  let alphabetizedCategoryEntities: CategoryEntity[] = cloneDeep(props.categoryEntities);
-  alphabetizedCategoryEntities = sortCategoryEntities(alphabetizedCategoryEntities);
+  let alphabetizedCategories: Category[] = cloneDeep(props.categories);
+  alphabetizedCategories = sortCategories(alphabetizedCategories);
 
   return (
     <>
@@ -203,9 +203,9 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
                 variant="standard"
                 onChange={handleCategoryChange}
               >
-                {alphabetizedCategoryEntities.map((category) => (
+                {alphabetizedCategories.map((category) => (
                   <MenuItem key={category.id} value={category.id}>
-                    {category.keyword}
+                    {category.name}
                   </MenuItem>
                 ))}
                 <MenuItem onClick={handleOpenNewCategoryDialog}>
@@ -266,7 +266,7 @@ function mapStateToProps(state: any, ownProps: AddRuleDialogPropsFromParent) {
   return {
     appInitialized: getAppInitialized(state),
     unidentifiedBankTransaction: getUnidentifiedBankTransactionById(state, ownProps.unidentifiedBankTransactionId),
-    categoryEntities: getCategories(state),
+    categories: getCategories(state),
   };
 }
 

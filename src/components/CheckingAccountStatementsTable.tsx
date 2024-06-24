@@ -5,13 +5,13 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { isEmpty } from 'lodash';
 
-import { CheckingAccountStatementEntity, StatementType } from '../types';
+import { CheckingAccountStatement, StatementType } from '../types';
 import { TrackerDispatch } from '../models';
 import { getCheckingAccountStatements } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
 
 interface CheckingAccountStatementsTableProps {
-  statements: CheckingAccountStatementEntity[];
+  statements: CheckingAccountStatement[];
 }
 
 const CheckingAccountStatementsTable: React.FC<CheckingAccountStatementsTableProps> = (props: CheckingAccountStatementsTableProps) => {
@@ -36,7 +36,7 @@ const CheckingAccountStatementsTable: React.FC<CheckingAccountStatementsTablePro
           </div>
         </div>
         <div className="table-body">
-          {props.statements.map((statement: CheckingAccountStatementEntity) => (
+          {props.statements.map((statement: CheckingAccountStatement) => (
             <React.Fragment key={statement.id}>
               <div className="table-row">
                 <div className="table-cell"></div>
@@ -44,7 +44,7 @@ const CheckingAccountStatementsTable: React.FC<CheckingAccountStatementsTablePro
                 <div className="table-cell">{formatDate(statement.startDate)}</div>
                 <div className="table-cell">{formatDate(statement.endDate)}</div>
                 <div className="table-cell">{statement.transactionCount}</div>
-                <div className="table-cell">{formatCurrency(statement.netSpent)}</div>
+                <div className="table-cell">{formatCurrency(statement.netDebits)}</div>
                 <div className="table-cell">{statement.checkCount}</div>
                 <div className="table-cell">{statement.atmWithdrawalCount}</div>
               </div>

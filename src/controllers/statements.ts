@@ -1,6 +1,6 @@
 import axios from "axios";
 import { TrackerVoidPromiseThunkAction, TrackerDispatch, TrackerAnyPromiseThunkAction, addCheckingAccountStatements, addCreditCardStatements } from "../models";
-import { CheckingAccountStatementEntity, CreditCardStatementEntity, apiUrlFragment, serverUrl } from "../types";
+import { CheckingAccountStatement, CreditCardStatement, apiUrlFragment, serverUrl } from "../types";
 
 export const loadCreditCardStatements = (): TrackerAnyPromiseThunkAction => {
 
@@ -10,7 +10,7 @@ export const loadCreditCardStatements = (): TrackerAnyPromiseThunkAction => {
 
     return axios.get(path)
       .then((response: any) => {
-        const statements: CreditCardStatementEntity[] = response.data;
+        const statements: CreditCardStatement[] = response.data;
         dispatch(addCreditCardStatements(statements));
         return Promise.resolve();
       }).catch((error) => {
@@ -30,7 +30,7 @@ export const loadCheckingAccountStatements = (): TrackerAnyPromiseThunkAction =>
 
     return axios.get(path)
       .then((response: any) => {
-        const statements: CheckingAccountStatementEntity[] = response.data;
+        const statements: CheckingAccountStatement[] = response.data;
         dispatch(addCheckingAccountStatements(statements));
         return Promise.resolve();
       }).catch((error) => {

@@ -1,26 +1,26 @@
 import { BankTransactionType, DisregardLevel, StatementType } from "./enums";
 
-export interface CategoryEntity {
+export interface Category {
   id: string;
-  keyword: string;
+  name: string;
   disregardLevel: DisregardLevel;
 }
 
-export interface CategoryKeywordEntity {
+export interface CategoryAssignmentRule {
   id: string;
-  keyword: string;
+  pattern: string;
   categoryId: string;
 }
 
 export interface CategorizedStatementData {
   startDate: string;
   endDate: string;
-  transactions: CategorizedTransactionEntity[];
-  unidentifiedBankTransactions: BankTransactionEntity[];
+  transactions: CategorizedTransaction[];
+  unidentifiedBankTransactions: BankTransaction[];
   total: number;
 }
 
-interface RawTransactionEntity {
+interface Transaction {
   id: string;
   statementId: string;
   transactionDate: string;
@@ -28,48 +28,48 @@ interface RawTransactionEntity {
   bankTransactionType: BankTransactionType;
 }
 
-export interface CreditCardTransactionEntity extends RawTransactionEntity {
+export interface CreditCardTransaction extends Transaction {
   postDate: string;
   category: string;
   description: string;
   type: string;
 }
 
-export interface CheckingAccountTransactionEntity extends RawTransactionEntity {
+export interface CheckingAccountTransaction extends Transaction {
   transactionType: string;
   name: string;
   memo: string;
 }
 
-export type BankTransactionEntity = CreditCardTransactionEntity | CheckingAccountTransactionEntity;
+export type BankTransaction = CreditCardTransaction | CheckingAccountTransaction;
 
-export interface CategorizedTransactionEntity {
-  bankTransactionEntity: BankTransactionEntity;
-  categoryEntity: CategoryEntity;
+export interface CategorizedTransaction {
+  bankTransaction: BankTransaction;
+  category: Category;
 }
 
 export type CategoryExpensesData = {
   id: string;
   categoryName: string;
-  transactions: CategorizedTransactionEntity[];
+  transactions: CategorizedTransaction[];
   transactionCount: number,
   totalExpenses: number,
   percentageOfTotal: number,
 }
 
-interface StatementEntity {
+interface Statement {
   id: string;
   fileName: string;
   type: StatementType;
   startDate: string;
   endDate: string;
   transactionCount: number;
-  netSpent: number;
+  netDebits: number;
 }
 
-export type CreditCardStatementEntity = StatementEntity
+export type CreditCardStatement = Statement
 
-export interface CheckingAccountStatementEntity extends StatementEntity {
+export interface CheckingAccountStatement extends Statement {
   checkCount: number;
   atmWithdrawalCount: number;
 }

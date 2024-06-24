@@ -1,5 +1,5 @@
 import { cloneDeep } from 'lodash';
-import { CheckingAccountStatementEntity, CheckingAccountStatementState } from '../types';
+import { CheckingAccountStatement, CheckingAccountStatementState } from '../types';
 import { TrackerModelBaseAction } from './baseAction';
 
 // ------------------------------------
@@ -12,11 +12,11 @@ export const ADD_CHECKING_ACCOUNT_STATEMENTS = 'ADD_CHECKING_ACCOUNT_STATEMENTS'
 // ------------------------------------
 
 interface AddCheckingAccountStatementsPayload {
-  checkingAccountStatements: CheckingAccountStatementEntity[];
+  checkingAccountStatements: CheckingAccountStatement[];
 }
 
 export const addCheckingAccountStatements = (
-  checkingAccountStatements: CheckingAccountStatementEntity[],
+  checkingAccountStatements: CheckingAccountStatement[],
 ): any => {
   return {
     type: ADD_CHECKING_ACCOUNT_STATEMENTS,

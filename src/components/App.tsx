@@ -5,11 +5,11 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import { SidebarMenuButton } from '../types';
-import { loadCategories, loadCategoryKeywords, loadCheckingAccountStatements, loadCreditCardStatements, loadMinMaxTransactionDates } from '../controllers';
+import { loadCategories, loadCategoryAssignmentRules, loadCheckingAccountStatements, loadCreditCardStatements, loadMinMaxTransactionDates } from '../controllers';
 import { TrackerDispatch, setAppInitialized } from '../models';
 import { getAppInitialized } from '../selectors';
 
-import CategoryKeywordsTable from './CategoryKeywordsTable';
+import CategoryAssignmentRulesTable from './CategoryAssignmentRulesTable';
 import CategoriesContent from './CategoriesContent';
 import ReportsContent from './ReportsContent';
 import StatementsContent from './StatementsContent';
@@ -19,7 +19,7 @@ export interface AppProps {
   appInitialized: boolean;
   onInitializeServer: () => any;
   onLoadCategories: () => any;
-  onLoadCategoryKeywords: () => any;
+  onLoadCategoryAssignmentRules: () => any;
   onLoadCreditCardStatements: () => any;
   onLoadCheckingAccountStatements: () => any;
   onLoadMinMaxTransactionDates: () => any;
@@ -35,7 +35,7 @@ const App = (props: AppProps) => {
           return props.onLoadCategories();
         })
         .then(() => {
-          return props.onLoadCategoryKeywords();
+          return props.onLoadCategoryAssignmentRules();
         })
         .then(() => {
           return props.onLoadCreditCardStatements();
@@ -76,7 +76,7 @@ const App = (props: AppProps) => {
 
       return <StatementsContent activeTab={activeTab} />;
     } else if (selectedMainButton === SidebarMenuButton.Aliases) {
-      return <CategoryKeywordsTable />;
+      return <CategoryAssignmentRulesTable />;
     } else if (selectedMainButton === SidebarMenuButton.Categories) {
       return <CategoriesContent />;
     } else {
@@ -109,7 +109,7 @@ const mapDispatchToProps = (dispatch: TrackerDispatch) => {
     onSetAppInitialized: setAppInitialized,
     onInitializeServer: initializeServer,
     onLoadCategories: loadCategories,
-    onLoadCategoryKeywords: loadCategoryKeywords,
+    onLoadCategoryAssignmentRules: loadCategoryAssignmentRules,
     onLoadCreditCardStatements: loadCreditCardStatements,
     onLoadCheckingAccountStatements: loadCheckingAccountStatements,
     onLoadMinMaxTransactionDates: loadMinMaxTransactionDates

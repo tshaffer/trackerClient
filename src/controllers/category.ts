@@ -1,6 +1,6 @@
 import axios from "axios";
-import { CategoryEntity, serverUrl, apiUrlFragment, CategoryKeywordEntity } from "../types";
-import { TrackerAnyPromiseThunkAction, TrackerDispatch, addCategories, addCategoryKeywordRedux, addCategoryKeywords, addCategoryRedux, deleteCategoryKeywordRedux, updateCategoryKeywordRedux } from '../models';
+import { Category, serverUrl, apiUrlFragment, CategoryAssignmentRule } from "../types";
+import { TrackerAnyPromiseThunkAction, TrackerDispatch, addCategories, addCategoryAssignmentRuleRedux, addCategoryAssignmentRules, addCategoryRedux, deleteCategoryAssignmentRuleRedux, updateCategoryAssignmentRuleRedux } from '../models';
 
 export const loadCategories = (): TrackerAnyPromiseThunkAction => {
 
@@ -10,7 +10,7 @@ export const loadCategories = (): TrackerAnyPromiseThunkAction => {
 
     return axios.get(path)
       .then((response: any) => {
-        const categories: CategoryEntity[] = response.data;
+        const categories: Category[] = response.data;
         dispatch(addCategories(categories));
         return Promise.resolve();
       }).catch((error) => {
@@ -21,16 +21,16 @@ export const loadCategories = (): TrackerAnyPromiseThunkAction => {
   };
 };
 
-export const loadCategoryKeywords = (): TrackerAnyPromiseThunkAction => {
+export const loadCategoryAssignmentRules = (): TrackerAnyPromiseThunkAction => {
 
   return (dispatch: TrackerDispatch, getState: any) => {
 
-    const path = serverUrl + apiUrlFragment + 'categoryKeywords';
+    const path = serverUrl + apiUrlFragment + 'categoryAssignmentRules';
 
     return axios.get(path)
       .then((response: any) => {
-        const categoryKeywordEntities: CategoryKeywordEntity[] = response.data;
-        dispatch(addCategoryKeywords(categoryKeywordEntities));
+        const categoryAssignmentRules: CategoryAssignmentRule[] = response.data;
+        dispatch(addCategoryAssignmentRules(categoryAssignmentRules));
         return Promise.resolve();
       }).catch((error) => {
         console.log('error');
@@ -40,13 +40,13 @@ export const loadCategoryKeywords = (): TrackerAnyPromiseThunkAction => {
   };
 };
 
-export const addCategoryServerAndRedux = (categoryEntity: CategoryEntity): TrackerAnyPromiseThunkAction => {
+export const addCategoryServerAndRedux = (category: Category): TrackerAnyPromiseThunkAction => {
 
   return (dispatch: TrackerDispatch, getState: any) => {
 
     const path = serverUrl + apiUrlFragment + 'addCategory';
 
-    const addCategoryBody = categoryEntity;
+    const addCategoryBody = category;
 
     return axios.post(
       path,
@@ -55,8 +55,8 @@ export const addCategoryServerAndRedux = (categoryEntity: CategoryEntity): Track
       console.log('addCategoryServerAndRedux');
       console.log(response);
       console.log(response.data);
-      dispatch(addCategoryRedux(categoryEntity));
-      return Promise.resolve(response.data as CategoryEntity);
+      dispatch(addCategoryRedux(category));
+      return Promise.resolve(response.data as Category);
     }).catch((error) => {
       console.log('error');
       console.log(error);
@@ -65,19 +65,19 @@ export const addCategoryServerAndRedux = (categoryEntity: CategoryEntity): Track
   };
 };
 
-export const addCategoryKeywordServerAndRedux = (categoryKeywordEntity: CategoryKeywordEntity): TrackerAnyPromiseThunkAction => {
+export const addCategoryAssignmentRuleServerAndRedux = (categoryAssignmentRule: CategoryAssignmentRule): TrackerAnyPromiseThunkAction => {
 
   return (dispatch: TrackerDispatch, getState: any) => {
 
-    const path = serverUrl + apiUrlFragment + 'addCategoryKeyword';
+    const path = serverUrl + apiUrlFragment + 'addCategoryAssignmentRule';
 
-    const addCategoryKeywordBody = categoryKeywordEntity;
+    const addCategoryAssignmentRuleBody = categoryAssignmentRule;
 
     return axios.post(
       path,
-      addCategoryKeywordBody
+      addCategoryAssignmentRuleBody
     ).then((response) => {
-      dispatch(addCategoryKeywordRedux(categoryKeywordEntity));
+      dispatch(addCategoryAssignmentRuleRedux(categoryAssignmentRule));
       return Promise.resolve();
     }).catch((error) => {
       console.log('error');
@@ -87,19 +87,19 @@ export const addCategoryKeywordServerAndRedux = (categoryKeywordEntity: Category
   };
 }
 
-export const updateCategoryKeywordServerAndRedux = (categoryKeywordEntity: CategoryKeywordEntity): TrackerAnyPromiseThunkAction => {
+export const updateCategoryAssignmentRuleServerAndRedux = (categoryAssignmentRule: CategoryAssignmentRule): TrackerAnyPromiseThunkAction => {
 
   return (dispatch: TrackerDispatch, getState: any) => {
 
-    const path = serverUrl + apiUrlFragment + 'updateCategoryKeyword';
+    const path = serverUrl + apiUrlFragment + 'updateCategoryAssignmentRule';
 
-    const updateCategoryKeywordBody = categoryKeywordEntity;
+    const updateCategoryAssignmentRuleBody = categoryAssignmentRule;
 
     return axios.post(
       path,
-      updateCategoryKeywordBody
+      updateCategoryAssignmentRuleBody
     ).then((response) => {
-      dispatch(updateCategoryKeywordRedux(categoryKeywordEntity));
+      dispatch(updateCategoryAssignmentRuleRedux(categoryAssignmentRule));
       return Promise.resolve();
     }).catch((error) => {
       console.log('error');
@@ -109,19 +109,19 @@ export const updateCategoryKeywordServerAndRedux = (categoryKeywordEntity: Categ
   };
 };
 
-export const deleteCategoryKeywordServerAndRedux = (categoryKeywordEntity: CategoryKeywordEntity): TrackerAnyPromiseThunkAction => {
+export const deleteCategoryAssignmentRuleServerAndRedux = (categoryAssignmentRule: CategoryAssignmentRule): TrackerAnyPromiseThunkAction => {
 
   return (dispatch: TrackerDispatch, getState: any) => {
 
-    const path = serverUrl + apiUrlFragment + 'deleteCategoryKeyword';
+    const path = serverUrl + apiUrlFragment + 'deleteCategoryAssignmentRule';
 
-    const deleteCategoryKeywordBody = categoryKeywordEntity;
+    const deleteCategoryAssignmentRuleBody = categoryAssignmentRule;
 
     return axios.post(
       path,
-      deleteCategoryKeywordBody
+      deleteCategoryAssignmentRuleBody
     ).then((response) => {
-      dispatch(deleteCategoryKeywordRedux(categoryKeywordEntity));
+      dispatch(deleteCategoryAssignmentRuleRedux(categoryAssignmentRule));
       return Promise.resolve();
     }).catch((error) => {
       console.log('error');

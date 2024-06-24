@@ -1,4 +1,4 @@
-import { BankTransactionEntity, DateRangeType, MinMaxDates, ReportDataState, StringToTransactionsLUT } from '../types';
+import { BankTransaction, DateRangeType, MinMaxDates, ReportDataState, StringToTransactionsLUT } from '../types';
 import { TrackerModelBaseAction } from './baseAction';
 
 // ------------------------------------
@@ -54,11 +54,11 @@ export const setTransactionsByCategory = (
 };
 
 interface SetUnidentifiedBankTransactionsPayload {
-  unidentifiedBankTransactions: BankTransactionEntity[]
+  unidentifiedBankTransactions: BankTransaction[]
 }
 
 export const setUnidentifiedBankTransactions = (
-  unidentifiedBankTransactions: BankTransactionEntity[]
+  unidentifiedBankTransactions: BankTransaction[]
 ): any => {
   return {
     type: SET_UNIDENTIFIED_BANK_TRANSACTIONS,

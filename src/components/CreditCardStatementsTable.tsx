@@ -6,13 +6,13 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { isEmpty } from 'lodash';
 
-import { CreditCardStatementEntity } from '../types';
+import { CreditCardStatement } from '../types';
 import { TrackerDispatch } from '../models';
 import { getCreditCardStatements } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
 
 interface CreditCardStatementsTableProps {
-  statements: CreditCardStatementEntity[];
+  statements: CreditCardStatement[];
 }
 
 const CreditCardStatementsTable: React.FC<CreditCardStatementsTableProps> = (props: CreditCardStatementsTableProps) => {
@@ -33,14 +33,14 @@ const CreditCardStatementsTable: React.FC<CreditCardStatementsTableProps> = (pro
           <div className="grid-table-cell">Net Spent</div>
         </div>
         <div className="grid-table-body">
-          {props.statements.map((statement: CreditCardStatementEntity) => (
+          {props.statements.map((statement: CreditCardStatement) => (
             <div className="grid-table-row" key={statement.id}>
               <div className="grid-table-cell"></div>
               <div className="grid-table-cell">{statement.fileName}</div>
               <div className="grid-table-cell">{formatDate(statement.startDate)}</div>
               <div className="grid-table-cell">{formatDate(statement.endDate)}</div>
               <div className="grid-table-cell">{statement.transactionCount}</div>
-              <div className="grid-table-cell">{formatCurrency(statement.netSpent)}</div>
+              <div className="grid-table-cell">{formatCurrency(statement.netDebits)}</div>
             </div>
           ))}
         </div>

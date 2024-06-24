@@ -1,5 +1,5 @@
 import { cloneDeep } from 'lodash';
-import { CreditCardStatementEntity, CreditCardStatementState } from '../types';
+import { CreditCardStatement, CreditCardStatementState } from '../types';
 import { TrackerModelBaseAction } from './baseAction';
 
 // ------------------------------------
@@ -12,11 +12,11 @@ export const ADD_CREDIT_CARD_STATEMENTS = 'ADD_CREDIT_CARD_STATEMENTS';
 // ------------------------------------
 
 interface AddCreditCardStatementsPayload {
-  creditCardStatements: CreditCardStatementEntity[];
+  creditCardStatements: CreditCardStatement[];
 }
 
 export const addCreditCardStatements = (
-  creditCardStatements: CreditCardStatementEntity[],
+  creditCardStatements: CreditCardStatement[],
 ): any => {
   return {
     type: ADD_CREDIT_CARD_STATEMENTS,
