@@ -8,7 +8,7 @@ import { Alert, Button, DialogActions, DialogContent } from '@mui/material';
 import { getAppInitialized } from '../selectors';
 import { isNil } from 'lodash';
 import { bindActionCreators } from 'redux';
-import { loadCategories, loadCheckingAccountStatements, loadCreditCardStatements, uploadFile } from '../controllers';
+import { loadCategories, loadCheckingAccountStatements, loadCreditCardStatements, loadMinMaxTransactionDates, uploadFile } from '../controllers';
 import { TrackerDispatch } from '../models';
 
 export interface UploadStatementDialogPropsFromParent {
@@ -22,6 +22,7 @@ export interface UploadStatementDialogProps extends UploadStatementDialogPropsFr
   onLoadCategories: () => any;
   onLoadCreditCardStatements: () => any;
   onLoadCheckingAccountStatements: () => any;
+  onLoadMinMaxTransactionDates: () => any;
 }
 
 const UploadStatementDialog = (props: UploadStatementDialogProps) => {
@@ -56,13 +57,16 @@ const UploadStatementDialog = (props: UploadStatementDialogProps) => {
           setUploadStatus('success');
 
           props.onLoadCategories()
-          .then(() => {
-            return props.onLoadCreditCardStatements();
-          })
-          .then(() => {
-            return props.onLoadCheckingAccountStatements();
-          })
-  
+            .then(() => {
+              return props.onLoadCreditCardStatements();
+            })
+            .then(() => {
+              return props.onLoadCheckingAccountStatements();
+            })
+            .then(() => {
+              return props.onLoadMinMaxTransactionDates();
+            });
+
         }).catch((err: any) => {
           console.log('uploadFile returned error');
           console.log(err);
@@ -120,6 +124,7 @@ const mapDispatchToProps = (dispatch: TrackerDispatch) => {
     onLoadCategories: loadCategories,
     onLoadCreditCardStatements: loadCreditCardStatements,
     onLoadCheckingAccountStatements: loadCheckingAccountStatements,
+    onLoadMinMaxTransactionDates: loadMinMaxTransactionDates,
   }, dispatch);
 };
 

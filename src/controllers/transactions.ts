@@ -17,6 +17,12 @@ import {
   TrackerDispatch,
   TrackerVoidPromiseThunkAction
 } from "../models";
+import { isNil } from "lodash";
+
+interface Result {
+  minDate: string;
+  maxDate: string;
+}
 
 const getISODateString = (date: Date): string => {
   return date.toISOString().split('T')[0];
@@ -62,8 +68,21 @@ export const loadMinMaxTransactionDates = (): TrackerAnyPromiseThunkAction => {
     return Promise.all([p1, p2])
       .then((results) => {
 
-        const minDate = getMinDate(results[0].minDate, results[1].minDate);
-        const maxDate = getMaxDate(results[0].maxDate, results[0].maxDate);
+        let minDate: string = '';
+        let maxDate: string = '';
+
+        const [result1, result2] = results;
+
+        if (isNil(result1)) {
+          if (result2 !== null) {
+            ({ minDate, maxDate } = result2);
+          }
+        } else if (isNil(result2)) {
+          ({ minDate, maxDate } = result1);
+        } else {
+          minDate = getMinDate(result1.minDate, result2.minDate);
+          maxDate = getMaxDate(result1.maxDate, result2.maxDate);
+        }
 
         const minMaxStartDates: MinMaxDates = {
           minDate,
