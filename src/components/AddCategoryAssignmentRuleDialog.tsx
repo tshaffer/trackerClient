@@ -111,7 +111,7 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
     }
   };
 
-  const handleCategoryKeywordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCategoryAssignmentRuleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPattern(event.target.value);
   };
 

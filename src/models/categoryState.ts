@@ -123,20 +123,20 @@ export const categoryStateReducer = (
       };
     }
     case UPDATE_CATEGORY_ASSIGNMENT_RULE: {
-      const updatedKeyword = action.payload.categoryAssignmentRule;
+      const updatedCategoryAsssignmentRule = action.payload.categoryAssignmentRule;
       return {
         ...state,
-        categoryAssignmentRules: state.categoryAssignmentRules.map((keyword) =>
-          keyword.id === updatedKeyword.id ? updatedKeyword : keyword
+        categoryAssignmentRules: state.categoryAssignmentRules.map((categoryAssignmentRule) =>
+          categoryAssignmentRule.id === updatedCategoryAsssignmentRule.id ? updatedCategoryAsssignmentRule : categoryAssignmentRule
         ),
       };
     }
     case DELETE_CATEGORY_ASSIGNMENT_RULE: {
-      const deletedKeyword = action.payload.categoryAssignmentRule;
+      const deletedCategoryAssignmentRule = action.payload.categoryAssignmentRule;
       return {
         ...state,
-        categoryAssignmentRules: state.categoryAssignmentRules.filter((keyword) =>
-          keyword.id !== deletedKeyword.id
+        categoryAssignmentRules: state.categoryAssignmentRules.filter((categoryAssignmentRule) =>
+          categoryAssignmentRule.id !== deletedCategoryAssignmentRule.id
         ),
       };
     }
