@@ -23,7 +23,7 @@ export enum StatementType {
 
 export enum SidebarMenuButton {
   Reports = 'Reports',
-  Aliases = 'Aliases',
+  CategoryAssignmentRules = 'Category Assignment Rules',
   Statements = 'Statements',
   Categories = 'Categories',
 

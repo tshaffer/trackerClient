@@ -10,7 +10,7 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Button, DialogActions, DialogContent, DialogContentText, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Tooltip } from '@mui/material';
 import { getAppInitialized, getUnidentifiedBankTransactionById } from '../selectors';
-import { BankTransaction, BankTransactionType, Category, CheckingAccountTransaction, CreditCardTransaction, DisregardLevel } from '../types';
+import { BankTransaction, BankTransactionType, Category, CheckingAccountTransaction, CreditCardTransaction, DisregardLevel, SidebarMenuButton } from '../types';
 import { getCategories } from '../selectors/categoryState';
 import { cloneDeep, isNil } from 'lodash';
 import { bindActionCreators } from 'redux';
@@ -167,7 +167,7 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
   return (
     <>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Category Assignment Rules</DialogTitle>
+        <DialogTitle>{SidebarMenuButton.CategoryAssignmentRules}</DialogTitle>
         <DialogContent style={{ paddingBottom: '0px' }}>
           <p>
             Each transaction will automatically be assigned a category based on the existing category associated with it, if available.

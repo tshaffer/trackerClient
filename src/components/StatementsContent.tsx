@@ -11,6 +11,7 @@ import UploadStatementDialog from './UploadStatementDialog';
 import { uploadFile } from '../controllers';
 import CheckingAccountStatementsTable from './CheckingAccountStatementsTable';
 import CreditCardStatementsTable from './CreditCardStatementsTable';
+import { SidebarMenuButton } from '../types';
 
 export interface StatementsContentPropsFromParent {
   activeTab: number;
@@ -44,7 +45,7 @@ const StatementsContent: React.FC<StatementsContentProps> = (props: StatementsCo
         onClose={handleCloseUploadStatementDialog}
       />
       <Box sx={{ width: '100%' }}>
-        <Typography variant="h5">Statements</Typography>
+        <Typography variant="h5">{SidebarMenuButton.Statements}</Typography>
         <Tabs value={tabIndex} onChange={handleTabChange}>
           <Tab label="Credit Card" />
           <Tab label="Checking Account" />

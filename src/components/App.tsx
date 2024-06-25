@@ -75,7 +75,7 @@ const App = (props: AppProps) => {
       else if (selectedSubButton === 'Checking Account') activeTab = 1;
 
       return <StatementsContent activeTab={activeTab} />;
-    } else if (selectedMainButton === SidebarMenuButton.Aliases) {
+    } else if (selectedMainButton === SidebarMenuButton.CategoryAssignmentRules) {
       return <CategoryAssignmentRulesTable />;
     } else if (selectedMainButton === SidebarMenuButton.Categories) {
       return <CategoriesContent />;

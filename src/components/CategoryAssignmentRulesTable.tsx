@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import '../styles/Tracker.css';
-import { Category, CategoryAssignmentRule } from '../types';
+import { Category, CategoryAssignmentRule, SidebarMenuButton } from '../types';
 import { Box, IconButton, MenuItem, TextField, Tooltip, Typography } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -209,7 +209,7 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Typography variant="h5" style={{ marginBottom: '8px' }}>Aliases</Typography>
+      <Typography variant="h5" style={{ marginBottom: '8px' }}>{SidebarMenuButton.CategoryAssignmentRules}</Typography>
       <div className="table-container">
         <div className="table-header">
           <div className="table-row">

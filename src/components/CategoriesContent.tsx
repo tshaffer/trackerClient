@@ -8,7 +8,7 @@ import { Box, Typography, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
 import { TrackerDispatch } from '../models';
-import { Category, DisregardLevel } from '../types';
+import { Category, DisregardLevel, SidebarMenuButton } from '../types';
 import AddCategoryDialog from './AddCategoryDialog';
 import CategoriesTable from './CategoriesTable';
 import { addCategoryServerAndRedux } from '../controllers';
@@ -44,7 +44,7 @@ const CategoriesContent: React.FC<CategoriesContentProps> = (props: CategoriesCo
       />
 
       <Box sx={{ width: '100%' }}>
-        <Typography variant="h5">Categories</Typography>
+        <Typography variant="h5">{SidebarMenuButton.Categories}</Typography>
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
           <Button
             startIcon={<AddIcon />}

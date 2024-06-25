@@ -41,7 +41,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
   return (
     <Box
       sx={{
-        width: '200px',
+        width: '280px',
         height: '100vh',
         backgroundColor: '#f0f0f0',
         padding: '10px',
@@ -70,7 +70,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
             onMouseEnter={(e) => handleHover(e, SidebarMenuButton.Reports)}
             onClick={() => handleClose('Spending')}
           >
-            <span>Reports</span><ChevronRightIcon />
+            <span>{SidebarMenuButton.Reports}</span><ChevronRightIcon />
           </Button>
           <Popper
             id="reports-popper"
@@ -100,28 +100,28 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
           <Button
             sx={buttonStyle}
             aria-haspopup="true"
-            onMouseEnter={(e) => handleHover(e, 'Categories')}
+            onMouseEnter={(e) => handleHover(e, SidebarMenuButton.Categories)}
             onClick={() => handleClose('List')}
           >
-            <span>Categories</span><ChevronRightIcon />
+            <span>{SidebarMenuButton.Categories}</span><ChevronRightIcon />
           </Button>
 
           <Button
             sx={buttonStyle}
             aria-haspopup="true"
-            onMouseEnter={(e) => handleHover(e, 'Aliases')}
+            onMouseEnter={(e) => handleHover(e, SidebarMenuButton.CategoryAssignmentRules)}
             onClick={() => handleClose('List')}
           >
-            <span>Aliases</span><ChevronRightIcon />
+            <span>{SidebarMenuButton.CategoryAssignmentRules}</span><ChevronRightIcon />
           </Button>
 
           <Button
             sx={buttonStyle}
             aria-haspopup="true"
             onMouseEnter={(e) => handleHover(e, SidebarMenuButton.Statements)}
-            onClick={() => handleClose('Statements')}
+            onClick={() => handleClose(SidebarMenuButton.Statements)}
           >
-            <span>Statements</span><ChevronRightIcon />
+            <span>{SidebarMenuButton.Statements}</span><ChevronRightIcon />
           </Button>
           <Popper
             id="reports-popper"

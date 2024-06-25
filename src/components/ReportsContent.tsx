@@ -11,6 +11,7 @@ import { search } from '../controllers';
 import DateRangeSpecifier from './DateRangeSpecifier';
 import SpendingReportTable from './SpendingReportTable';
 import UnIdentifiedTransactionTable from './UnidentifiedTransactionTable';
+import { SidebarMenuButton } from '../types';
 
 export interface ReportsContentPropsFromParent {
   activeTab: number;
@@ -43,8 +44,8 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Typography variant="h5">Reports</Typography>
-      <Tabs value={tabIndex} onChange={handleTabChange} aria-label="Reports Tabs">
+      <Typography variant="h5">{SidebarMenuButton.Reports}</Typography>
+      <Tabs value={tabIndex} onChange={handleTabChange}>
         <Tab label="Spending" />
         <Tab label="Unidentified Transactions" />
       </Tabs>
