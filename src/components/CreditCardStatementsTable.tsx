@@ -30,7 +30,7 @@ const CreditCardStatementsTable: React.FC<CreditCardStatementsTableProps> = (pro
           <div className="grid-table-cell">Start Date</div>
           <div className="grid-table-cell">End Date</div>
           <div className="grid-table-cell">Transaction Count</div>
-          <div className="grid-table-cell">Net Spent</div>
+          <div className="grid-table-cell">Net Debits</div>
         </div>
         <div className="grid-table-body">
           {props.statements.map((statement: CreditCardStatement) => (

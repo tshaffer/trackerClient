@@ -30,7 +30,7 @@ const CheckingAccountStatementsTable: React.FC<CheckingAccountStatementsTablePro
             <div className="table-cell">Start Date</div>
             <div className="table-cell">End Date</div>
             <div className="table-cell">Transaction Count</div>
-            <div className="table-cell">Net Spent</div>
+            <div className="table-cell">Net Debits</div>
             <div className="table-cell"># of checks</div>
             <div className="table-cell"># of ATM withdrawals</div>
           </div>
