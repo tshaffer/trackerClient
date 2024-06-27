@@ -9,7 +9,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import { TrackerAnyPromiseThunkAction, TrackerDispatch } from '../models';
-import { getCategories, getCategoryAssignemntRules } from '../selectors/categoryState';
+import { getCategories, getCategoryAssignmentRules } from '../selectors/categoryState';
 import { addCategoryAssignmentRuleServerAndRedux, deleteCategoryAssignmentRuleServerAndRedux, updateCategoryAssignmentRuleServerAndRedux } from '../controllers';
 import { cloneDeep, isEmpty } from 'lodash';
 
@@ -267,7 +267,7 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
 
 function mapStateToProps(state: any) {
   return {
-    categoryAssignmentRules: getCategoryAssignemntRules(state),
+    categoryAssignmentRules: getCategoryAssignmentRules(state),
     categories: getCategories(state),
   };
 }

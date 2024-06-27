@@ -13,7 +13,7 @@ export const getCategoryDisregardLevel = (state: TrackerState, id: string): numb
   return category ? category.disregardLevel : 0;
 }
 
-export const getCategoryAssignemntRules = (state: TrackerState): CategoryAssignmentRule[] => {
+export const getCategoryAssignmentRules = (state: TrackerState): CategoryAssignmentRule[] => {
   return state.categoryState.categoryAssignmentRules;
 };
 
