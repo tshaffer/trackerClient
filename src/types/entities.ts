@@ -17,7 +17,7 @@ export interface CategorizedStatementData {
   endDate: string;
   transactions: CategorizedTransaction[];
   unidentifiedBankTransactions: BankTransaction[];
-  total: number;
+  netDebits: number;
 }
 
 interface Transaction {

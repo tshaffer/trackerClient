@@ -120,8 +120,8 @@ export const search = (startDate: string, endDate: string): TrackerVoidPromiseTh
           transactionsByCategory[category].push(transaction);
         });
 
-        const { startDate, endDate, total } = categorizedStatementData;
-        dispatch(setStatementData(startDate, endDate, total));
+        const { startDate, endDate, netDebits: netDebits } = categorizedStatementData;
+        dispatch(setStatementData(startDate, endDate, netDebits));
 
         console.log(transactionsByCategory);
         dispatch(setTransactionsByCategory(transactionsByCategory));
