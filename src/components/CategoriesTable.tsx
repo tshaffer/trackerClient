@@ -40,37 +40,10 @@ const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableP
       [id]: !prevOpenRows[id],
     }));
   };
-  
+
   const categories: Category[] = props.categories
     .map((category: Category) => category)
     .sort((a, b) => (a.name).localeCompare(b.name));
-
-  /*
-    <TableRow>
-      <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={3}>
-        <Collapse in={openRows[category.id]} timeout="auto" unmountOnExit>
-          <Box margin={1}>
-            <Table size="small" aria-label="rules">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Pattern</TableCell>
-                  <TableCell>Assigned Category</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {category.rules.map((rule, index) => (
-                  <TableRow key={index}>
-                    <TableCell>{rule.pattern}</TableCell>
-                    <TableCell>{rule.category}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Box>
-        </Collapse>
-      </TableCell>
-    </TableRow>
-  */
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -102,14 +75,12 @@ const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableP
                         <TableHead>
                           <TableRow>
                             <TableCell>Pattern</TableCell>
-                            <TableCell>Assigned Category</TableCell>
                           </TableRow>
                         </TableHead>
                         <TableBody>
                           {getRulesByCategory(category.id).map((rule, index) => (
                             <TableRow key={index}>
                               <TableCell>{rule.pattern}</TableCell>
-                              <TableCell>{category.name}</TableCell>
                             </TableRow>
                           ))}
                         </TableBody>
