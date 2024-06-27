@@ -109,3 +109,17 @@
   overflow-y: auto;
   /* Add vertical scrollbar */
 }
+
+.category-table-cell {
+  flex: 1;
+  text-align: left;
+  display: flex;
+  align-items: center;
+}
+
+
+.category-table-cell:first-child {
+  /* flex: 0 0 1200px; */
+  /* Adjust the width of the first column */
+}
+
