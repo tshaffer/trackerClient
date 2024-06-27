@@ -5,7 +5,7 @@ import { Category, CategoryAssignmentRule } from '../types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { Box, Collapse, IconButton } from '@mui/material';
+import { Box, Collapse, IconButton, List, ListItem, ListItemText, ListSubheader } from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
 import { TrackerDispatch } from '../models';
@@ -71,20 +71,21 @@ const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableP
                 <div className="category-table-cell" style={{ paddingBottom: 0, paddingTop: 0 }}>
                   <Collapse in={openRows[category.id]} timeout="auto" unmountOnExit>
                     <Box margin={1}>
-                      <div className="table-container">
-                        <div className="table-header">
-                          <div className="table-row">
-                            <div className="category-category-table-cell">Pattern</div>
-                          </div>
-                        </div>
-                        <div className="catalog-table-body">
-                          {getRulesByCategory(category.id).map((rule, index) => (
-                            <div className="table-row" key={index}>
-                              <div className="category-category-table-cell">{rule.pattern}</div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
+                      <List
+                        component="nav"
+                        dense
+                        subheader={
+                          <ListSubheader component="div">
+                            Assignment Rules
+                          </ListSubheader>
+                        }
+                      >
+                        {getRulesByCategory(category.id).map((rule, index) => (
+                          <ListItem key={index}>
+                            <ListItemText primary={rule.pattern} />
+                          </ListItem>
+                        ))}
+                      </List>
                     </Box>
                   </Collapse>
                 </div>
