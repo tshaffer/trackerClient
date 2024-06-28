@@ -44,27 +44,26 @@ const UploadStatementDialog = (props: UploadStatementDialogProps) => {
     onClose();
   };
 
+  const handleCloseErrorDialog = () => {
+    setUploadStatus(null);
+  }
+
   const handleFileChangeHandler = (e: any) => {
     setSelectedFile(e.target.files[0]);
   };
 
   const handleUploadFile = () => {
-    console.log(props);
     if (!isNil(selectedFile)) {
       const statementExists: boolean = props.checkingAccountStatementState.some(statement => statement.fileName === (selectedFile as any).name) || props.creditCardStatementState.some(statement => statement.fileName ===  (selectedFile as any).name);
       if (statementExists) {
-        console.log('File already uploaded');
+        setUploadStatus('The selected statement has already been uploaded. Please select a different statement.');
         return;
       }
       const data = new FormData();
       data.append('file', selectedFile);
-      console.log('handleUploadFile, selectedFile: ', selectedFile);
       props.onUploadFile(data)
         .then((response: any) => {
-          console.log(response);
-          console.log(response.statusText);
           setUploadStatus('success');
-
           props.onLoadCategories()
             .then(() => {
               return props.onLoadCreditCardStatements();
@@ -79,7 +78,7 @@ const UploadStatementDialog = (props: UploadStatementDialogProps) => {
         }).catch((err: any) => {
           console.log('uploadFile returned error');
           console.log(err);
-          setUploadStatus('failure');
+          setUploadStatus('Upload Failed: Please try again.');
         });
     }
   }
@@ -103,16 +102,16 @@ const UploadStatementDialog = (props: UploadStatementDialogProps) => {
         <Button onClick={handleUploadFile} autoFocus variant="contained" color="primary" disabled={!selectedFile}>Upload</Button>
       </DialogActions>
       {uploadStatus && (
-        <Dialog open={true} onClose={handleClose}>
+        <Dialog open={true} onClose={handleCloseErrorDialog}>
           <DialogContent>
             {uploadStatus === 'success' ? (
               <Alert severity="success">Upload Successful</Alert>
             ) : (
-              <Alert severity="error">Upload Failed: Please try again.</Alert>
+              <Alert severity="error">{uploadStatus}</Alert>
             )}
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose} color="primary">
+            <Button onClick={handleCloseErrorDialog} color="primary">
               OK
             </Button>
           </DialogActions>
