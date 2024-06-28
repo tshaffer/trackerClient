@@ -5,11 +5,12 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
 import { Alert, Button, DialogActions, DialogContent } from '@mui/material';
-import { getAppInitialized } from '../selectors';
+import { getAppInitialized, getCheckingAccountStatements, getCreditCardStatements } from '../selectors';
 import { isNil } from 'lodash';
 import { bindActionCreators } from 'redux';
 import { loadCategories, loadCheckingAccountStatements, loadCreditCardStatements, loadMinMaxTransactionDates, uploadFile } from '../controllers';
 import { TrackerDispatch } from '../models';
+import { CheckingAccountStatement, CreditCardStatement } from '../types';
 
 export interface UploadStatementDialogPropsFromParent {
   open: boolean;
@@ -18,6 +19,8 @@ export interface UploadStatementDialogPropsFromParent {
 
 export interface UploadStatementDialogProps extends UploadStatementDialogPropsFromParent {
   appInitialized: boolean;
+  checkingAccountStatementState: CheckingAccountStatement[],
+  creditCardStatementState: CreditCardStatement[],
   onUploadFile: (data: FormData) => any;
   onLoadCategories: () => any;
   onLoadCreditCardStatements: () => any;
@@ -46,34 +49,40 @@ const UploadStatementDialog = (props: UploadStatementDialogProps) => {
   };
 
   const handleUploadFile = () => {
+    console.log(props);
     if (!isNil(selectedFile)) {
-      const data = new FormData();
-      data.append('file', selectedFile);
-      console.log('handleUploadFile, selectedFile: ', selectedFile);
-      props.onUploadFile(data)
-        .then((response: any) => {
-          console.log(response);
-          console.log(response.statusText);
-          setUploadStatus('success');
+      if (props.checkingAccountStatementState.includes(selectedFile) || props.creditCardStatementState.includes(selectedFile)) {
+        console.log('File already uploaded');
+        return;
+      } else {
+        const data = new FormData();
+        data.append('file', selectedFile);
+        console.log('handleUploadFile, selectedFile: ', selectedFile);
+        props.onUploadFile(data)
+          .then((response: any) => {
+            console.log(response);
+            console.log(response.statusText);
+            setUploadStatus('success');
 
-          props.onLoadCategories()
-            .then(() => {
-              return props.onLoadCreditCardStatements();
-            })
-            .then(() => {
-              return props.onLoadCheckingAccountStatements();
-            })
-            .then(() => {
-              return props.onLoadMinMaxTransactionDates();
-            });
+            props.onLoadCategories()
+              .then(() => {
+                return props.onLoadCreditCardStatements();
+              })
+              .then(() => {
+                return props.onLoadCheckingAccountStatements();
+              })
+              .then(() => {
+                return props.onLoadMinMaxTransactionDates();
+              });
 
-        }).catch((err: any) => {
-          console.log('uploadFile returned error');
-          console.log(err);
-          setUploadStatus('failure');
-        });
+          }).catch((err: any) => {
+            console.log('uploadFile returned error');
+            console.log(err);
+            setUploadStatus('failure');
+          });
+      }
     }
-  };
+  }
 
   return (
     <Dialog onClose={handleClose} open={open}>
@@ -115,6 +124,8 @@ const UploadStatementDialog = (props: UploadStatementDialogProps) => {
 function mapStateToProps(state: any) {
   return {
     appInitialized: getAppInitialized(state),
+    checkingAccountStatementState: getCheckingAccountStatements(state),
+    creditCardStatementState: getCreditCardStatements(state),
   };
 }
 
