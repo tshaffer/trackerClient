@@ -51,38 +51,39 @@ const UploadStatementDialog = (props: UploadStatementDialogProps) => {
   const handleUploadFile = () => {
     console.log(props);
     if (!isNil(selectedFile)) {
-      if (props.checkingAccountStatementState.includes(selectedFile) || props.creditCardStatementState.includes(selectedFile)) {
+      const statementExists: boolean = props.checkingAccountStatementState.some(statement => statement.fileName === (selectedFile as any).name) || props.creditCardStatementState.some(statement => statement.fileName ===  (selectedFile as any).name);
+      if (statementExists) {
         console.log('File already uploaded');
         return;
-      } else {
-        const data = new FormData();
-        data.append('file', selectedFile);
-        console.log('handleUploadFile, selectedFile: ', selectedFile);
-        props.onUploadFile(data)
-          .then((response: any) => {
-            console.log(response);
-            console.log(response.statusText);
-            setUploadStatus('success');
-
-            props.onLoadCategories()
-              .then(() => {
-                return props.onLoadCreditCardStatements();
-              })
-              .then(() => {
-                return props.onLoadCheckingAccountStatements();
-              })
-              .then(() => {
-                return props.onLoadMinMaxTransactionDates();
-              });
-
-          }).catch((err: any) => {
-            console.log('uploadFile returned error');
-            console.log(err);
-            setUploadStatus('failure');
-          });
       }
+      const data = new FormData();
+      data.append('file', selectedFile);
+      console.log('handleUploadFile, selectedFile: ', selectedFile);
+      props.onUploadFile(data)
+        .then((response: any) => {
+          console.log(response);
+          console.log(response.statusText);
+          setUploadStatus('success');
+
+          props.onLoadCategories()
+            .then(() => {
+              return props.onLoadCreditCardStatements();
+            })
+            .then(() => {
+              return props.onLoadCheckingAccountStatements();
+            })
+            .then(() => {
+              return props.onLoadMinMaxTransactionDates();
+            });
+
+        }).catch((err: any) => {
+          console.log('uploadFile returned error');
+          console.log(err);
+          setUploadStatus('failure');
+        });
     }
   }
+
 
   return (
     <Dialog onClose={handleClose} open={open}>
