@@ -30,57 +30,9 @@ export interface UploadStatementDialogProps extends UploadStatementDialogPropsFr
 
 const UploadStatementDialog = (props: UploadStatementDialogProps) => {
 
-  const [selectedFiles, setSelectedFiles] = React.useState<FileList | null>(null);
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedFiles(event.target.files);
-  };
-
-  const handleUpload = async () => {
-
-    if (!selectedFiles) return;
-
-    console.log('handleUpload', selectedFiles);
-    return;
-    /*
-    const formData = new FormData();
-    Array.from(selectedFiles).forEach(file => {
-      formData.append('files', file);
-    });
-
-    try {
-      // const response = await axios.post('/upload', formData, {
-      //   headers: {
-      //     'Content-Type': 'multipart/form-data',
-      //   },
-      // });
-      // console.log('Files uploaded successfully:', response.data);
-    } catch (error) {
-      console.error('Error uploading files:', error);
-    }
-      */
-  };
-
-  return (
-    <Box>
-      <input type="file" multiple style={{ width: '500px' }} onChange={handleFileChange} />
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleUpload}
-        disabled={!selectedFiles}
-      >
-        Upload
-      </Button>
-    </Box>
-  );
-};
-
-
-
-/*
   const { open, onClose } = props;
 
+  const [selectedFiles, setSelectedFiles] = React.useState<FileList | null>(null);
   const [selectedFile, setSelectedFile] = React.useState(null);
   const [uploadStatus, setUploadStatus] = React.useState<any>(null); // null, 'success', or 'failure'
 
@@ -99,6 +51,11 @@ const UploadStatementDialog = (props: UploadStatementDialogProps) => {
 
   const handleFileChangeHandler = (e: any) => {
     setSelectedFile(e.target.files[0]);
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedFiles(event.target.files);
+    // setSelectedFile(e.target.files[0]);
   };
 
   const handleUploadFile = () => {
@@ -132,6 +89,30 @@ const UploadStatementDialog = (props: UploadStatementDialogProps) => {
     }
   }
 
+  const handleUpload = async () => {
+
+    console.log('selectedFiles:', selectedFiles);
+
+    // if (!selectedFiles) return;
+
+    // const formData = new FormData();
+    // Array.from(selectedFiles).forEach(file => {
+    //   formData.append('files', file);
+    // });
+
+    // try {
+    //   const response = await axios.post('/upload', formData, {
+    //     headers: {
+    //       'Content-Type': 'multipart/form-data',
+    //     },
+    //   });
+    //   console.log('Files uploaded successfully:', response.data);
+    // } catch (error) {
+    //   console.error('Error uploading files:', error);
+    // }
+  };
+
+
   return (
     <Dialog onClose={handleClose} open={open}>
       <DialogTitle>Upload Statement</DialogTitle>
@@ -141,13 +122,13 @@ const UploadStatementDialog = (props: UploadStatementDialogProps) => {
           noValidate
           autoComplete="off"
         >
-          <input type="file" name="file" style={{ width: '500px' }} onChange={handleFileChangeHandler} />
+          <input type="file" multiple name="file" style={{ width: '500px' }} onChange={handleFileChange} />
           <br />
         </Box>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
-        <Button onClick={handleUploadFile} autoFocus variant="contained" color="primary" disabled={!selectedFile}>Upload</Button>
+        <Button onClick={handleUpload} autoFocus variant="contained" color="primary" >Upload</Button>
       </DialogActions>
       {uploadStatus && (
         <Dialog open={true} onClose={handleCloseErrorDialog}>
@@ -168,7 +149,6 @@ const UploadStatementDialog = (props: UploadStatementDialogProps) => {
     </Dialog>
   );
 };
-*/
 
 function mapStateToProps(state: any) {
   return {
