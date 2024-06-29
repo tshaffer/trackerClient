@@ -33,7 +33,6 @@ const UploadStatementDialog = (props: UploadStatementDialogProps) => {
   const { open, onClose } = props;
 
   const [selectedFiles, setSelectedFiles] = React.useState<FileList | null>(null);
-  const [selectedFile, setSelectedFile] = React.useState(null);
   const [uploadStatus, setUploadStatus] = React.useState<any>(null); // null, 'success', or 'failure'
 
   if (!open) {
@@ -49,56 +48,70 @@ const UploadStatementDialog = (props: UploadStatementDialogProps) => {
     setUploadStatus(null);
   }
 
-  const handleFileChangeHandler = (e: any) => {
-    setSelectedFile(e.target.files[0]);
-  };
-
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedFiles(event.target.files);
-    // setSelectedFile(e.target.files[0]);
   };
 
-  const handleUploadFile = () => {
-    if (!isNil(selectedFile)) {
-      const statementExists: boolean = props.checkingAccountStatementState.some(statement => statement.fileName === (selectedFile as any).name) || props.creditCardStatementState.some(statement => statement.fileName ===  (selectedFile as any).name);
-      if (statementExists) {
-        setUploadStatus('The selected statement has already been uploaded. Please select a different statement.');
-        return;
-      }
-      const data = new FormData();
-      data.append('file', selectedFile);
-      props.onUploadFile(data)
-        .then((response: any) => {
-          setUploadStatus('success');
-          props.onLoadCategories()
-            .then(() => {
-              return props.onLoadCreditCardStatements();
-            })
-            .then(() => {
-              return props.onLoadCheckingAccountStatements();
-            })
-            .then(() => {
-              return props.onLoadMinMaxTransactionDates();
-            });
+  // const handleUploadFile = () => {
+  //   if (!isNil(selectedFile)) {
+  //     const statementExists: boolean = props.checkingAccountStatementState.some(statement => statement.fileName === (selectedFile as any).name) || props.creditCardStatementState.some(statement => statement.fileName ===  (selectedFile as any).name);
+  //     if (statementExists) {
+  //       setUploadStatus('The selected statement has already been uploaded. Please select a different statement.');
+  //       return;
+  //     }
+  //     const data = new FormData();
+  //     data.append('file', selectedFile);
+  //     props.onUploadFile(data)
+  //       .then((response: any) => {
+  //         setUploadStatus('success');
+  //         props.onLoadCategories()
+  //           .then(() => {
+  //             return props.onLoadCreditCardStatements();
+  //           })
+  //           .then(() => {
+  //             return props.onLoadCheckingAccountStatements();
+  //           })
+  //           .then(() => {
+  //             return props.onLoadMinMaxTransactionDates();
+  //           });
 
-        }).catch((err: any) => {
-          console.log('uploadFile returned error');
-          console.log(err);
-          setUploadStatus('Upload Failed: Please try again.');
-        });
-    }
-  }
+  //       }).catch((err: any) => {
+  //         console.log('uploadFile returned error');
+  //         console.log(err);
+  //         setUploadStatus('Upload Failed: Please try again.');
+  //       });
+  //   }
+  // }
 
   const handleUpload = async () => {
 
     console.log('selectedFiles:', selectedFiles);
 
-    // if (!selectedFiles) return;
+    if (!selectedFiles) return;
 
-    // const formData = new FormData();
-    // Array.from(selectedFiles).forEach(file => {
-    //   formData.append('files', file);
-    // });
+    const formData = new FormData();
+    Array.from(selectedFiles).forEach(file => {
+      formData.append('files', file);
+    });
+    props.onUploadFile(formData)
+    .then((response: any) => {
+      setUploadStatus('success');
+      props.onLoadCategories()
+        .then(() => {
+          return props.onLoadCreditCardStatements();
+        })
+        .then(() => {
+          return props.onLoadCheckingAccountStatements();
+        })
+        .then(() => {
+          return props.onLoadMinMaxTransactionDates();
+        });
+
+    }).catch((err: any) => {
+      console.log('uploadFile returned error');
+      console.log(err);
+      setUploadStatus('Upload Failed: Please try again.');
+    });
 
     // try {
     //   const response = await axios.post('/upload', formData, {
