@@ -25,8 +25,8 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
   const [selectedStatement, setSelectedStatement] = useState<string>('statement1');
 
   React.useEffect(() => {
-    props.onSetStartDate(props.minMaxTransactionDates.minDate);
-    props.onSetEndDate(props.minMaxTransactionDates.maxDate);
+    props.onSetStartDate(getStartDate(props.dateRangeType));
+    props.onSetEndDate(getEndDate(props.dateRangeType));
   }, []);
 
   const getISODateString = (date: Date): string => {
