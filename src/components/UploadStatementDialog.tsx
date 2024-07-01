@@ -107,7 +107,7 @@ const UploadStatementDialog = (props: UploadStatementDialogProps) => {
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
+        <Button onClick={handleClose}>Close</Button>
         <Button onClick={handleUpload} autoFocus variant="contained" color="primary" >Upload</Button>
       </DialogActions>
       {uploadStatus && (

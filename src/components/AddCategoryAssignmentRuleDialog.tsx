@@ -1,19 +1,20 @@
 import React, { useRef, useEffect, useState } from 'react';
 
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import { v4 as uuidv4 } from 'uuid';
+
+import { cloneDeep, isNil } from 'lodash';
 
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { Button, DialogActions, DialogContent, DialogContentText, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Tooltip } from '@mui/material';
-import { getAppInitialized, getUnidentifiedBankTransactionById } from '../selectors';
+import { Button, DialogActions, DialogContent, DialogContentText, MenuItem, Tooltip } from '@mui/material';
+
+import { getAppInitialized, getCategories, getUnidentifiedBankTransactionById } from '../selectors';
 import { BankTransaction, BankTransactionType, Category, CheckingAccountTransaction, CreditCardTransaction, DisregardLevel, SidebarMenuButton } from '../types';
-import { getCategories } from '../selectors/categoryState';
-import { cloneDeep, isNil } from 'lodash';
-import { bindActionCreators } from 'redux';
 import { addCategoryServerAndRedux } from '../controllers';
 import { TrackerDispatch } from '../models';
 
@@ -64,6 +65,7 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
       setTimeout(() => {
         if (open && textFieldRef.current) {
           (textFieldRef.current as any).focus();
+          setSelectedCategoryId('');
         }
       }, 200);
     }
