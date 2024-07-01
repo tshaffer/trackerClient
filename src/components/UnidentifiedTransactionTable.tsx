@@ -44,6 +44,30 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
     }
   }
 
+  const getUniqueDescriptionsCount = (unidentifiedBankTransactions: BankTransaction[]): number => {
+    const uniqueDescriptions: string[] = [];
+    unidentifiedBankTransactions.forEach((unidentifiedBankTransaction: BankTransaction) => {
+      const description = getTransactionDetails(unidentifiedBankTransaction);
+      if (!uniqueDescriptions.includes(description)) {
+        uniqueDescriptions.push(description);
+      }
+    });
+    return uniqueDescriptions.length;
+  }
+
+  const getDebitsCredits = (unidentifiedBankTransactions: BankTransaction[]): { debits: number, credits: number } => {
+    let debits = 0;
+    let credits = 0;
+    unidentifiedBankTransactions.forEach((unidentifiedBankTransaction: BankTransaction) => {
+      if (unidentifiedBankTransaction.amount < 0) {
+        debits += unidentifiedBankTransaction.amount;
+      } else {
+        credits += unidentifiedBankTransaction.amount;
+      }
+    });
+    return { debits, credits };
+  }
+
   const handleButtonClick = (unidentifiedBankTransaction: BankTransaction) => {
     setUnidentifiedBankTransactionId(unidentifiedBankTransaction.id);
     setShowAddRuleDialog(true);
@@ -72,6 +96,8 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
     return null;
   }
 
+  const { debits, credits } = getDebitsCredits(props.unidentifiedBankTransactions);
+
   return (
     <React.Fragment>
       <AddRuleDialog
@@ -81,6 +107,10 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
         unidentifiedBankTransactionId={unidentifiedBankTransactionId}
       />
 
+      <h4>Remaining number of unidentified transactions: {props.unidentifiedBankTransactions.length}</h4>
+      <h4>Remaining of unique descriptions: {getUniqueDescriptionsCount(props.unidentifiedBankTransactions)}</h4>
+      <h4>Debits: {formatCurrency(debits)}</h4>
+      <h4>Credits: {formatCurrency(credits)}</h4>
       <div className="table-container">
         <div className="table-header">
           <div className="table-row">
