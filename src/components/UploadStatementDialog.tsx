@@ -6,7 +6,6 @@ import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
 import { Alert, Button, DialogActions, DialogContent } from '@mui/material';
 import { getAppInitialized, getCheckingAccountStatements, getCreditCardStatements } from '../selectors';
-import { isNil } from 'lodash';
 import { bindActionCreators } from 'redux';
 import { loadCategories, loadCheckingAccountStatements, loadCreditCardStatements, loadMinMaxTransactionDates, uploadFile } from '../controllers';
 import { TrackerDispatch } from '../models';
@@ -52,42 +51,20 @@ const UploadStatementDialog = (props: UploadStatementDialogProps) => {
     setSelectedFiles(event.target.files);
   };
 
-  // const handleUploadFile = () => {
-  //   if (!isNil(selectedFile)) {
-  //     const statementExists: boolean = props.checkingAccountStatementState.some(statement => statement.fileName === (selectedFile as any).name) || props.creditCardStatementState.some(statement => statement.fileName ===  (selectedFile as any).name);
-  //     if (statementExists) {
-  //       setUploadStatus('The selected statement has already been uploaded. Please select a different statement.');
-  //       return;
-  //     }
-  //     const data = new FormData();
-  //     data.append('file', selectedFile);
-  //     props.onUploadFile(data)
-  //       .then((response: any) => {
-  //         setUploadStatus('success');
-  //         props.onLoadCategories()
-  //           .then(() => {
-  //             return props.onLoadCreditCardStatements();
-  //           })
-  //           .then(() => {
-  //             return props.onLoadCheckingAccountStatements();
-  //           })
-  //           .then(() => {
-  //             return props.onLoadMinMaxTransactionDates();
-  //           });
-
-  //       }).catch((err: any) => {
-  //         console.log('uploadFile returned error');
-  //         console.log(err);
-  //         setUploadStatus('Upload Failed: Please try again.');
-  //       });
-  //   }
-  // }
-
   const handleUpload = async () => {
 
     console.log('selectedFiles:', selectedFiles);
 
     if (!selectedFiles) return;
+
+    // check to see if any of the files have already been uploaded
+    const selectedFilesArray: File[] = Array.from(selectedFiles);
+    for (const selectedFile of selectedFilesArray) {
+      if (props.checkingAccountStatementState.some(statement => statement.fileName === selectedFile.name) || props.creditCardStatementState.some(statement => statement.fileName === selectedFile.name)) {
+        setUploadStatus(selectedFile.name + ' has already been uploaded. Please select a different statement.');
+        return;
+      }
+    }
 
     const formData = new FormData();
     Array.from(selectedFiles).forEach(file => {
@@ -113,16 +90,6 @@ const UploadStatementDialog = (props: UploadStatementDialogProps) => {
       setUploadStatus('Upload Failed: Please try again.');
     });
 
-    // try {
-    //   const response = await axios.post('/upload', formData, {
-    //     headers: {
-    //       'Content-Type': 'multipart/form-data',
-    //     },
-    //   });
-    //   console.log('Files uploaded successfully:', response.data);
-    // } catch (error) {
-    //   console.error('Error uploading files:', error);
-    // }
   };
 
 
