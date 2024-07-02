@@ -3,20 +3,22 @@ import { Box, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, MenuI
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { TrackerDispatch, setEndDate, setDateRangeType, setStartDate } from '../models';
-import { getStartDate, getEndDate, getDateRangeType, getMinMaxTransactionDates } from '../selectors';
-import { DateRangeType, MinMaxDates } from '../types';
+import { getStartDate, getEndDate, getDateRangeType, getMinMaxTransactionDates, getCheckingAccountStatements, getCreditCardStatements } from '../selectors';
+import { CheckingAccountStatement, CreditCardStatement, DateRangeType, MinMaxDates, StatementType } from '../types';
 import dayjs, { Dayjs } from 'dayjs';
 import { isNil } from 'lodash';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { getCurrentDate, getISODateString, getRetirementDate } from '../utilities';
+import { formatDate, getCurrentDate, getISODateString, getRetirementDate } from '../utilities';
 
 interface DateRangeSpecifierProps {
   dateRangeType: DateRangeType;
   startDate: string,
   endDate: string,
   minMaxTransactionDates: MinMaxDates,
+  creditCardStatements: CreditCardStatement[],
+  checkingAccountStatements: CheckingAccountStatement[],
   onSetDateRangeType: (dateRangeType: DateRangeType) => any;
   onSetStartDate: (startDate: string) => any;
   onSetEndDate: (endDate: string) => any;
@@ -146,6 +148,13 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
     if (props.dateRangeType !== DateRangeType.Statement) {
       return <React.Fragment />;
     }
+    const combinedStatements = props.creditCardStatements.concat(props.checkingAccountStatements);
+    const sortedStatements = combinedStatements.sort((a, b) => {
+      const dateA = new Date(a.endDate);
+      const dateB = new Date(b.endDate);
+      return dateB.getTime() - dateA.getTime(); // Sort in descending order
+    });
+
     return (
       <FormControl sx={{ ml: 2, minWidth: 120 }}>
         <InputLabel id="statement-select-label">Name</InputLabel>
@@ -156,9 +165,11 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
           onChange={handleStatementChange}
           label="Statement"
         >
-          <MenuItem value="statement1">Statement 1</MenuItem>
-          <MenuItem value="statement2">Statement 2</MenuItem>
-          <MenuItem value="statement3">Statement 3</MenuItem>
+          {sortedStatements.map((statement, index) => {
+            return (
+              <MenuItem key={statement.id} value={`statement${index + 1}`}>{(statement.type === StatementType.CreditCard ? 'Chase: ' : 'US Bank: ') + formatDate(statement.endDate)}</MenuItem>
+            );
+          })}
         </Select>
       </FormControl>
 
@@ -193,6 +204,8 @@ function mapStateToProps(state: any) {
     startDate: getStartDate(state),
     endDate: getEndDate(state),
     minMaxTransactionDates: getMinMaxTransactionDates(state),
+    creditCardStatements: getCreditCardStatements(state),
+    checkingAccountStatements: getCheckingAccountStatements(state),
   };
 }
 
