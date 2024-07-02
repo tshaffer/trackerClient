@@ -12,11 +12,13 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import AddRuleDialog from './AddCategoryAssignmentRuleDialog';
 import { addCategoryAssignmentRuleServerAndRedux, addCategoryServerAndRedux, search } from '../controllers';
 import { TrackerDispatch } from '../models';
-import { getStartDate, getEndDate, getUnidentifiedBankTransactions } from '../selectors';
+import { getStartDate, getEndDate, getUnidentifiedBankTransactions, getGeneratedReportEndDate, getGeneratedReportStartDate } from '../selectors';
 
 interface NotIdentifiedTransactionTableProps {
   startDate: string;
   endDate: string;
+  generatedReportStartDate: string;
+  generatedReportEndDate: string;
   unidentifiedBankTransactions: BankTransaction[];
   onAddCategory: (category: Category) => any;
   onAddCategoryAssignmentRule: (categoryAssignmentRule: CategoryAssignmentRule) => any;
@@ -107,6 +109,7 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
         unidentifiedBankTransactionId={unidentifiedBankTransactionId}
       />
 
+      <h4>Date Range {formatDate(props.generatedReportStartDate)} - {formatDate(props.generatedReportEndDate)}</h4>
       <h4>Remaining number of unidentified transactions: {props.unidentifiedBankTransactions.length}</h4>
       <h4>Remaining of unique descriptions: {getUniqueDescriptionsCount(props.unidentifiedBankTransactions)}</h4>
       <h4>Debits: {formatCurrency(debits)}</h4>
@@ -145,6 +148,8 @@ function mapStateToProps(state: any) {
   return {
     startDate: getStartDate(state),
     endDate: getEndDate(state),
+    generatedReportStartDate: getGeneratedReportStartDate(state),
+    generatedReportEndDate: getGeneratedReportEndDate(state),
     unidentifiedBankTransactions: getUnidentifiedBankTransactions(state),
   };
 }

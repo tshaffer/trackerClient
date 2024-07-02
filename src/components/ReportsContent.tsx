@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 
 import { Tabs, Tab, Box, Typography, Button } from '@mui/material';
 
-import { TrackerDispatch } from '../models';
+import { TrackerDispatch, setGeneratedReportEndDate, setGeneratedReportStartDate } from '../models';
 import { getStartDate, getEndDate } from '../selectors';
 import { search } from '../controllers';
 
@@ -21,6 +21,8 @@ interface ReportsContentProps extends ReportsContentPropsFromParent {
   startDate: string,
   endDate: string,
   onSearch: (startDate: string, endDate: string) => any;
+  onSetGeneratedReportStartDate: (date: string) => any;
+  onSetGeneratedReportEndDate: (date: string) => any;
 }
 
 const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProps) => {
@@ -35,10 +37,14 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
   };
 
   const handleGenerateReport = () => {
+    props.onSetGeneratedReportStartDate(props.startDate);
+    props.onSetGeneratedReportEndDate(props.endDate);
     props.onSearch(props.startDate, props.endDate);
   };
 
   const handleGenerateUnidentifiedTransactionsGenerateReport = () => {
+    props.onSetGeneratedReportStartDate(props.startDate);
+    props.onSetGeneratedReportEndDate(props.endDate);
     props.onSearch(props.startDate, props.endDate);
   }
 
@@ -91,6 +97,8 @@ function mapStateToProps(state: any) {
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
     onSearch: search,
+    onSetGeneratedReportStartDate: setGeneratedReportStartDate,
+    onSetGeneratedReportEndDate: setGeneratedReportEndDate,
   }, dispatch);
 };
 

@@ -12,6 +12,14 @@ export const getEndDate = (state: TrackerState): string => {
   return state.reportDataState.endDate;
 }
 
+export const getGeneratedReportStartDate = (state: TrackerState): string => {
+  return state.reportDataState.generatedReportStartDate;
+}
+
+export const getGeneratedReportEndDate = (state: TrackerState): string => {
+  return state.reportDataState.generatedReportEndDate;
+}
+
 export const getTotal = (state: TrackerState): number => {
   return state.reportDataState.total;
 }

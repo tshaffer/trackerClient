@@ -9,12 +9,14 @@ import { formatCurrency, formatPercentage, formatDate, expensesPerMonth, roundTo
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { TrackerDispatch } from '../models';
-import { getStartDate, getEndDate, getTransactionsByCategory } from '../selectors';
-import { isEmpty } from 'lodash';
+import { getStartDate, getEndDate, getTransactionsByCategory, getGeneratedReportStartDate, getGeneratedReportEndDate } from '../selectors';
+import { get, isEmpty } from 'lodash';
 
 interface SpendingReportTableProps {
   startDate: string;
   endDate: string;
+  generatedReportStartDate: string;
+  generatedReportEndDate: string;
   transactionsByCategory: StringToTransactionsLUT,
 }
 
@@ -94,8 +96,9 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
 
   return (
     <React.Fragment>
+      <h4>Date Range {formatDate(props.generatedReportStartDate)} - {formatDate(props.generatedReportEndDate)}</h4>
       <h4>Total Amount: {formatCurrency(totalAmount)}</h4>
-      <h4>Per Month: {expensesPerMonth(totalAmount, props.startDate, props.endDate)}</h4>
+      <h4>Per Month: {expensesPerMonth(totalAmount, props.generatedReportStartDate, props.generatedReportEndDate)}</h4>
       <div className="table-container">
         <div className="table-header">
           <div className="table-row">
@@ -155,6 +158,8 @@ function mapStateToProps(state: any) {
   return {
     startDate: getStartDate(state),
     endDate: getEndDate(state),
+    generatedReportStartDate: getGeneratedReportStartDate(state),
+    generatedReportEndDate: getGeneratedReportEndDate(state),
     transactionsByCategory: getTransactionsByCategory(state),
   };
 }
