@@ -10,6 +10,7 @@ import { isNil } from 'lodash';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { getCurrentDate, getISODateString, getRetirementDate } from '../utilities';
 
 interface DateRangeSpecifierProps {
   dateRangeType: DateRangeType;
@@ -29,19 +30,10 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
     props.onSetEndDate(getEndDate(props.dateRangeType));
   }, []);
 
-  const getISODateString = (date: Date): string => {
-    return date.toISOString().split('T')[0];
-  };
-
   const getFirstDayOfCurrentYear = (): string => {
     const now = new Date();
     const firstDayOfCurrentYear = new Date(now.getFullYear(), 0, 1);
     return getISODateString(firstDayOfCurrentYear);
-  };
-
-  const getCurrentDate = (): string => {
-    const now = new Date();
-    return getISODateString(now);
   };
 
   const getFirstDayOfLastYear = (): string => {
@@ -64,6 +56,8 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
         return getFirstDayOfCurrentYear();
       case DateRangeType.LastYear:
         return getFirstDayOfLastYear();
+      case DateRangeType.SinceRetirement:
+        return getRetirementDate();
       default:
         return props.startDate;
     }
@@ -74,6 +68,7 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
       case DateRangeType.All:
         return props.minMaxTransactionDates.maxDate;
       case DateRangeType.YearToDate:
+      case DateRangeType.SinceRetirement:
         return getCurrentDate();
       case DateRangeType.LastYear:
         return getLastDayOfLastYear();
@@ -174,6 +169,7 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
       <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <FormControl component="fieldset">
           <RadioGroup row value={props.dateRangeType} onChange={handleDateOptionChange}>
+            <FormControlLabel value={DateRangeType.SinceRetirement} control={<Radio />} label="Since Retirement" sx={{ maxHeight: '32px' }} />
             <FormControlLabel value={DateRangeType.All} control={<Radio />} label="All Dates" sx={{ maxHeight: '32px' }} />
             <FormControlLabel value={DateRangeType.YearToDate} control={<Radio />} label="Year to Date" sx={{ maxHeight: '32px' }} />
             <FormControlLabel value={DateRangeType.LastYear} control={<Radio />} label="Last Year" sx={{ maxHeight: '32px' }} />

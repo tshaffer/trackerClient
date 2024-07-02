@@ -14,6 +14,7 @@ export enum DateRangeType {
   LastYear = 'lastYear',
   DateRange = 'dateRange',
   Statement = 'statement',
+  SinceRetirement = 'sinceRetirement',
 }
 
 export enum StatementType {

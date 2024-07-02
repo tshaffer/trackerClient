@@ -1,4 +1,5 @@
 import { BankTransaction, DateRangeType, MinMaxDates, ReportDataState, StringToTransactionsLUT } from '../types';
+import { getCurrentDate, getRetirementDate } from '../utilities';
 import { TrackerModelBaseAction } from './baseAction';
 
 // ------------------------------------
@@ -166,9 +167,9 @@ export const setMinMaxTransactionDates = (
 // ------------------------------------
 
 const initialState: ReportDataState = {
-  dateRangeType: DateRangeType.All,
-  startDate: new Date().toISOString().split('T')[0],
-  endDate: new Date().toISOString().split('T')[0],
+  dateRangeType: DateRangeType.SinceRetirement,
+  startDate: getRetirementDate(),
+  endDate: getCurrentDate(),
   generatedReportStartDate: new Date().toISOString().split('T')[0],
   generatedReportEndDate: new Date().toISOString().split('T')[0],
   transactionsByCategory: {},
