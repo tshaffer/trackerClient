@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Box, FormControl, RadioGroup, FormControlLabel, Radio, MenuItem, Select, InputLabel, SelectChangeEvent } from '@mui/material';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { TrackerDispatch, setEndDate, setDateRangeType, setStartDate, setReportStatementId } from '../models';
-import { getStartDate, getEndDate, getDateRangeType, getMinMaxTransactionDates, getCheckingAccountStatements, getCreditCardStatements, getStatementId } from '../selectors';
+import { getStartDate, getEndDate, getDateRangeType, getMinMaxTransactionDates, getCheckingAccountStatements, getCreditCardStatements, getReportStatementId } from '../selectors';
 import { CheckingAccountStatement, CreditCardStatement, DateRangeType, MinMaxDates, StatementType } from '../types';
 import dayjs, { Dayjs } from 'dayjs';
 import { isNil } from 'lodash';
@@ -105,6 +105,12 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
 
   const handleStatementChange = (event: SelectChangeEvent<string>) => {
     props.onSetReportStatementId(event.target.value);
+    const statementId = event.target.value;
+    const statement = props.creditCardStatements.find((statement: CreditCardStatement) => statement.id === statementId) || props.checkingAccountStatements.find((statement: CheckingAccountStatement) => statement.id === statementId); 
+    if (statement) {
+      props.onSetStartDate(statement.startDate);
+      props.onSetEndDate(statement.endDate);
+    }
   };
 
   const renderStartDate = (): JSX.Element => {
@@ -168,7 +174,7 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
         >
           {sortedStatements.map((statement, index) => {
             return (
-              <MenuItem key={statement.id} value={`statement${index + 1}`}>{(statement.type === StatementType.CreditCard ? 'Chase: ' : 'US Bank: ') + formatDate(statement.endDate)}</MenuItem>
+              <MenuItem key={statement.id} value={statement.id}>{(statement.type === StatementType.CreditCard ? 'Chase: ' : 'US Bank: ') + formatDate(statement.endDate)}</MenuItem>
             );
           })}
         </Select>
@@ -204,7 +210,7 @@ function mapStateToProps(state: any) {
     dateRangeType: getDateRangeType(state),
     startDate: getStartDate(state),
     endDate: getEndDate(state),
-    statementId: getStatementId(state),
+    statementId: getReportStatementId(state),
     minMaxTransactionDates: getMinMaxTransactionDates(state),
     creditCardStatements: getCreditCardStatements(state),
     checkingAccountStatements: getCheckingAccountStatements(state),

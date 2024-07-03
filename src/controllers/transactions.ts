@@ -95,7 +95,7 @@ export const loadMinMaxTransactionDates = (): TrackerAnyPromiseThunkAction => {
 
 
 
-export const search = (startDate: string, endDate: string): TrackerVoidPromiseThunkAction => {
+export const search = (startDate: string, endDate: string, includeCreditCardTransactions: boolean, includeCheckingAccountTransactions: boolean): TrackerVoidPromiseThunkAction => {
 
   return (dispatch: TrackerDispatch, getState: any) => {
 
@@ -105,6 +105,8 @@ export const search = (startDate: string, endDate: string): TrackerVoidPromiseTh
 
     path += '?startDate=' + startDate;
     path += '&endDate=' + endDate;
+    path += '&includeCreditCardTransactions=' + includeCreditCardTransactions;
+    path += '&includeCheckingAccountTransactions=' + includeCheckingAccountTransactions;
 
     return axios.get(path)
       .then((transactionsResponse: any) => {

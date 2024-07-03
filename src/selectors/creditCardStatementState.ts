@@ -4,3 +4,6 @@ export const getCreditCardStatements = (state: TrackerState): CreditCardStatemen
   return state.creditCardStatementState.creditCardStatements;
 };
 
+export const getCreditCardStatementById = (state: TrackerState, creditCardStatementId: string): CreditCardStatement | null => {
+  return state.creditCardStatementState.creditCardStatements.find((creditCardStatement: CreditCardStatement) => creditCardStatement.id === creditCardStatementId) || null;
+}

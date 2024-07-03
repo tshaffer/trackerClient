@@ -5,13 +5,14 @@ import { bindActionCreators } from 'redux';
 import { Tabs, Tab, Box, Typography, Button } from '@mui/material';
 
 import { TrackerDispatch, setGeneratedReportEndDate, setGeneratedReportStartDate } from '../models';
-import { getStartDate, getEndDate } from '../selectors';
+import { getStartDate, getEndDate, getDateRangeType, getReportStatement, getReportStatementId } from '../selectors';
 import { search } from '../controllers';
 
 import DateRangeSpecifier from './DateRangeSpecifier';
 import SpendingReportTable from './SpendingReportTable';
 import UnIdentifiedTransactionTable from './UnidentifiedTransactionTable';
-import { SidebarMenuButton } from '../types';
+import { DateRangeType, SidebarMenuButton, Statement, StatementType } from '../types';
+import { isNil } from 'lodash';
 
 export interface ReportsContentPropsFromParent {
   activeTab: number;
@@ -20,7 +21,9 @@ export interface ReportsContentPropsFromParent {
 interface ReportsContentProps extends ReportsContentPropsFromParent {
   startDate: string,
   endDate: string,
-  onSearch: (startDate: string, endDate: string) => any;
+  dateRangeType: DateRangeType,
+  reportStatement: Statement | null,
+  onSearch: (startDate: string, endDate: string, includeCreditCardTransactions: boolean, includeCheckingAccountTransactions: boolean) => any;
   onSetGeneratedReportStartDate: (date: string) => any;
   onSetGeneratedReportEndDate: (date: string) => any;
 }
@@ -37,15 +40,37 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
   };
 
   const handleGenerateReport = () => {
+
     props.onSetGeneratedReportStartDate(props.startDate);
     props.onSetGeneratedReportEndDate(props.endDate);
-    props.onSearch(props.startDate, props.endDate);
+
+    let includeCreditCardTransactions = true;
+    let includeCheckingAccountTransactions = true;
+    if (props.dateRangeType === DateRangeType.Statement) {
+      if (!isNil(props.reportStatement)) {
+        includeCreditCardTransactions = props.reportStatement.type === StatementType.CreditCard;
+        includeCheckingAccountTransactions = props.reportStatement.type === StatementType.Checking;
+      }
+    }
+
+    props.onSearch(props.startDate, props.endDate, includeCreditCardTransactions, includeCheckingAccountTransactions);
   };
 
   const handleGenerateUnidentifiedTransactionsGenerateReport = () => {
+
     props.onSetGeneratedReportStartDate(props.startDate);
     props.onSetGeneratedReportEndDate(props.endDate);
-    props.onSearch(props.startDate, props.endDate);
+
+    let includeCreditCardTransactions = true;
+    let includeCheckingAccountTransactions = true;
+    if (props.dateRangeType === DateRangeType.Statement) {
+      if (!isNil(props.reportStatement)) {
+        includeCreditCardTransactions = props.reportStatement.type === StatementType.CreditCard;
+        includeCheckingAccountTransactions = props.reportStatement.type === StatementType.Checking;
+      }
+    }
+
+    props.onSearch(props.startDate, props.endDate, includeCreditCardTransactions, includeCheckingAccountTransactions);
   }
 
   return (
@@ -91,6 +116,8 @@ function mapStateToProps(state: any) {
   return {
     startDate: getStartDate(state),
     endDate: getEndDate(state),
+    dateRangeType: getDateRangeType(state),
+    reportStatement: getReportStatement(state, getReportStatementId(state)),
   };
 }
 

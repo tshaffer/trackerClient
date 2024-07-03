@@ -57,7 +57,7 @@ export type CategoryExpensesData = {
   percentageOfTotal: number,
 }
 
-interface Statement {
+export interface Statement {
   id: string;
   fileName: string;
   type: StatementType;

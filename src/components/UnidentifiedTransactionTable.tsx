@@ -5,24 +5,27 @@ import { bindActionCreators } from 'redux';
 import { v4 as uuidv4 } from 'uuid';
 
 import '../styles/Tracker.css';
-import { BankTransaction, BankTransactionType, Category, CategoryAssignmentRule, CheckingAccountTransaction, CreditCardTransaction, DisregardLevel } from '../types';
+import { BankTransaction, BankTransactionType, Category, CategoryAssignmentRule, CheckingAccountTransaction, CreditCardTransaction, DateRangeType, DisregardLevel, Statement, StatementType } from '../types';
 import { formatCurrency, formatDate } from '../utilities';
 import { IconButton } from '@mui/material';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import AddRuleDialog from './AddCategoryAssignmentRuleDialog';
 import { addCategoryAssignmentRuleServerAndRedux, addCategoryServerAndRedux, search } from '../controllers';
 import { TrackerDispatch } from '../models';
-import { getStartDate, getEndDate, getUnidentifiedBankTransactions, getGeneratedReportEndDate, getGeneratedReportStartDate } from '../selectors';
+import { getStartDate, getEndDate, getUnidentifiedBankTransactions, getGeneratedReportEndDate, getGeneratedReportStartDate, getDateRangeType, getReportStatement, getReportStatementId } from '../selectors';
+import { isNil } from 'lodash';
 
 interface NotIdentifiedTransactionTableProps {
   startDate: string;
   endDate: string;
+  dateRangeType: DateRangeType,
+  reportStatement: Statement | null,
   generatedReportStartDate: string;
   generatedReportEndDate: string;
   unidentifiedBankTransactions: BankTransaction[];
   onAddCategory: (category: Category) => any;
   onAddCategoryAssignmentRule: (categoryAssignmentRule: CategoryAssignmentRule) => any;
-  onSearch: (startDate: string, endDate: string) => any;
+  onSearch: (startDate: string, endDate: string, includeCreditCardTransactions: boolean, includeCheckingAccountTransactions: boolean) => any;
 }
 
 const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps> = (props: NotIdentifiedTransactionTableProps) => {
@@ -85,7 +88,15 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
     console.log('handleAddRule: ', categoryAssignmentRule, categoryAssignmentRule);
     props.onAddCategoryAssignmentRule(categoryAssignmentRule)
       .then(() => {
-        props.onSearch(props.startDate, props.endDate);
+        let includeCreditCardTransactions = true;
+        let includeCheckingAccountTransactions = true;
+        if (props.dateRangeType === DateRangeType.Statement) {
+          if (!isNil(props.reportStatement)) {
+            includeCreditCardTransactions = props.reportStatement.type === StatementType.CreditCard;
+            includeCheckingAccountTransactions = props.reportStatement.type === StatementType.Checking;
+          }
+        }
+        props.onSearch(props.startDate, props.endDate, true, true);
       }
       );
   }
@@ -151,6 +162,8 @@ function mapStateToProps(state: any) {
     generatedReportStartDate: getGeneratedReportStartDate(state),
     generatedReportEndDate: getGeneratedReportEndDate(state),
     unidentifiedBankTransactions: getUnidentifiedBankTransactions(state),
+    dateRangeType: getDateRangeType(state),
+    reportStatement: getReportStatement(state, getReportStatementId(state)),
   };
 }
 

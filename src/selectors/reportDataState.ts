@@ -1,4 +1,7 @@
-import { BankTransaction, DateRangeType, MinMaxDates, ReportDataState, StringToTransactionsLUT, TrackerState } from "../types";
+import { isNil } from "lodash";
+import { BankTransaction, DateRangeType, MinMaxDates, ReportDataState, StringToTransactionsLUT, Statement, TrackerState } from "../types";
+import { getCheckingAccountStatementById } from "./checkingAccountStatementState";
+import { getCreditCardStatementById } from "./creditCardStatementState";
 
 export const getReportDataState = (state: TrackerState): ReportDataState => {
   return state.reportDataState;
@@ -44,6 +47,18 @@ export const getMinMaxTransactionDates = (state: TrackerState): MinMaxDates => {
   return state.reportDataState.minMaxTransactionDates;
 }
 
-export const getStatementId = (state: TrackerState): string => {
+export const getReportStatementId = (state: TrackerState): string => {
   return state.reportDataState.reportStatementId;
+}
+
+export const getReportStatement = (state: TrackerState, statementId: string): Statement | null => {
+  const creditCardStatement = getCreditCardStatementById(state, statementId);
+  if (!isNil(creditCardStatement)) {
+    return creditCardStatement;
+  }
+  const checkingAccountStatement = getCheckingAccountStatementById(state, statementId);
+  if (!isNil(checkingAccountStatement)) {
+    return checkingAccountStatement;
+  }
+  return null;
 }
