@@ -43,3 +43,7 @@ export const getDateRangeType = (state: TrackerState): DateRangeType => {
 export const getMinMaxTransactionDates = (state: TrackerState): MinMaxDates => {
   return state.reportDataState.minMaxTransactionDates;
 }
+
+export const getStatementId = (state: TrackerState): string => {
+  return state.reportDataState.statementId;
+}

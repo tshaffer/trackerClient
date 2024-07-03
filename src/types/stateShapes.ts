@@ -24,6 +24,7 @@ export interface ReportDataState {
   unidentifiedBankTransactions: BankTransaction[];
   total: number;
   minMaxTransactionDates: MinMaxDates;
+  statementId: string;
 }
 
 export interface CategoryState {

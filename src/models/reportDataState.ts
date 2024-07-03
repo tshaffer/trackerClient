@@ -14,6 +14,7 @@ export const SET_END_DATE = 'SET_END_DATE';
 export const SET_GENERATED_REPORT_START_DATE = 'SET_GENERATED_REPORT_START_DATE';
 export const SET_GENERATED_REPORT_END_DATE = 'SET_GENERATED_REPORT_END_DATE';
 export const SET_MIN_MAX_TRANSACTION_DATES = 'SET_MIN_MAX_TRANSACTION_DATES';
+export const SET_STATEMENT_ID = 'SET_STATEMENT_ID';
 
 // ------------------------------------
 // Actions
@@ -161,6 +162,21 @@ export const setMinMaxTransactionDates = (
   };
 };
 
+interface SetStatementIdPayload {
+  statementId: string;
+}
+
+export const setStatementId = (
+  statementId: string
+): any => {
+  return {
+    type: SET_STATEMENT_ID,
+    payload: {
+      statementId,
+    },
+  };
+};
+
 
 // ------------------------------------
 // Reducer
@@ -176,11 +192,12 @@ const initialState: ReportDataState = {
   unidentifiedBankTransactions: [],
   total: 0,
   minMaxTransactionDates: { minDate: '', maxDate: '' },
+  statementId: '',
 };
 
 export const reportDataStateReducer = (
   state: ReportDataState = initialState,
-  action: TrackerModelBaseAction<SetStatementDataPayload & SetTransactionsByCategoryPayload & SetUnidentifiedBankTransactionsPayload & SetDateRangeTypePayload & SetStartDatePayload & SetEndDatePayload & SetGeneratedReportStartDatePayload & SetGeneratedReportEndDatePayload & SetMinMaxTransactionDatesPayload>
+  action: TrackerModelBaseAction<SetStatementDataPayload & SetTransactionsByCategoryPayload & SetUnidentifiedBankTransactionsPayload & SetDateRangeTypePayload & SetStartDatePayload & SetEndDatePayload & SetGeneratedReportStartDatePayload & SetGeneratedReportEndDatePayload & SetMinMaxTransactionDatesPayload & SetStatementIdPayload>
 ): ReportDataState => {
   switch (action.type) {
     case SET_STATEMENT_DATA: {
@@ -209,6 +226,9 @@ export const reportDataStateReducer = (
     }
     case SET_MIN_MAX_TRANSACTION_DATES: {
       return { ...state, minMaxTransactionDates: action.payload.minMaxTransactionDates };
+    }
+    case SET_STATEMENT_ID: {
+      return { ...state, statementId: action.payload.statementId };
     }
     default:
       return state;

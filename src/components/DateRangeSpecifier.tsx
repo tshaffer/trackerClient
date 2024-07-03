@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Box, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio, MenuItem, Select, InputLabel, SelectChangeEvent } from '@mui/material';
+import { Box, FormControl, RadioGroup, FormControlLabel, Radio, MenuItem, Select, InputLabel, SelectChangeEvent } from '@mui/material';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { TrackerDispatch, setEndDate, setDateRangeType, setStartDate } from '../models';
-import { getStartDate, getEndDate, getDateRangeType, getMinMaxTransactionDates, getCheckingAccountStatements, getCreditCardStatements } from '../selectors';
+import { TrackerDispatch, setEndDate, setDateRangeType, setStartDate, setStatementId } from '../models';
+import { getStartDate, getEndDate, getDateRangeType, getMinMaxTransactionDates, getCheckingAccountStatements, getCreditCardStatements, getStatementId } from '../selectors';
 import { CheckingAccountStatement, CreditCardStatement, DateRangeType, MinMaxDates, StatementType } from '../types';
 import dayjs, { Dayjs } from 'dayjs';
 import { isNil } from 'lodash';
@@ -16,16 +16,17 @@ interface DateRangeSpecifierProps {
   dateRangeType: DateRangeType;
   startDate: string,
   endDate: string,
+  statementId: string,
   minMaxTransactionDates: MinMaxDates,
   creditCardStatements: CreditCardStatement[],
   checkingAccountStatements: CheckingAccountStatement[],
   onSetDateRangeType: (dateRangeType: DateRangeType) => any;
   onSetStartDate: (startDate: string) => any;
   onSetEndDate: (endDate: string) => any;
+  onSetStatementId: (statementId: string) => any;
 }
 
 const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeSpecifierProps) => {
-  const [selectedStatement, setSelectedStatement] = useState<string>('statement1');
 
   React.useEffect(() => {
     props.onSetStartDate(getStartDate(props.dateRangeType));
@@ -103,7 +104,7 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
   };
 
   const handleStatementChange = (event: SelectChangeEvent<string>) => {
-    setSelectedStatement(event.target.value as string);
+    props.onSetStatementId(event.target.value);
   };
 
   const renderStartDate = (): JSX.Element => {
@@ -161,7 +162,7 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
         <Select
           labelId="statement-select-label"
           id="statement-select"
-          value={selectedStatement}
+          value={props.statementId}
           onChange={handleStatementChange}
           label="Statement"
         >
@@ -203,6 +204,7 @@ function mapStateToProps(state: any) {
     dateRangeType: getDateRangeType(state),
     startDate: getStartDate(state),
     endDate: getEndDate(state),
+    statementId: getStatementId(state),
     minMaxTransactionDates: getMinMaxTransactionDates(state),
     creditCardStatements: getCreditCardStatements(state),
     checkingAccountStatements: getCheckingAccountStatements(state),
@@ -214,6 +216,7 @@ const mapDispatchToProps = (dispatch: TrackerDispatch) => {
     onSetDateRangeType: setDateRangeType,
     onSetStartDate: setStartDate,
     onSetEndDate: setEndDate,
+    onSetStatementId: setStatementId,
   }, dispatch);
 };
 
