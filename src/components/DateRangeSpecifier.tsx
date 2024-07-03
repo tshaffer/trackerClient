@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, FormControl, RadioGroup, FormControlLabel, Radio, MenuItem, Select, InputLabel, SelectChangeEvent } from '@mui/material';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { TrackerDispatch, setEndDate, setDateRangeType, setStartDate, setStatementId } from '../models';
+import { TrackerDispatch, setEndDate, setDateRangeType, setStartDate, setReportStatementId } from '../models';
 import { getStartDate, getEndDate, getDateRangeType, getMinMaxTransactionDates, getCheckingAccountStatements, getCreditCardStatements, getStatementId } from '../selectors';
 import { CheckingAccountStatement, CreditCardStatement, DateRangeType, MinMaxDates, StatementType } from '../types';
 import dayjs, { Dayjs } from 'dayjs';
@@ -23,7 +23,7 @@ interface DateRangeSpecifierProps {
   onSetDateRangeType: (dateRangeType: DateRangeType) => any;
   onSetStartDate: (startDate: string) => any;
   onSetEndDate: (endDate: string) => any;
-  onSetStatementId: (statementId: string) => any;
+  onSetReportStatementId: (statementId: string) => any;
 }
 
 const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeSpecifierProps) => {
@@ -104,7 +104,7 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
   };
 
   const handleStatementChange = (event: SelectChangeEvent<string>) => {
-    props.onSetStatementId(event.target.value);
+    props.onSetReportStatementId(event.target.value);
   };
 
   const renderStartDate = (): JSX.Element => {
@@ -216,7 +216,7 @@ const mapDispatchToProps = (dispatch: TrackerDispatch) => {
     onSetDateRangeType: setDateRangeType,
     onSetStartDate: setStartDate,
     onSetEndDate: setEndDate,
-    onSetStatementId: setStatementId,
+    onSetReportStatementId: setReportStatementId,
   }, dispatch);
 };
 

@@ -45,5 +45,5 @@ export const getMinMaxTransactionDates = (state: TrackerState): MinMaxDates => {
 }
 
 export const getStatementId = (state: TrackerState): string => {
-  return state.reportDataState.statementId;
+  return state.reportDataState.reportStatementId;
 }
