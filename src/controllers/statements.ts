@@ -44,7 +44,7 @@ export const loadCheckingAccountStatements = (): TrackerAnyPromiseThunkAction =>
 
 export const uploadFile = (formData: FormData): TrackerVoidPromiseThunkAction => {
   return (dispatch: TrackerDispatch, getState: any) => {
-    const path = serverUrl + apiUrlFragment + 'creditCardStatement';
+    const path = serverUrl + apiUrlFragment + 'statement';
     return axios.post(path, formData);
   };
 };
