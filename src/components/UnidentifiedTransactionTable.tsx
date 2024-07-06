@@ -5,10 +5,11 @@ import { bindActionCreators } from 'redux';
 import { v4 as uuidv4 } from 'uuid';
 
 import '../styles/Tracker.css';
-import { BankTransaction, BankTransactionType, Category, CategoryAssignmentRule, CheckingAccountTransaction, CreditCardTransaction, DateRangeType, DisregardLevel, Statement, StatementType } from '../types';
+import { BankTransaction, BankTransactionType, Category, CategoryAssignmentRule, CheckingAccountTransaction, CheckingAccountTransactionType, CreditCardTransaction, DateRangeType, DisregardLevel, Statement, StatementType } from '../types';
 import { formatCurrency, formatDate } from '../utilities';
-import { IconButton } from '@mui/material';
+import { IconButton, Tooltip } from '@mui/material';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import EditIcon from '@mui/icons-material/Edit';
 import AddRuleDialog from './AddCategoryAssignmentRuleDialog';
 import { addCategoryAssignmentRuleServerAndRedux, addCategoryServerAndRedux, search } from '../controllers';
 import { TrackerDispatch } from '../models';
@@ -73,9 +74,13 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
     return { debits, credits };
   }
 
-  const handleButtonClick = (unidentifiedBankTransaction: BankTransaction) => {
+  const handleAssignCategory = (unidentifiedBankTransaction: BankTransaction) => {
     setUnidentifiedBankTransactionId(unidentifiedBankTransaction.id);
     setShowAddRuleDialog(true);
+  };
+
+  const handleEditCheck = (unidentifiedBankTransaction: BankTransaction) => {
+    console.log('handleEditCheck: ', unidentifiedBankTransaction);
   };
 
   const handleAddRule = (pattern: string, categoryId: string): void => {
@@ -104,6 +109,23 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
   const handleCloseAddRuleDialog = () => {
     setShowAddRuleDialog(false);
   };
+
+  const getEditIcon = (unidentifiedBankTransaction: BankTransaction): JSX.Element => {
+    if (unidentifiedBankTransaction.bankTransactionType === BankTransactionType.Checking) {
+      if ((unidentifiedBankTransaction as CheckingAccountTransaction).checkingAccountTransactionType === CheckingAccountTransactionType.Check) {
+        return (
+          <Tooltip title="Set check number and payee">
+            <IconButton onClick={() => handleEditCheck(unidentifiedBankTransaction)}>
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+        );
+      }
+    }
+    return (
+      <div style={{ width: 40, height: 40 }}></div>
+    );
+  }
 
   if (props.unidentifiedBankTransactions.length === 0) {
     return null;
@@ -139,9 +161,10 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
           {props.unidentifiedBankTransactions.map((unidentifiedBankTransaction: BankTransaction) => (
             <div className="table-row" key={unidentifiedBankTransaction.id}>
               <div className="table-cell">
-                <IconButton onClick={() => handleButtonClick(unidentifiedBankTransaction)}>
+                <IconButton onClick={() => handleAssignCategory(unidentifiedBankTransaction)}>
                   <AssignmentIcon />
                 </IconButton>
+                {getEditIcon(unidentifiedBankTransaction)}
               </div>
               <div className="table-cell">{getTransactionTypeLabel(unidentifiedBankTransaction.bankTransactionType)}</div>
               <div className="table-cell">{getTransactionDetails(unidentifiedBankTransaction)}</div>
