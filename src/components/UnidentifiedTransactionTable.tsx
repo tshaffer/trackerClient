@@ -15,6 +15,7 @@ import { addCategoryAssignmentRuleServerAndRedux, addCategoryServerAndRedux, sea
 import { TrackerDispatch } from '../models';
 import { getStartDate, getEndDate, getUnidentifiedBankTransactions, getGeneratedReportEndDate, getGeneratedReportStartDate, getDateRangeType, getReportStatement, getReportStatementId } from '../selectors';
 import { isNil } from 'lodash';
+import EditCheckDialog from './EditCheckDialog';
 
 interface NotIdentifiedTransactionTableProps {
   startDate: string;
@@ -33,6 +34,7 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
 
   const [unidentifiedBankTransactionId, setUnidentifiedBankTransactionId] = React.useState('');
   const [showAddRuleDialog, setShowAddRuleDialog] = React.useState(false);
+  const [showEditCheckDialog, setShowEditCheckDialog] = React.useState(false);
 
   const getTransactionTypeLabel = (bankTransactionType: BankTransactionType): string => {
     if (bankTransactionType === BankTransactionType.CreditCard) {
@@ -79,10 +81,6 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
     setShowAddRuleDialog(true);
   };
 
-  const handleEditCheck = (unidentifiedBankTransaction: BankTransaction) => {
-    console.log('handleEditCheck: ', unidentifiedBankTransaction);
-  };
-
   const handleAddRule = (pattern: string, categoryId: string): void => {
     const id: string = uuidv4();
     const categoryAssignmentRule: CategoryAssignmentRule = {
@@ -109,6 +107,20 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
   const handleCloseAddRuleDialog = () => {
     setShowAddRuleDialog(false);
   };
+
+  const handleEditCheck = (unidentifiedBankTransaction: BankTransaction) => {
+    console.log('handleEditCheck: ', unidentifiedBankTransaction);
+    setUnidentifiedBankTransactionId(unidentifiedBankTransaction.id);
+    setShowEditCheckDialog(true);
+  };
+
+  const handleSaveCheck = (check: CheckingAccountTransaction) => {
+    console.log('handleSaveCheck: ', check);
+  };
+
+  const handleCloseEditCheckDialog = () => {
+    setShowEditCheckDialog(false);
+  }
 
   const getEditIcon = (unidentifiedBankTransaction: BankTransaction): JSX.Element => {
     if (unidentifiedBankTransaction.bankTransactionType === BankTransactionType.Checking) {
@@ -140,6 +152,12 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
         onAddRule={handleAddRule}
         onClose={handleCloseAddRuleDialog}
         unidentifiedBankTransactionId={unidentifiedBankTransactionId}
+      />
+      <EditCheckDialog
+        open={showEditCheckDialog}
+        unidentifiedBankTransactionId={unidentifiedBankTransactionId}
+        onClose={handleCloseEditCheckDialog}
+        onSave={handleSaveCheck}
       />
 
       <h4>Date Range {formatDate(props.generatedReportStartDate)} - {formatDate(props.generatedReportEndDate)}</h4>

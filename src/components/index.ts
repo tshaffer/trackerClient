@@ -7,6 +7,7 @@ export * from './CategoriesTable';
 export * from './CheckingAccountStatementsTable';
 export * from './CreditCardStatementsTable';
 export * from './DateRangeSpecifier';
+export * from './EditCheckDialog';
 export * from './ReportsContent';
 export * from './Sidebar';
 export * from './SpendingReportTable';
