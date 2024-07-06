@@ -150,7 +150,7 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
       <div className="table-container">
         <div className="table-header">
           <div className="table-row">
-            <div className="table-cell"></div>
+            <div className="unidentified-table-cell"></div>
             <div className="table-cell">Transaction Type</div>
             <div className="table-cell">Description</div>
             <div className="table-cell">Date</div>

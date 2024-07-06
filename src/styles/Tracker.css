@@ -50,6 +50,11 @@
   /* Adjust the width of the first column */
 }
 
+.unidentified-table-cell:first-child {
+  flex: 0 0 80px;
+  /* Adjust the width of the first column */
+}
+
 .table-cell:last-child {
   text-align: right;
 }
