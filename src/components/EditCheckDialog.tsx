@@ -9,6 +9,7 @@ import {
 import { Category, CheckTransaction } from '../types';
 import { TrackerDispatch } from '../models';
 import { getUnidentifiedBankTransactionById, getCategories } from '../selectors';
+import { formatCurrency, formatDate } from '../utilities';
 
 export interface EditCheckDialogPropsFromParent {
   open: boolean;
@@ -31,20 +32,37 @@ const EditCheckDialog = (props: EditCheckDialogProps) => {
   const [payee, setPayee] = useState(props.check.payee);
   const [checkNumber, setCheckNumber] = useState(props.check.checkNumber);
   const [category, setCategory] = useState(props.check.category);
+  const [checkNumberError, setCheckNumberError] = useState<string | null>(null);
 
   const handleSave = () => {
+    if (!validateCheckNumber(checkNumber)) {
+      setCheckNumberError('Check number must be a valid number');
+      return;
+    }
     const updatedCheck = { ...props.check, payee, checkNumber, category };
     props.onSave(updatedCheck);
   };
 
+  const validateCheckNumber = (value: string): boolean => {
+    return value === '' || !isNaN(Number(value));
+  };
+
+  const handleCheckNumberBlur = () => {
+    if (!validateCheckNumber(checkNumber)) {
+      setCheckNumberError('Check number must be a valid number');
+    } else {
+      setCheckNumberError(null);
+    }
+  };
+
   return (
     <Dialog open={props.open} onClose={props.onClose}>
-      <DialogTitle>Edit CheckingAccountTransaction</DialogTitle>
+      <DialogTitle>Edit Check</DialogTitle>
       <DialogContent>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '300px' }}>
           <TextField
             label="Transaction Date"
-            value={props.check.transactionDate}
+            value={formatDate(props.check.transactionDate)}
             InputProps={{
               readOnly: true,
             }}
@@ -52,7 +70,7 @@ const EditCheckDialog = (props: EditCheckDialogProps) => {
           />
           <TextField
             label="Amount"
-            value={props.check.amount}
+            value={formatCurrency(-props.check.amount)}
             InputProps={{
               readOnly: true,
             }}
@@ -65,9 +83,12 @@ const EditCheckDialog = (props: EditCheckDialogProps) => {
             fullWidth
           />
           <TextField
-            label="CheckingAccountTransaction Number"
+            label="Check Number"
             value={checkNumber}
             onChange={(e) => setCheckNumber(e.target.value)}
+            onBlur={handleCheckNumberBlur}
+            error={!!checkNumberError}
+            helperText={checkNumberError}
             fullWidth
           />
           <FormControl fullWidth>
