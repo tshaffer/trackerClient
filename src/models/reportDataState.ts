@@ -1,4 +1,5 @@
-import { BankTransaction, DateRangeType, MinMaxDates, ReportDataState, StringToTransactionsLUT } from '../types';
+import { cloneDeep } from 'lodash';
+import { BankTransaction, CheckTransaction, DateRangeType, MinMaxDates, ReportDataState, StringToTransactionsLUT } from '../types';
 import { getCurrentDate, getRetirementDate } from '../utilities';
 import { TrackerModelBaseAction } from './baseAction';
 
@@ -15,6 +16,7 @@ export const SET_GENERATED_REPORT_START_DATE = 'SET_GENERATED_REPORT_START_DATE'
 export const SET_GENERATED_REPORT_END_DATE = 'SET_GENERATED_REPORT_END_DATE';
 export const SET_MIN_MAX_TRANSACTION_DATES = 'SET_MIN_MAX_TRANSACTION_DATES';
 export const SET_REPORT_STATEMENT_ID = 'SET_REPORT_STATEMENT_ID';
+export const UPDATE_CHECK_TRANSACTION = 'UPDATE_CHECK_TRANSACTION';
 
 // ------------------------------------
 // Actions
@@ -177,6 +179,21 @@ export const setReportStatementId = (
   };
 };
 
+interface UpdateCheckTransactionPayload {
+  check: CheckTransaction;
+}
+
+export const updateCheckTransactionRedux = (
+  check: CheckTransaction
+): any => {
+  return {
+    type: UPDATE_CHECK_TRANSACTION,
+    payload: {
+      check,
+    },
+  };
+};
+
 
 // ------------------------------------
 // Reducer
@@ -197,7 +214,7 @@ const initialState: ReportDataState = {
 
 export const reportDataStateReducer = (
   state: ReportDataState = initialState,
-  action: TrackerModelBaseAction<SetStatementDataPayload & SetTransactionsByCategoryPayload & SetUnidentifiedBankTransactionsPayload & SetDateRangeTypePayload & SetStartDatePayload & SetEndDatePayload & SetGeneratedReportStartDatePayload & SetGeneratedReportEndDatePayload & SetMinMaxTransactionDatesPayload & SetReportStatementIdPayload>
+  action: TrackerModelBaseAction<SetStatementDataPayload & SetTransactionsByCategoryPayload & SetUnidentifiedBankTransactionsPayload & SetDateRangeTypePayload & SetStartDatePayload & SetEndDatePayload & SetGeneratedReportStartDatePayload & SetGeneratedReportEndDatePayload & SetMinMaxTransactionDatesPayload & SetReportStatementIdPayload & UpdateCheckTransactionPayload>
 ): ReportDataState => {
   switch (action.type) {
     case SET_STATEMENT_DATA: {
@@ -229,6 +246,16 @@ export const reportDataStateReducer = (
     }
     case SET_REPORT_STATEMENT_ID: {
       return { ...state, reportStatementId: action.payload.reportStatementId };
+    }
+    case UPDATE_CHECK_TRANSACTION: {
+      const newState = cloneDeep(state);
+      newState.unidentifiedBankTransactions = newState.unidentifiedBankTransactions.map((transaction) => {
+        if (transaction.id === action.payload.check.id) {
+          return action.payload.check;
+        }
+        return transaction;
+      });
+      return newState;
     }
     default:
       return state;

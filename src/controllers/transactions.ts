@@ -4,6 +4,7 @@ import {
   BankTransaction,
   CategorizedStatementData,
   CategorizedTransaction,
+  CheckTransaction,
   MinMaxDates,
   serverUrl,
   StringToTransactionsLUT,
@@ -15,7 +16,8 @@ import {
   setUnidentifiedBankTransactions,
   TrackerAnyPromiseThunkAction,
   TrackerDispatch,
-  TrackerVoidPromiseThunkAction
+  TrackerVoidPromiseThunkAction,
+  updateCheckTransactionRedux
 } from "../models";
 import { isNil } from "lodash";
 
@@ -132,3 +134,31 @@ export const search = (startDate: string, endDate: string, includeCreditCardTran
       });
   }
 }
+
+export const updateCheckTransaction = (check: CheckTransaction): TrackerAnyPromiseThunkAction => {
+  
+    return (dispatch: TrackerDispatch, getState: any) => {
+  
+      dispatch(updateCheckTransactionRedux(check));
+      return Promise.resolve(check);
+      // const path = serverUrl + apiUrlFragment + 'updateCheckTransaction';
+  
+      // const updateCheckTransactionBody = check;
+  
+      // return axios.post(
+      //   path,
+      //   updateCheckTransactionBody
+      // ).then((response) => {
+      //   console.log('updateCheckTransaction');
+      //   console.log(response);
+      //   console.log(response.data);
+      //   dispatch(updateCheckTransactionRedux(check));
+      //   return Promise.resolve(response.data as CheckTransaction);
+      // }).catch((error) => {
+      //   console.log('error');
+      //   console.log(error);
+      //   return '';
+      // });
+    };
+  }
+  

@@ -10,6 +10,7 @@ import { Category, CheckTransaction } from '../types';
 import { TrackerDispatch } from '../models';
 import { getUnidentifiedBankTransactionById, getCategories } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
+import { updateCheckTransaction } from '../controllers';
 
 export interface EditCheckDialogPropsFromParent {
   open: boolean;
@@ -21,6 +22,7 @@ export interface EditCheckDialogPropsFromParent {
 interface EditCheckDialogProps extends EditCheckDialogPropsFromParent {
   check: CheckTransaction;
   categories: Category[];
+  onUpdateCheckTransaction: (check: CheckTransaction) => any;
 }
 
 const EditCheckDialog = (props: EditCheckDialogProps) => {
@@ -40,7 +42,9 @@ const EditCheckDialog = (props: EditCheckDialogProps) => {
       return;
     }
     const updatedCheck = { ...props.check, payee, checkNumber, category };
-    props.onSave(updatedCheck);
+    // props.onSave(updatedCheck);
+    props.onUpdateCheckTransaction(updatedCheck);
+    props.onClose();
   };
 
   const validateCheckNumber = (value: string): boolean => {
@@ -130,6 +134,7 @@ function mapStateToProps(state: any, ownProps: EditCheckDialogPropsFromParent) {
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
+    onUpdateCheckTransaction: updateCheckTransaction,
   }, dispatch);
 };
 
