@@ -36,15 +36,6 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
     });
   };
 
-  const getTransactionDetails = (bankTransaction: BankTransaction): string => {
-    return bankTransaction.userDescription
-    // if (bankTransaction.bankTransactionType === BankTransactionType.CreditCard) {
-    //   return (bankTransaction as CreditCardTransaction).description;
-    // } else {
-    //   return (bankTransaction as CheckingAccountTransaction).name;
-    // }
-  }
-
   const getRows = (): CategoryExpensesData[] => {
 
     const rows: CategoryExpensesData[] = [];
@@ -140,7 +131,7 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
                         <div className="table-cell"></div>
                         <div className="table-cell">{formatDate(transaction.bankTransaction.transactionDate)}</div>
                         <div className="table-cell">{formatCurrency(-transaction.bankTransaction.amount)}</div>
-                        <div className="table-cell">{getTransactionDetails(transaction.bankTransaction)}</div>
+                        <div className="table-cell">{transaction.bankTransaction.userDescription}</div>
                       </div>
                     ))}
                   </div>

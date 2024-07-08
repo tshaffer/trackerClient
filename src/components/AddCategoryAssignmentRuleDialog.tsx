@@ -44,11 +44,6 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
       return '';
     }
     return bankTransaction.userDescription;
-    // if (bankTransaction.bankTransactionType === BankTransactionType.CreditCard) {
-    //   return (bankTransaction as CreditCardTransaction).description;
-    // } else {
-    //   return (bankTransaction as CheckingAccountTransaction).name;
-    // }
   }
 
   const { open, onClose } = props;

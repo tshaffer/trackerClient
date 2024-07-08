@@ -44,19 +44,10 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
     }
   }
 
-  const getTransactionDetails = (bankTransaction: BankTransaction): string => {
-    return bankTransaction.userDescription
-    // if (bankTransaction.bankTransactionType === BankTransactionType.CreditCard) {
-    //   return (bankTransaction as CreditCardTransaction).description;
-    // } else {
-    //   return (bankTransaction as CheckingAccountTransaction).name;
-    // }
-  }
-
   const getUniqueDescriptionsCount = (unidentifiedBankTransactions: BankTransaction[]): number => {
     const uniqueDescriptions: string[] = [];
     unidentifiedBankTransactions.forEach((unidentifiedBankTransaction: BankTransaction) => {
-      const description = getTransactionDetails(unidentifiedBankTransaction);
+      const description = unidentifiedBankTransaction.userDescription;
       if (!uniqueDescriptions.includes(description)) {
         uniqueDescriptions.push(description);
       }
@@ -186,7 +177,7 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
                 {getEditIcon(unidentifiedBankTransaction)}
               </div>
               <div className="table-cell">{getTransactionTypeLabel(unidentifiedBankTransaction.bankTransactionType)}</div>
-              <div className="table-cell">{getTransactionDetails(unidentifiedBankTransaction)}</div>
+              <div className="table-cell">{unidentifiedBankTransaction.userDescription}</div>
               <div className="table-cell">{formatDate(unidentifiedBankTransaction.transactionDate)}</div>
               <div className="table-cell">{formatCurrency(-unidentifiedBankTransaction.amount)}</div>
             </div>
