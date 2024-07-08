@@ -45,11 +45,12 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
   }
 
   const getTransactionDetails = (bankTransaction: BankTransaction): string => {
-    if (bankTransaction.bankTransactionType === BankTransactionType.CreditCard) {
-      return (bankTransaction as CreditCardTransaction).description;
-    } else {
-      return (bankTransaction as CheckingAccountTransaction).name;
-    }
+    return bankTransaction.userDescription
+    // if (bankTransaction.bankTransactionType === BankTransactionType.CreditCard) {
+    //   return (bankTransaction as CreditCardTransaction).description;
+    // } else {
+    //   return (bankTransaction as CheckingAccountTransaction).name;
+    // }
   }
 
   const getUniqueDescriptionsCount = (unidentifiedBankTransactions: BankTransaction[]): number => {
