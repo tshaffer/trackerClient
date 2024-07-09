@@ -1,5 +1,5 @@
 import { isNil } from "lodash";
-import { BankTransaction, DateRangeType, MinMaxDates, ReportDataState, StringToTransactionsLUT, Statement, TrackerState } from "../types";
+import { BankTransaction, DateRangeType, MinMaxDates, ReportDataState, StringToTransactionsLUT, Statement, TrackerState, CategorizedTransaction } from "../types";
 import { getCheckingAccountStatementById } from "./checkingAccountStatementState";
 import { getCreditCardStatementById } from "./creditCardStatementState";
 
@@ -34,6 +34,17 @@ export const getTransactionsByCategory = (state: TrackerState): StringToTransact
 export const getUnidentifiedBankTransactions = (state: TrackerState): BankTransaction[] => {
   return state.reportDataState.unidentifiedBankTransactions;
 };
+
+export const getTransactionById = (state: TrackerState, transactionId: string): BankTransaction | null => {
+  const transactionsByCategory: StringToTransactionsLUT = getTransactionsByCategory(state);
+  const categorizedTransactions: CategorizedTransaction[] = Object.values(transactionsByCategory).flat();
+  const matchingCategorizedTransaction: CategorizedTransaction | null = categorizedTransactions.find((categorizedTransaction: CategorizedTransaction) => categorizedTransaction.bankTransaction.id === transactionId) || null;
+  if (!isNil(matchingCategorizedTransaction)) {
+    return matchingCategorizedTransaction.bankTransaction;
+  } else {
+    return null;
+  }
+}
 
 export const getUnidentifiedBankTransactionById = (state: TrackerState, unidentifiedBankTransactionId: string): BankTransaction | null => {
   return state.reportDataState.unidentifiedBankTransactions.find((unidentifiedBankTransaction: BankTransaction) => unidentifiedBankTransaction.id === unidentifiedBankTransactionId) || null;

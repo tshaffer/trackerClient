@@ -144,11 +144,11 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
     }
     return (
       <Tooltip title="Edit transaction">
-      <IconButton onClick={() => handleEditTransaction(unidentifiedBankTransaction)}>
-        <EditIcon />
-      </IconButton>
-    </Tooltip>
-);
+        <IconButton onClick={() => handleEditTransaction(unidentifiedBankTransaction)}>
+          <EditIcon />
+        </IconButton>
+      </Tooltip>
+    );
   }
 
   if (props.unidentifiedBankTransactions.length === 0) {
@@ -173,7 +173,7 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
       />
       <EditTransactionDialog
         open={showEditTransactionDialog}
-        unidentifiedBankTransactionId={unidentifiedBankTransactionId}
+        transactionId={unidentifiedBankTransactionId}
         onClose={handleCloseEditTransactionDialog}
         onSave={handleSaveTransaction}
       />

@@ -4,13 +4,17 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
 import '../styles/Tracker.css';
-import { BankTransaction, BankTransactionType, CategorizedTransaction, CategoryExpensesData, CheckingAccountTransaction, CreditCardTransaction, StringToTransactionsLUT } from '../types';
+import { BankTransaction, BankTransactionType, CategorizedTransaction, CategoryExpensesData, CheckingAccountTransaction, CreditCardTransaction, StringToTransactionsLUT, Transaction } from '../types';
 import { formatCurrency, formatPercentage, formatDate, expensesPerMonth, roundTo } from '../utilities';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { TrackerDispatch } from '../models';
 import { getStartDate, getEndDate, getTransactionsByCategory, getGeneratedReportStartDate, getGeneratedReportEndDate } from '../selectors';
-import { get, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
+import { Tooltip } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import EditTransactionDialog from './EditTransactionDialog';
+import { updateTransaction } from '../controllers';
 
 interface SpendingReportTableProps {
   startDate: string;
@@ -18,11 +22,14 @@ interface SpendingReportTableProps {
   generatedReportStartDate: string;
   generatedReportEndDate: string;
   transactionsByCategory: StringToTransactionsLUT,
+  onUpdateTransaction: (transaction: Transaction) => any;
 }
 
 const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: SpendingReportTableProps) => {
 
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+  const [transactionId, setTransactionId] = React.useState('');
+  const [showEditTransactionDialog, setShowEditTransactionDialog] = React.useState(false);
 
   const sortCategoriesByTotalExpenses = (categoryExpenses: CategoryExpensesData[]): CategoryExpensesData[] => {
     return categoryExpenses.sort((a, b) => {
@@ -77,6 +84,19 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
     setSelectedRowId(prevRowId => (prevRowId === rowId ? null : rowId));
   };
 
+  const handleEditTransaction = (transaction: Transaction) => {
+    setTransactionId(transaction.id);
+    setShowEditTransactionDialog(true);
+  };
+
+  const handleSaveTransaction = (transaction: Transaction) => {
+    props.onUpdateTransaction(transaction);
+  };
+
+  const handleCloseEditTransactionDialog = () => {
+    setShowEditTransactionDialog(false);
+  }
+
   const rows: CategoryExpensesData[] = getRows();
 
   let totalAmount = 0;
@@ -88,6 +108,12 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
 
   return (
     <React.Fragment>
+      <EditTransactionDialog
+        open={showEditTransactionDialog}
+        transactionId={transactionId}
+        onClose={handleCloseEditTransactionDialog}
+        onSave={handleSaveTransaction}
+      />
       <h4>Date Range {formatDate(props.generatedReportStartDate)} - {formatDate(props.generatedReportEndDate)}</h4>
       <h4>Total Amount: {formatCurrency(totalAmount)}</h4>
       <h4>Per Month: {expensesPerMonth(totalAmount, props.generatedReportStartDate, props.generatedReportEndDate)}</h4>
@@ -128,7 +154,13 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
                   <div className="table-body">
                     {categoryExpenses.transactions.map((transaction: CategorizedTransaction) => (
                       <div className="table-row" key={transaction.bankTransaction.id}>
-                        <div className="table-cell"></div>
+                        <div className="table-cell">
+                          <Tooltip title="Edit transaction">
+                            <IconButton onClick={() => handleEditTransaction(transaction.bankTransaction)}>
+                              <EditIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </div>
                         <div className="table-cell">{formatDate(transaction.bankTransaction.transactionDate)}</div>
                         <div className="table-cell">{formatCurrency(-transaction.bankTransaction.amount)}</div>
                         <div className="table-cell">{transaction.bankTransaction.userDescription}</div>
@@ -158,6 +190,7 @@ function mapStateToProps(state: any) {
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
+    onUpdateTransaction: updateTransaction,
   }, dispatch);
 };
 
