@@ -4,7 +4,9 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import {
-  Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, FormControl, InputLabel, Select, MenuItem, Box
+  Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, FormControl, InputLabel, Select, MenuItem, Box,
+  FormControlLabel,
+  Checkbox
 } from '@mui/material';
 import { Category, CheckTransaction } from '../types';
 import { TrackerDispatch } from '../models';
@@ -35,6 +37,9 @@ const EditCheckDialog = (props: EditCheckDialogProps) => {
   const [checkNumber, setCheckNumber] = useState(props.check.checkNumber);
   const [category, setCategory] = useState(props.check.category);
   const [checkNumberError, setCheckNumberError] = useState<string | null>(null);
+  const [userDescription, setUserDescription] = useState(props.check.userDescription);
+  const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
+  const [concatenatedText, setConcatenatedText] = useState('');
 
   const handleSave = () => {
     if (!validateCheckNumber(checkNumber)) {
@@ -58,6 +63,22 @@ const EditCheckDialog = (props: EditCheckDialogProps) => {
       setCheckNumberError(null);
     }
   };
+
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const isChecked = event.target.checked;
+    setIsCheckboxChecked(isChecked);
+    if (isChecked) {
+      setConcatenatedText(`Check number: ${checkNumber}, ${payee}`);
+    } else {
+      setConcatenatedText('');
+    }
+  };
+
+  React.useEffect(() => {
+    if (isCheckboxChecked) {
+      setConcatenatedText(`Check number: ${checkNumber}, ${payee}`);
+    }
+  }, [checkNumber, payee, isCheckboxChecked]);
 
   return (
     <Dialog open={props.open} onClose={props.onClose}>
@@ -95,7 +116,23 @@ const EditCheckDialog = (props: EditCheckDialogProps) => {
             helperText={checkNumberError}
             fullWidth
           />
-          <FormControl fullWidth>
+          <FormControlLabel
+            control={<Checkbox checked={isCheckboxChecked} onChange={handleCheckboxChange} />}
+            label="Concatenate Fields"
+          />
+          <TextField
+            label="Concatenated Text"
+            value={concatenatedText}
+            disabled={isCheckboxChecked}
+            fullWidth
+          />
+          {/* <TextField
+            label="Description"
+            value={userDescription}
+            onChange={(e) => setUserDescription(e.target.value)}
+            fullWidth
+          /> */}
+          {/* <FormControl fullWidth>
             <InputLabel id="category-label">Category</InputLabel>
             <Select
               labelId="category-label"
@@ -109,7 +146,7 @@ const EditCheckDialog = (props: EditCheckDialogProps) => {
                 </MenuItem>
               ))}
             </Select>
-          </FormControl>
+          </FormControl> */}
         </Box>
       </DialogContent>
       <DialogActions>
