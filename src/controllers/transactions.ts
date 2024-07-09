@@ -95,8 +95,6 @@ export const loadMinMaxTransactionDates = (): TrackerAnyPromiseThunkAction => {
   };
 };
 
-
-
 export const search = (startDate: string, endDate: string, includeCreditCardTransactions: boolean, includeCheckingAccountTransactions: boolean): TrackerVoidPromiseThunkAction => {
 
   return (dispatch: TrackerDispatch, getState: any) => {
@@ -135,30 +133,28 @@ export const search = (startDate: string, endDate: string, includeCreditCardTran
   }
 }
 
-export const updateCheckTransaction = (check: CheckTransaction): TrackerAnyPromiseThunkAction => {
+export const updateCheckTransaction = (checkTransaction: CheckTransaction): TrackerAnyPromiseThunkAction => {
   
     return (dispatch: TrackerDispatch, getState: any) => {
   
-      dispatch(updateCheckTransactionRedux(check));
-      return Promise.resolve(check);
-      // const path = serverUrl + apiUrlFragment + 'updateCheckTransaction';
+      const path = serverUrl + apiUrlFragment + 'updateCheckTransaction';
   
-      // const updateCheckTransactionBody = check;
+      const updateCheckTransactionBody =  { checkTransaction };
   
-      // return axios.post(
-      //   path,
-      //   updateCheckTransactionBody
-      // ).then((response) => {
-      //   console.log('updateCheckTransaction');
-      //   console.log(response);
-      //   console.log(response.data);
-      //   dispatch(updateCheckTransactionRedux(check));
-      //   return Promise.resolve(response.data as CheckTransaction);
-      // }).catch((error) => {
-      //   console.log('error');
-      //   console.log(error);
-      //   return '';
-      // });
+      return axios.post(
+        path,
+        updateCheckTransactionBody
+      ).then((response) => {
+        console.log('updateCheckTransaction');
+        console.log(response);
+        console.log(response.data);
+        dispatch(updateCheckTransactionRedux(checkTransaction));
+        return Promise.resolve(response.data as CheckTransaction);
+      }).catch((error) => {
+        console.log('error');
+        console.log(error);
+        return '';
+      });
     };
   }
   
