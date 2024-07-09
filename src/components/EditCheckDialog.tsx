@@ -39,7 +39,6 @@ const EditCheckDialog = (props: EditCheckDialogProps) => {
   const [checkNumberError, setCheckNumberError] = useState<string | null>(null);
   const [userDescription, setUserDescription] = useState(props.check.userDescription);
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
-  const [concatenatedText, setConcatenatedText] = useState('');
 
   const handleSave = () => {
     if (!validateCheckNumber(checkNumber)) {
@@ -68,15 +67,13 @@ const EditCheckDialog = (props: EditCheckDialogProps) => {
     const isChecked = event.target.checked;
     setIsCheckboxChecked(isChecked);
     if (isChecked) {
-      setConcatenatedText(`Check number: ${checkNumber}, ${payee}`);
-    } else {
-      setConcatenatedText('');
+      setUserDescription(`Check number: ${checkNumber}, ${payee}`);
     }
   };
 
   React.useEffect(() => {
     if (isCheckboxChecked) {
-      setConcatenatedText(`Check number: ${checkNumber}, ${payee}`);
+      setUserDescription(`Check number: ${checkNumber}, ${payee}`);
     }
   }, [checkNumber, payee, isCheckboxChecked]);
 
@@ -118,35 +115,14 @@ const EditCheckDialog = (props: EditCheckDialogProps) => {
           />
           <FormControlLabel
             control={<Checkbox checked={isCheckboxChecked} onChange={handleCheckboxChange} />}
-            label="Concatenate Fields"
+            label="Derive description"
           />
           <TextField
-            label="Concatenated Text"
-            value={concatenatedText}
+            label="Description"
+            value={userDescription}
             disabled={isCheckboxChecked}
             fullWidth
           />
-          {/* <TextField
-            label="Description"
-            value={userDescription}
-            onChange={(e) => setUserDescription(e.target.value)}
-            fullWidth
-          /> */}
-          {/* <FormControl fullWidth>
-            <InputLabel id="category-label">Category</InputLabel>
-            <Select
-              labelId="category-label"
-              value={category}
-              onChange={(e) => setCategory(e.target.value as string)}
-              label="Category"
-            >
-              {props.categories.map((cat) => (
-                <MenuItem key={cat.id} value={cat.id}>
-                  {cat.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl> */}
         </Box>
       </DialogContent>
       <DialogActions>
