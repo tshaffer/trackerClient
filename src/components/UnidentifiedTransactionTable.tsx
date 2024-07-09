@@ -5,13 +5,13 @@ import { bindActionCreators } from 'redux';
 import { v4 as uuidv4 } from 'uuid';
 
 import '../styles/Tracker.css';
-import { BankTransaction, BankTransactionType, Category, CategoryAssignmentRule, CheckingAccountTransaction, CheckingAccountTransactionType, CreditCardTransaction, DateRangeType, DisregardLevel, Statement, StatementType } from '../types';
+import { BankTransaction, BankTransactionType, Category, CategoryAssignmentRule, CheckTransaction, CheckingAccountTransaction, CheckingAccountTransactionType, CreditCardTransaction, DateRangeType, DisregardLevel, Statement, StatementType } from '../types';
 import { formatCurrency, formatDate } from '../utilities';
 import { IconButton, Tooltip } from '@mui/material';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import EditIcon from '@mui/icons-material/Edit';
 import AddRuleDialog from './AddCategoryAssignmentRuleDialog';
-import { addCategoryAssignmentRuleServerAndRedux, addCategoryServerAndRedux, search } from '../controllers';
+import { addCategoryAssignmentRuleServerAndRedux, addCategoryServerAndRedux, search, updateCheckTransaction } from '../controllers';
 import { TrackerDispatch } from '../models';
 import { getStartDate, getEndDate, getUnidentifiedBankTransactions, getGeneratedReportEndDate, getGeneratedReportStartDate, getDateRangeType, getReportStatement, getReportStatementId } from '../selectors';
 import { isNil } from 'lodash';
@@ -25,6 +25,7 @@ interface NotIdentifiedTransactionTableProps {
   generatedReportStartDate: string;
   generatedReportEndDate: string;
   unidentifiedBankTransactions: BankTransaction[];
+  onUpdateCheckTransaction: (check: CheckTransaction) => any;
   onAddCategory: (category: Category) => any;
   onAddCategoryAssignmentRule: (categoryAssignmentRule: CategoryAssignmentRule) => any;
   onSearch: (startDate: string, endDate: string, includeCreditCardTransactions: boolean, includeCheckingAccountTransactions: boolean) => any;
@@ -101,13 +102,12 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
   };
 
   const handleEditCheck = (unidentifiedBankTransaction: BankTransaction) => {
-    console.log('handleEditCheck: ', unidentifiedBankTransaction);
     setUnidentifiedBankTransactionId(unidentifiedBankTransaction.id);
     setShowEditCheckDialog(true);
   };
 
-  const handleSaveCheck = (check: CheckingAccountTransaction) => {
-    console.log('handleSaveCheck: ', check);
+  const handleSaveCheck = (check: CheckTransaction) => {
+    props.onUpdateCheckTransaction(check);
   };
 
   const handleCloseEditCheckDialog = () => {
@@ -204,6 +204,7 @@ const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
     onAddCategory: addCategoryServerAndRedux,
     onAddCategoryAssignmentRule: addCategoryAssignmentRuleServerAndRedux,
+    onUpdateCheckTransaction: updateCheckTransaction,
     onSearch: search,
   }, dispatch);
 };
