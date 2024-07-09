@@ -8,7 +8,7 @@ export interface CategorizedStatementData {
   netDebits: number;
 }
 
-interface Transaction {
+export interface Transaction {
   id: string;
   statementId: string;
   transactionDate: string;

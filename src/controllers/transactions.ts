@@ -8,6 +8,7 @@ import {
   MinMaxDates,
   serverUrl,
   StringToTransactionsLUT,
+  Transaction,
 } from "../types";
 import {
   setMinMaxTransactionDates,
@@ -134,27 +135,52 @@ export const search = (startDate: string, endDate: string, includeCreditCardTran
 }
 
 export const updateCheckTransaction = (checkTransaction: CheckTransaction): TrackerAnyPromiseThunkAction => {
-  
-    return (dispatch: TrackerDispatch, getState: any) => {
-  
-      const path = serverUrl + apiUrlFragment + 'updateCheckTransaction';
-  
-      const updateCheckTransactionBody =  { checkTransaction };
-  
-      return axios.post(
-        path,
-        updateCheckTransactionBody
-      ).then((response) => {
-        console.log('updateCheckTransaction');
-        console.log(response);
-        console.log(response.data);
-        dispatch(updateCheckTransactionRedux(checkTransaction));
-        return Promise.resolve(response.data as CheckTransaction);
-      }).catch((error) => {
-        console.log('error');
-        console.log(error);
-        return '';
-      });
-    };
-  }
-  
+
+  return (dispatch: TrackerDispatch, getState: any) => {
+
+    const path = serverUrl + apiUrlFragment + 'updateCheckTransaction';
+
+    const updateCheckTransactionBody = { checkTransaction };
+
+    return axios.post(
+      path,
+      updateCheckTransactionBody
+    ).then((response) => {
+      console.log('updateCheckTransaction');
+      console.log(response);
+      console.log(response.data);
+      dispatch(updateCheckTransactionRedux(checkTransaction));
+      return Promise.resolve(response.data as CheckTransaction);
+    }).catch((error) => {
+      console.log('error');
+      console.log(error);
+      return '';
+    });
+  };
+}
+
+export const updateTransaction = (transaction: Transaction): TrackerAnyPromiseThunkAction => {
+
+  return (dispatch: TrackerDispatch, getState: any) => {
+
+    const path = serverUrl + apiUrlFragment + 'updateTransaction';
+
+    const updateTransactionBody = { transaction };
+
+    console.log('updateTransaction: ', updateTransactionBody);
+    return Promise.resolve();
+    // return axios.post(
+    //   path,
+    //   updateTransactionBody
+    // ).then((response) => {
+    //   console.log('updateTransaction');
+    //   console.log(response);
+    //   console.log(response.data);
+    //   return Promise.resolve(response.data as CheckTransaction);
+    // }).catch((error) => {
+    //   console.log('error');
+    //   console.log(error);
+    //   return '';
+    // });
+  };
+}
