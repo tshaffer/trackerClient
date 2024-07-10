@@ -277,19 +277,15 @@ export const reportDataStateReducer = (
     case UPDATE_TRANSACTION: {
       const newState = cloneDeep(state);
       if (action.payload.transaction.bankTransactionType === BankTransactionType.Checking) {
-        // newState.unidentifiedBankTransactions = newState.unidentifiedBankTransactions.map((transaction) => {
-        const newUnidentifiedTransactions = newState.unidentifiedBankTransactions.map((transaction) => {
+        newState.unidentifiedBankTransactions = newState.unidentifiedBankTransactions.map((transaction) => {
           if (transaction.id === action.payload.transaction.id) {
             return action.payload.transaction as BankTransaction;
           }
           return transaction as BankTransaction;
         });
-        console.log('UPDATE_TRANSACTION', newUnidentifiedTransactions);
-        newState.unidentifiedBankTransactions = cloneDeep(newUnidentifiedTransactions);
       } else {
         const transactionsByCategory = newState.transactionsByCategory;
         const transaction: BankTransaction | null = getTransactionByIdFromReportDataState(newState, action.payload.transaction.id);
-        console.log('UPDATE_TRANSACTION', transaction);
         if (!isNil(transaction)) {
           const creditCardTransaction: CreditCardTransaction = transaction as CreditCardTransaction;
           const category = creditCardTransaction.category;
@@ -303,8 +299,8 @@ export const reportDataStateReducer = (
           }
           transactionsByCategory[category] = transactions;
         }
-        return newState;
       }
+      return newState;
     }
     default:
       return state;
