@@ -42,6 +42,18 @@ export const getTransactionById = (state: TrackerState, transactionId: string): 
   if (!isNil(matchingCategorizedTransaction)) {
     return matchingCategorizedTransaction.bankTransaction;
   } else {
+    return getUnidentifiedBankTransactionById(state, transactionId);
+  }
+}
+
+export const getTransactionByIdFromReportDataState = (reportDataState: ReportDataState, transactionId: string): BankTransaction | null => {
+  const transactionsByCategory: StringToTransactionsLUT = reportDataState.transactionsByCategory;
+  const categorizedTransactions: CategorizedTransaction[] = Object.values(transactionsByCategory).flat();
+  const matchingCategorizedTransaction: CategorizedTransaction | null = categorizedTransactions.find((categorizedTransaction: CategorizedTransaction) => categorizedTransaction.bankTransaction.id === transactionId) || null;
+  if (!isNil(matchingCategorizedTransaction)) {
+    return matchingCategorizedTransaction.bankTransaction;
+  } else {
+    // return getUnidentifiedBankTransactionByIdFromReportDataState(reportDataState, transactionId);
     return null;
   }
 }

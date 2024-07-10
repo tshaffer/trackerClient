@@ -18,7 +18,8 @@ import {
   TrackerAnyPromiseThunkAction,
   TrackerDispatch,
   TrackerVoidPromiseThunkAction,
-  updateCheckTransactionRedux
+  updateCheckTransactionRedux,
+  updateTransactionRedux
 } from "../models";
 import { isNil } from "lodash";
 
@@ -163,11 +164,12 @@ export const updateTransaction = (transaction: Transaction): TrackerAnyPromiseTh
 
   return (dispatch: TrackerDispatch, getState: any) => {
 
-    const path = serverUrl + apiUrlFragment + 'updateTransaction';
+    dispatch(updateTransactionRedux(transaction));
+    // const path = serverUrl + apiUrlFragment + 'updateTransaction';
 
-    const updateTransactionBody = { transaction };
+    // const updateTransactionBody = { transaction };
 
-    console.log('updateTransaction: ', updateTransactionBody);
+    // console.log('updateTransaction: ', updateTransactionBody);
     return Promise.resolve();
     // return axios.post(
     //   path,

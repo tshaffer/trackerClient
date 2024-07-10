@@ -28,14 +28,11 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
     return null;
   }
 
-  console.log('EditTransactionDialog: ', props.transactionId, props.transaction);
-
   const [userDescription, setUserDescription] = useState(props.transaction.userDescription);
 
   const handleSave = () => {
     const updatedTransaction: Transaction = { ...props.transaction, userDescription };
-    // props.onSave(updatedTransaction);
-    console.log('handleSave: ', updatedTransaction);
+    props.onSave(updatedTransaction);
     props.onClose();
   };
 

@@ -1,7 +1,8 @@
-import { cloneDeep } from 'lodash';
-import { BankTransaction, CheckTransaction, DateRangeType, MinMaxDates, ReportDataState, StringToTransactionsLUT } from '../types';
+import { cloneDeep, isNil } from 'lodash';
+import { BankTransaction, BankTransactionType, CheckTransaction, CreditCardStatement, CreditCardTransaction, DateRangeType, MinMaxDates, ReportDataState, StringToTransactionsLUT, Transaction } from '../types';
 import { getCurrentDate, getRetirementDate } from '../utilities';
 import { TrackerModelBaseAction } from './baseAction';
+import { getTransactionById, getTransactionByIdFromReportDataState } from '../selectors';
 
 // ------------------------------------
 // Constants
@@ -17,6 +18,7 @@ export const SET_GENERATED_REPORT_END_DATE = 'SET_GENERATED_REPORT_END_DATE';
 export const SET_MIN_MAX_TRANSACTION_DATES = 'SET_MIN_MAX_TRANSACTION_DATES';
 export const SET_REPORT_STATEMENT_ID = 'SET_REPORT_STATEMENT_ID';
 export const UPDATE_CHECK_TRANSACTION = 'UPDATE_CHECK_TRANSACTION';
+export const UPDATE_TRANSACTION = 'UPDATE_TRANSACTION';
 
 // ------------------------------------
 // Actions
@@ -194,6 +196,21 @@ export const updateCheckTransactionRedux = (
   };
 };
 
+interface UpdateTransactionPayload {
+  transaction: Transaction;
+}
+
+export const updateTransactionRedux = (
+  transaction: Transaction
+): any => {
+  return {
+    type: UPDATE_TRANSACTION,
+    payload: {
+      transaction,
+    },
+  };
+};
+
 
 // ------------------------------------
 // Reducer
@@ -214,7 +231,7 @@ const initialState: ReportDataState = {
 
 export const reportDataStateReducer = (
   state: ReportDataState = initialState,
-  action: TrackerModelBaseAction<SetStatementDataPayload & SetTransactionsByCategoryPayload & SetUnidentifiedBankTransactionsPayload & SetDateRangeTypePayload & SetStartDatePayload & SetEndDatePayload & SetGeneratedReportStartDatePayload & SetGeneratedReportEndDatePayload & SetMinMaxTransactionDatesPayload & SetReportStatementIdPayload & UpdateCheckTransactionPayload>
+  action: TrackerModelBaseAction<SetStatementDataPayload & SetTransactionsByCategoryPayload & SetUnidentifiedBankTransactionsPayload & SetDateRangeTypePayload & SetStartDatePayload & SetEndDatePayload & SetGeneratedReportStartDatePayload & SetGeneratedReportEndDatePayload & SetMinMaxTransactionDatesPayload & SetReportStatementIdPayload & UpdateCheckTransactionPayload & UpdateTransactionPayload>
 ): ReportDataState => {
   switch (action.type) {
     case SET_STATEMENT_DATA: {
@@ -256,6 +273,38 @@ export const reportDataStateReducer = (
         return transaction;
       });
       return newState;
+    }
+    case UPDATE_TRANSACTION: {
+      const newState = cloneDeep(state);
+      if (action.payload.transaction.bankTransactionType === BankTransactionType.Checking) {
+        // newState.unidentifiedBankTransactions = newState.unidentifiedBankTransactions.map((transaction) => {
+        const newUnidentifiedTransactions = newState.unidentifiedBankTransactions.map((transaction) => {
+          if (transaction.id === action.payload.transaction.id) {
+            return action.payload.transaction as BankTransaction;
+          }
+          return transaction as BankTransaction;
+        });
+        console.log('UPDATE_TRANSACTION', newUnidentifiedTransactions);
+        newState.unidentifiedBankTransactions = cloneDeep(newUnidentifiedTransactions);
+      } else {
+        const transactionsByCategory = newState.transactionsByCategory;
+        const transaction: BankTransaction | null = getTransactionByIdFromReportDataState(newState, action.payload.transaction.id);
+        console.log('UPDATE_TRANSACTION', transaction);
+        if (!isNil(transaction)) {
+          const creditCardTransaction: CreditCardTransaction = transaction as CreditCardTransaction;
+          const category = creditCardTransaction.category;
+          const transactions = transactionsByCategory[category];
+          if (transactions) {
+            transactions.forEach((categorizedTransaction, i) => {
+              if (categorizedTransaction.bankTransaction.id === transaction.id) {
+                transactions[i].bankTransaction = action.payload.transaction as BankTransaction;
+              }
+            });
+          }
+          transactionsByCategory[category] = transactions;
+        }
+        return newState;
+      }
     }
     default:
       return state;
