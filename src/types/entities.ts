@@ -8,6 +8,11 @@ export interface CategorizedStatementData {
   netDebits: number;
 }
 
+export interface Transactions {
+  creditCardTransactions: CreditCardTransaction[];
+  checkingAccountTransactions: CheckingAccountTransaction[];
+}
+
 export interface Transaction {
   id: string;
   statementId: string;

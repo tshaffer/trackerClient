@@ -14,6 +14,14 @@ export interface AppState {
   appInitialized: boolean;
 }
 
+export interface CreditCardStatementState {
+  creditCardStatements: CreditCardStatement[];
+}
+
+export interface CheckingAccountStatementState {
+  checkingAccountStatements: CheckingAccountStatement[];
+}
+
 export interface ReportDataState {
   dateRangeType: DateRangeType;
   startDate: string;
@@ -32,10 +40,3 @@ export interface CategoryState {
   categoryAssignmentRules: CategoryAssignmentRule[];
 }
 
-export interface CreditCardStatementState {
-  creditCardStatements: CreditCardStatement[];
-}
-
-export interface CheckingAccountStatementState {
-  checkingAccountStatements: CheckingAccountStatement[];
-}

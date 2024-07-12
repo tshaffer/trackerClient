@@ -11,7 +11,7 @@ import { IconButton, Tooltip } from '@mui/material';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import EditIcon from '@mui/icons-material/Edit';
 import AddRuleDialog from './AddCategoryAssignmentRuleDialog';
-import { addCategoryAssignmentRuleServerAndRedux, addCategoryServerAndRedux, search, updateCheckTransaction, updateTransaction } from '../controllers';
+import { addCategoryAssignmentRuleServerAndRedux, addCategoryServerAndRedux, getCategorizedTransactions, updateCheckTransaction, updateTransaction } from '../controllers';
 import { TrackerDispatch } from '../models';
 import { getStartDate, getEndDate, getUnidentifiedBankTransactions, getGeneratedReportEndDate, getGeneratedReportStartDate, getDateRangeType, getReportStatement, getReportStatementId } from '../selectors';
 import { isNil } from 'lodash';
@@ -30,7 +30,7 @@ interface NotIdentifiedTransactionTableProps {
   onAddCategoryAssignmentRule: (categoryAssignmentRule: CategoryAssignmentRule) => any;
   onUpdateTransaction: (transaction: Transaction) => any;
   onUpdateCheckTransaction: (check: CheckTransaction) => any;
-  onSearch: (startDate: string, endDate: string, includeCreditCardTransactions: boolean, includeCheckingAccountTransactions: boolean) => any;
+  onGetCategorizedTransactions: (startDate: string, endDate: string, includeCreditCardTransactions: boolean, includeCheckingAccountTransactions: boolean) => any;
 }
 
 const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps> = (props: NotIdentifiedTransactionTableProps) => {
@@ -95,7 +95,7 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
             includeCheckingAccountTransactions = props.reportStatement.type === StatementType.Checking;
           }
         }
-        props.onSearch(props.startDate, props.endDate, true, true);
+        props.onGetCategorizedTransactions(props.startDate, props.endDate, true, true);
       }
       );
   }
@@ -232,7 +232,7 @@ const mapDispatchToProps = (dispatch: TrackerDispatch) => {
     onAddCategoryAssignmentRule: addCategoryAssignmentRuleServerAndRedux,
     onUpdateCheckTransaction: updateCheckTransaction,
     onUpdateTransaction: updateTransaction,
-    onSearch: search,
+    onGetCategorizedTransactions: getCategorizedTransactions,
   }, dispatch);
 };
 

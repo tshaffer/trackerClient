@@ -2,13 +2,21 @@ import axios from "axios";
 import {
   apiUrlFragment,
   BankTransaction,
+  BankTransactionType,
   CategorizedStatementData,
   CategorizedTransaction,
+  Category,
+  CategoryAssignmentRule,
+  CheckingAccountTransaction,
   CheckTransaction,
+  CreditCardTransaction,
+  DisregardLevel,
   MinMaxDates,
+  ReviewedTransactions,
   serverUrl,
   StringToTransactionsLUT,
   Transaction,
+  Transactions,
 } from "../types";
 import {
   setMinMaxTransactionDates,
@@ -22,6 +30,8 @@ import {
   updateTransactionRedux
 } from "../models";
 import { isNil } from "lodash";
+import { getCategories, getCategoryAssignmentRules, getCategoryByName } from "../selectors";
+import { roundTo } from "../utilities";
 
 interface Result {
   minDate: string;
@@ -97,22 +107,13 @@ export const loadMinMaxTransactionDates = (): TrackerAnyPromiseThunkAction => {
   };
 };
 
-export const search = (startDate: string, endDate: string, includeCreditCardTransactions: boolean, includeCheckingAccountTransactions: boolean): TrackerVoidPromiseThunkAction => {
+export const getCategorizedTransactions = (startDate: string, endDate: string, includeCreditCardTransactions: boolean, includeCheckingAccountTransactions: boolean): TrackerVoidPromiseThunkAction => {
 
   return (dispatch: TrackerDispatch, getState: any) => {
-
-    let path = serverUrl
-      + apiUrlFragment
-      + 'categorizedTransactions';
-
-    path += '?startDate=' + startDate;
-    path += '&endDate=' + endDate;
-    path += '&includeCreditCardTransactions=' + includeCreditCardTransactions;
-    path += '&includeCheckingAccountTransactions=' + includeCheckingAccountTransactions;
-
-    return axios.get(path)
-      .then((transactionsResponse: any) => {
-        const categorizedStatementData: CategorizedStatementData = (transactionsResponse as any).data;
+    const state = getState();
+    return doGetCategorizedTransactions(state, startDate, endDate, includeCreditCardTransactions, includeCheckingAccountTransactions)
+      .then((categorizedStatementData: CategorizedStatementData) => {
+        console.log(categorizedStatementData);
         const transactions: CategorizedTransaction[] = categorizedStatementData.transactions;
         const unidentifiedBankTransactions: BankTransaction[] = categorizedStatementData.unidentifiedBankTransactions;
         const transactionsByCategory: StringToTransactionsLUT = {};
@@ -122,18 +123,157 @@ export const search = (startDate: string, endDate: string, includeCreditCardTran
             transactionsByCategory[category] = [];
           }
           transactionsByCategory[category].push(transaction);
-        });
 
-        const { startDate, endDate, netDebits: netDebits } = categorizedStatementData;
-        dispatch(setStatementData(startDate, endDate, netDebits));
+          const { startDate, endDate, netDebits: netDebits } = categorizedStatementData;
+          dispatch(setStatementData(startDate, endDate, netDebits));
+  
+          console.log(transactionsByCategory);
+          dispatch(setTransactionsByCategory(transactionsByCategory));
+  
+          dispatch(setUnidentifiedBankTransactions(unidentifiedBankTransactions));
+          });
 
-        console.log(transactionsByCategory);
-        dispatch(setTransactionsByCategory(transactionsByCategory));
-
-        dispatch(setUnidentifiedBankTransactions(unidentifiedBankTransactions));
       });
-  }
+  };
 }
+
+export const doGetCategorizedTransactions = async (state: any, startDate: string, endDate: string, includeCreditCardTransactions: boolean, includeCheckingAccountTransactions: boolean): Promise<CategorizedStatementData> => {
+
+  const allCategories: Category[] = await getCategories(state);
+  const categories: Category[] = [];
+  for (const category of allCategories) {
+    if (category.disregardLevel === DisregardLevel.None) {
+      categories.push(category);
+    }
+  }
+
+  const ignoreCategory: Category = getCategoryByName(state, 'Ignore') as Category;
+  const categoryAssignmentRules = getCategoryAssignmentRules(state);
+
+  const transactionsFromDb: Transactions = await getTransactions(startDate, endDate, includeCreditCardTransactions, includeCheckingAccountTransactions);
+  const { creditCardTransactions, checkingAccountTransactions } = transactionsFromDb;
+  // TEDTODO - separate out the credit card and checking account transactions??
+  const allTransactions: BankTransaction[] = (checkingAccountTransactions as BankTransaction[]).concat(creditCardTransactions as BankTransaction[]);
+
+  const reviewedTransactionEntities: ReviewedTransactions = categorizeTransactions(allTransactions, categories, ignoreCategory, categoryAssignmentRules);
+  const categorizedTransactions: CategorizedTransaction[] = reviewedTransactionEntities.categorizedTransactions;
+  const unidentifiedBankTransactions: BankTransaction[] = reviewedTransactionEntities.uncategorizedTransactions;
+
+  const transactions: CategorizedTransaction[] = [];
+  let sum = 0;
+
+  for (const categorizedTransaction of categorizedTransactions) {
+    const transaction: CategorizedTransaction = {
+      bankTransaction: categorizedTransaction.bankTransaction,
+      category: categorizedTransaction.category,
+    };
+    transactions.push(transaction);
+    sum += transaction.bankTransaction.amount;
+  }
+
+  sum = roundTo(-sum, 2)
+
+  const categorizedStatementData: CategorizedStatementData = {
+    startDate,
+    endDate,
+    transactions,
+    netDebits: sum,
+    unidentifiedBankTransactions,
+  };
+
+  console.log(categorizedStatementData);
+  return categorizedStatementData;
+}
+
+const getTransactions = async (startDate: string, endDate: string, includeCreditCardTransactions: boolean, includeCheckingAccountTransactions: boolean): Promise<Transactions> => {
+
+  let path = serverUrl
+    + apiUrlFragment
+    + 'transactions';
+
+  path += '?startDate=' + startDate;
+  path += '&endDate=' + endDate;
+  path += '&includeCreditCardTransactions=' + includeCreditCardTransactions;
+  path += '&includeCheckingAccountTransactions=' + includeCheckingAccountTransactions;
+
+  return axios.get(path)
+    .then((transactionsResponse: any) => {
+      const transactions: Transactions = transactionsResponse.data;
+      return Promise.resolve(transactions);
+    });
+
+}
+
+const categorizeTransactions = (
+  transactions: BankTransaction[],
+  categories: Category[],
+  ignoreCategory: Category,
+  categoryAssignmentRules: CategoryAssignmentRule[]
+): ReviewedTransactions => {
+
+  const categorizedTransactions: CategorizedTransaction[] = [];
+  const uncategorizedTransactions: BankTransaction[] = [];
+  const ignoredTransactions: BankTransaction[] = [];
+
+  let sum: number = 0;
+
+  for (const transaction of transactions) {
+    const category: Category | null = categorizeTransaction(transaction, categories, categoryAssignmentRules);
+    if (!isNil(category)) {
+      if (category.id === ignoreCategory.id) {
+        ignoredTransactions.push(transaction);
+      } else {
+        const categorizedTransaction: CategorizedTransaction = {
+          bankTransaction: transaction,
+          category: category,
+        };
+        categorizedTransactions.push(categorizedTransaction);
+
+        sum += transaction.amount;
+      }
+    } else {
+      uncategorizedTransactions.push(transaction);
+    }
+  }
+
+  return {
+    categorizedTransactions,
+    uncategorizedTransactions,
+    ignoredTransactions,
+  };
+};
+
+const categorizeTransaction = (
+  transaction: BankTransaction,
+  categories: Category[],
+  categoryAssignmentRules: CategoryAssignmentRule[]): Category | null => {
+
+  const transactionDetails: string = transaction.bankTransactionType === BankTransactionType.CreditCard ?
+    (transaction as CreditCardTransaction).description : (transaction as CheckingAccountTransaction).name;
+
+  for (const categoryAssignmentRule of categoryAssignmentRules) {
+    if (transactionDetails.includes(categoryAssignmentRule.pattern)) {
+      const categoryId = categoryAssignmentRule.categoryId;
+      for (const category of categories) {
+        if (category.id === categoryId) {
+          return category;
+        }
+      }
+    }
+  }
+
+  if (transaction.bankTransactionType === BankTransactionType.CreditCard) {
+    if (!isNil((transaction as unknown as CreditCardTransaction).category)) {
+      for (const category of categories) {
+        if ((transaction as unknown as CreditCardTransaction).category === category.name) {
+          return category;
+        }
+      }
+    }
+  }
+
+  return null;
+};
 
 export const updateCheckTransaction = (checkTransaction: CheckTransaction): TrackerAnyPromiseThunkAction => {
 
