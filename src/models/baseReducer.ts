@@ -8,6 +8,7 @@ import { reportDataStateReducer } from './reportDataState';
 import { categoryStateReducer } from './categoryState';
 import { checkingAccountStatementStateReducer } from './checkingAccountStatementState';
 import { creditCardStatementStateReducer } from './creditCardStatementState';
+import { transactionsStateReducer } from './transactionsState';
 
 // -----------------------------------------------------------------------
 // Reducers
@@ -18,6 +19,7 @@ export const rootReducer = combineReducers<TrackerState>({
   categoryState: categoryStateReducer,
   checkingAccountStatementState: checkingAccountStatementStateReducer,
   creditCardStatementState: creditCardStatementStateReducer,
+  transactionsState: transactionsStateReducer,
 });
 
 // -----------------------------------------------------------------------

@@ -1,5 +1,5 @@
 import { StringToTransactionsLUT } from "./base";
-import { BankTransaction, Category, CategoryAssignmentRule, CheckingAccountStatement, CreditCardStatement, MinMaxDates } from "./entities";
+import { BankTransaction, Category, CategoryAssignmentRule, CheckingAccountStatement, CreditCardStatement, MinMaxDates, Transaction } from "./entities";
 import { DateRangeType } from "./enums";
 
 export interface TrackerState {
@@ -8,6 +8,7 @@ export interface TrackerState {
   reportDataState: ReportDataState;
   checkingAccountStatementState: CheckingAccountStatementState;
   creditCardStatementState: CreditCardStatementState;
+  transactionsState: TransactionsState;
 }
 
 export interface AppState {
@@ -38,5 +39,10 @@ export interface ReportDataState {
 export interface CategoryState {
   categories: Category[];
   categoryAssignmentRules: CategoryAssignmentRule[];
+}
+
+export interface TransactionsState {
+  byId: { [id: string]: Transaction };
+  allIds: string[];
 }
 
