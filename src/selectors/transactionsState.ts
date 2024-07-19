@@ -20,8 +20,32 @@ export const getTransactionById = (state: TrackerState, id: string): Transaction
 //   return getTransactions(state).filter((transaction) => transaction.categoryId === categoryId);
 // };
 
-
 export const getTransactionsByCategory = (state: TrackerState): StringToTransactionsLUT => {
+
+  const categorizedStatementData: CategorizedStatementData = doGetTransactionsByCategory(state);
+  const { transactions } = categorizedStatementData;
+
+  const transactionsByCategory: StringToTransactionsLUT = {};
+  transactions.forEach((transaction: CategorizedTransaction) => {
+    const category: string = transaction.category.name;
+    if (!transactionsByCategory[category]) {
+      transactionsByCategory[category] = [];
+    }
+    transactionsByCategory[category].push(transaction);
+
+    // const { startDate, endDate, netDebits: netDebits } = categorizedStatementData;
+    // dispatch(setStatementData(startDate, endDate, netDebits));
+
+    // console.log(transactionsByCategory);
+    // dispatch(setTransactionsByCategory(transactionsByCategory));
+
+    // dispatch(setUnidentifiedBankTransactions(unidentifiedBankTransactions));
+    });
+
+  return transactionsByCategory;
+}
+
+export const doGetTransactionsByCategory = (state: TrackerState): CategorizedStatementData => {
 
   const allCategories: Category[] = getCategories(state);
   const categories: Category[] = [];
@@ -63,24 +87,13 @@ export const getTransactionsByCategory = (state: TrackerState): StringToTransact
     unidentifiedBankTransactions,
   };
 
-  const transactionsByCategory: StringToTransactionsLUT = {};
-  transactions.forEach((transaction: CategorizedTransaction) => {
-    const category: string = transaction.category.name;
-    if (!transactionsByCategory[category]) {
-      transactionsByCategory[category] = [];
-    }
-    transactionsByCategory[category].push(transaction);
+  return categorizedStatementData;
+}
 
-    // const { startDate, endDate, netDebits: netDebits } = categorizedStatementData;
-    // dispatch(setStatementData(startDate, endDate, netDebits));
-
-    // console.log(transactionsByCategory);
-    // dispatch(setTransactionsByCategory(transactionsByCategory));
-
-    // dispatch(setUnidentifiedBankTransactions(unidentifiedBankTransactions));
-    });
-
-  return transactionsByCategory;
+export const getUnidentifiedBankTransactions = (state: TrackerState): BankTransaction[] => {
+  const categorizedStatementData: CategorizedStatementData = doGetTransactionsByCategory(state);
+  const { unidentifiedBankTransactions } = categorizedStatementData;
+  return unidentifiedBankTransactions;
 }
 
 const categorizeTransactions = (

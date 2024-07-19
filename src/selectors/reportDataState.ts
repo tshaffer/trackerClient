@@ -31,9 +31,9 @@ export const getTotal = (state: TrackerState): number => {
 //   return state.reportDataState.transactionsByCategory;
 // };
 
-export const getUnidentifiedBankTransactions = (state: TrackerState): BankTransaction[] => {
-  return state.reportDataState.unidentifiedBankTransactions;
-};
+// export const getUnidentifiedBankTransactions = (state: TrackerState): BankTransaction[] => {
+//   return state.reportDataState.unidentifiedBankTransactions;
+// };
 
 // export const getTransactionById = (state: TrackerState, transactionId: string): BankTransaction | null => {
 //   const transactionsByCategory: StringToTransactionsLUT = getTransactionsByCategory(state);
