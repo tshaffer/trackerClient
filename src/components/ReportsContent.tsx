@@ -55,7 +55,7 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
     }
   
     props.onLoadTransactions(props.startDate, props.endDate, includeCreditCardTransactions, includeCheckingAccountTransactions);
-    props.onGetCategorizedTransactions(props.startDate, props.endDate, includeCreditCardTransactions, includeCheckingAccountTransactions);
+    // props.onGetCategorizedTransactions(props.startDate, props.endDate, includeCreditCardTransactions, includeCheckingAccountTransactions);
   };
 
   const handleGenerateUnidentifiedTransactionsGenerateReport = () => {
@@ -73,7 +73,7 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
     }
 
     props.onLoadTransactions(props.startDate, props.endDate, includeCreditCardTransactions, includeCheckingAccountTransactions);
-    props.onGetCategorizedTransactions(props.startDate, props.endDate, includeCreditCardTransactions, includeCheckingAccountTransactions);
+    // props.onGetCategorizedTransactions(props.startDate, props.endDate, includeCreditCardTransactions, includeCheckingAccountTransactions);
   }
 
   return (

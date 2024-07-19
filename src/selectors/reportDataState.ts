@@ -27,24 +27,24 @@ export const getTotal = (state: TrackerState): number => {
   return state.reportDataState.total;
 }
 
-export const getTransactionsByCategory = (state: TrackerState): StringToTransactionsLUT => {
-  return state.reportDataState.transactionsByCategory;
-};
+// export const getTransactionsByCategory = (state: TrackerState): StringToTransactionsLUT => {
+//   return state.reportDataState.transactionsByCategory;
+// };
 
 export const getUnidentifiedBankTransactions = (state: TrackerState): BankTransaction[] => {
   return state.reportDataState.unidentifiedBankTransactions;
 };
 
-export const getTransactionById = (state: TrackerState, transactionId: string): BankTransaction | null => {
-  const transactionsByCategory: StringToTransactionsLUT = getTransactionsByCategory(state);
-  const categorizedTransactions: CategorizedTransaction[] = Object.values(transactionsByCategory).flat();
-  const matchingCategorizedTransaction: CategorizedTransaction | null = categorizedTransactions.find((categorizedTransaction: CategorizedTransaction) => categorizedTransaction.bankTransaction.id === transactionId) || null;
-  if (!isNil(matchingCategorizedTransaction)) {
-    return matchingCategorizedTransaction.bankTransaction;
-  } else {
-    return getUnidentifiedBankTransactionById(state, transactionId);
-  }
-}
+// export const getTransactionById = (state: TrackerState, transactionId: string): BankTransaction | null => {
+//   const transactionsByCategory: StringToTransactionsLUT = getTransactionsByCategory(state);
+//   const categorizedTransactions: CategorizedTransaction[] = Object.values(transactionsByCategory).flat();
+//   const matchingCategorizedTransaction: CategorizedTransaction | null = categorizedTransactions.find((categorizedTransaction: CategorizedTransaction) => categorizedTransaction.bankTransaction.id === transactionId) || null;
+//   if (!isNil(matchingCategorizedTransaction)) {
+//     return matchingCategorizedTransaction.bankTransaction;
+//   } else {
+//     return getUnidentifiedBankTransactionById(state, transactionId);
+//   }
+// }
 
 export const getTransactionByIdFromReportDataState = (reportDataState: ReportDataState, transactionId: string): BankTransaction | null => {
   const transactionsByCategory: StringToTransactionsLUT = reportDataState.transactionsByCategory;
