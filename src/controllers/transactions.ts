@@ -27,7 +27,7 @@ import {
   TrackerDispatch,
   TrackerVoidPromiseThunkAction,
   updateCheckTransactionRedux,
-  updateTransactionRedux
+  updateTransactionDescription
 } from "../models";
 import { isNil } from "lodash";
 import { getCategories, getCategoryAssignmentRules, getCategoryByName } from "../selectors";
@@ -126,12 +126,12 @@ export const getCategorizedTransactions = (startDate: string, endDate: string, i
 
           const { startDate, endDate, netDebits: netDebits } = categorizedStatementData;
           dispatch(setStatementData(startDate, endDate, netDebits));
-  
+
           console.log(transactionsByCategory);
           dispatch(setTransactionsByCategory(transactionsByCategory));
-  
+
           dispatch(setUnidentifiedBankTransactions(unidentifiedBankTransactions));
-          });
+        });
 
       });
   };
@@ -304,7 +304,7 @@ export const updateTransaction = (transaction: Transaction): TrackerAnyPromiseTh
 
   return (dispatch: TrackerDispatch, getState: any) => {
 
-    dispatch(updateTransactionRedux(transaction));
+    dispatch(updateTransactionDescription(transaction.id, transaction.userDescription));
     // const path = serverUrl + apiUrlFragment + 'updateTransaction';
 
     // const updateTransactionBody = { transaction };

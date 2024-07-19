@@ -6,7 +6,7 @@ import { TrackerModelBaseAction } from './baseAction';
 // Constants
 // ------------------------------------
 export const ADD_TRANSACTIONS = 'ADD_TRANSACTIONS';
-export const UPDATE_TRANSACTION = 'UPDATE_TRANSACTION';
+export const UPDATE_TRANSACTION_DESCRIPTION = 'UPDATE_TRANSACTION_DESCRIPTION';
 
 // ------------------------------------
 // Actions
@@ -31,12 +31,12 @@ interface UpdateTransactionPayload {
   description: string;
 }
 
-export const updateTransaction = (
+export const updateTransactionDescription = (
   id: string,
   description: string,
 ): any => {
   return {
-    type: UPDATE_TRANSACTION,
+    type: UPDATE_TRANSACTION_DESCRIPTION,
     payload: {
       id,
       description,
@@ -68,7 +68,7 @@ export const transactionsStateReducer = (
       });
       return newState;
     }
-    case UPDATE_TRANSACTION: {
+    case UPDATE_TRANSACTION_DESCRIPTION: {
       const newState = clone(state);
       const { id, description } = action.payload;
       if (newState.byId[id]) {
