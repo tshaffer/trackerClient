@@ -200,7 +200,7 @@ interface UpdateTransactionPayload {
   transaction: Transaction;
 }
 
-export const updateTransactionRedux = (
+export const old_updateTransactionRedux = (
   transaction: Transaction
 ): any => {
   return {

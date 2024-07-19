@@ -27,20 +27,17 @@ export const addTransactions = (
 };
 
 interface UpdateTransactionPayload {
-  id: string;
-  description: string;
+  transaction: Transaction;
 }
 
-export const updateTransaction = (
-  id: string,
-  description: string,
+export const updateTransactionRedux = (
+  transaction: Transaction
 ): any => {
   return {
     type: UPDATE_TRANSACTION,
     payload: {
-      id,
-      description,
-    }
+      transaction,
+    },
   };
 };
 
@@ -70,9 +67,9 @@ export const transactionsStateReducer = (
     }
     case UPDATE_TRANSACTION: {
       const newState = clone(state);
-      const { id, description } = action.payload;
+      const id = action.payload.transaction.id;
       if (newState.byId[id]) {
-        newState.byId[id].userDescription = description;
+        newState.byId[id].userDescription = action.payload.transaction.userDescription;
       }
       return newState;
     }
