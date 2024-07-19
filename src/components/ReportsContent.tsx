@@ -6,7 +6,7 @@ import { Tabs, Tab, Box, Typography, Button } from '@mui/material';
 
 import { TrackerDispatch, setGeneratedReportEndDate, setGeneratedReportStartDate } from '../models';
 import { getStartDate, getEndDate, getDateRangeType, getReportStatement, getReportStatementId } from '../selectors';
-import { getCategorizedTransactions, loadTransactions } from '../controllers';
+import { loadTransactions } from '../controllers';
 
 import DateRangeSpecifier from './DateRangeSpecifier';
 import SpendingReportTable from './SpendingReportTable';
@@ -23,7 +23,6 @@ interface ReportsContentProps extends ReportsContentPropsFromParent {
   endDate: string,
   dateRangeType: DateRangeType,
   reportStatement: Statement | null,
-  onGetCategorizedTransactions: (startDate: string, endDate: string, includeCreditCardTransactions: boolean, includeCheckingAccountTransactions: boolean) => any;
   onLoadTransactions: (startDate: string, endDate: string, includeCreditCardTransactions: boolean, includeCheckingAccountTransactions: boolean) => any;
   onSetGeneratedReportStartDate: (date: string) => any;
   onSetGeneratedReportEndDate: (date: string) => any;
@@ -55,7 +54,6 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
     }
   
     props.onLoadTransactions(props.startDate, props.endDate, includeCreditCardTransactions, includeCheckingAccountTransactions);
-    // props.onGetCategorizedTransactions(props.startDate, props.endDate, includeCreditCardTransactions, includeCheckingAccountTransactions);
   };
 
   const handleGenerateUnidentifiedTransactionsGenerateReport = () => {
@@ -73,7 +71,6 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
     }
 
     props.onLoadTransactions(props.startDate, props.endDate, includeCreditCardTransactions, includeCheckingAccountTransactions);
-    // props.onGetCategorizedTransactions(props.startDate, props.endDate, includeCreditCardTransactions, includeCheckingAccountTransactions);
   }
 
   return (
@@ -127,7 +124,6 @@ function mapStateToProps(state: any) {
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
     onLoadTransactions: loadTransactions,
-    onGetCategorizedTransactions: getCategorizedTransactions,
     onSetGeneratedReportStartDate: setGeneratedReportStartDate,
     onSetGeneratedReportEndDate: setGeneratedReportEndDate,
   }, dispatch);

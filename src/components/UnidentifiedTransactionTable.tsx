@@ -95,6 +95,7 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
             includeCheckingAccountTransactions = props.reportStatement.type === StatementType.Checking;
           }
         }
+        debugger; // when this gets called, see if there's an alternative to this function as no other code uses it.
         props.onGetCategorizedTransactions(props.startDate, props.endDate, true, true);
       }
       );

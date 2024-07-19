@@ -32,14 +32,6 @@ export const getTransactionsByCategory = (state: TrackerState): StringToTransact
       transactionsByCategory[category] = [];
     }
     transactionsByCategory[category].push(transaction);
-
-    // const { startDate, endDate, netDebits: netDebits } = categorizedStatementData;
-    // dispatch(setStatementData(startDate, endDate, netDebits));
-
-    // console.log(transactionsByCategory);
-    // dispatch(setTransactionsByCategory(transactionsByCategory));
-
-    // dispatch(setUnidentifiedBankTransactions(unidentifiedBankTransactions));
     });
 
   return transactionsByCategory;

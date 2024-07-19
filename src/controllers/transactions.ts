@@ -290,7 +290,7 @@ export const updateCheckTransaction = (checkTransaction: CheckTransaction): Trac
 
   return (dispatch: TrackerDispatch, getState: any) => {
 
-    const path = serverUrl + apiUrlFragment + 'updateCheckTransaction';
+    const path = serverUrl + apiUrlFragment + 'updateTransaction';
 
     const updateCheckTransactionBody = { checkTransaction };
 
