@@ -19,6 +19,7 @@ import {
   Transactions,
 } from "../types";
 import {
+  addTransactions,
   setMinMaxTransactionDates,
   setStatementData,
   setTransactionsByCategory,
@@ -106,6 +107,16 @@ export const loadMinMaxTransactionDates = (): TrackerAnyPromiseThunkAction => {
       });
   };
 };
+
+export const loadTransactions = (startDate: string, endDate: string, includeCreditCardTransactions: boolean, includeCheckingAccountTransactions: boolean): TrackerVoidPromiseThunkAction => {
+  return async (dispatch: TrackerDispatch, getState: any) => {
+    const transactionsFromDb: Transactions = await getTransactions(startDate, endDate, includeCreditCardTransactions, includeCheckingAccountTransactions);
+    const { creditCardTransactions, checkingAccountTransactions } = transactionsFromDb;
+    dispatch(addTransactions(creditCardTransactions as Transaction[]));
+    dispatch(addTransactions(checkingAccountTransactions as Transaction[]));
+    return Promise.resolve();
+  };
+}
 
 export const getCategorizedTransactions = (startDate: string, endDate: string, includeCreditCardTransactions: boolean, includeCheckingAccountTransactions: boolean): TrackerVoidPromiseThunkAction => {
 

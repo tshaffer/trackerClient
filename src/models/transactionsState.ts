@@ -5,8 +5,8 @@ import { TrackerModelBaseAction } from './baseAction';
 // ------------------------------------
 // Constants
 // ------------------------------------
-export const ADD_TRANSACTIONS = 'ADD_TRANSACTIONS';
-export const UPDATE_TRANSACTION = 'UPDATE_TRANSACTION';
+const ADD_TRANSACTIONS = 'ADD_TRANSACTIONS';
+const UPDATE_TRANSACTION = 'UPDATE_TRANSACTION';
 
 // ------------------------------------
 // Actions
