@@ -39,7 +39,6 @@ export interface CheckingAccountTransaction extends Transaction {
 export interface CheckTransaction extends CheckingAccountTransaction {
   checkNumber: string;
   payee: string;
-  category: string;
 }
 
 export type BankTransaction = CreditCardTransaction | CheckingAccountTransaction;

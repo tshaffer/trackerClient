@@ -33,7 +33,6 @@ const EditCheckDialog = (props: EditCheckDialogProps) => {
 
   const [payee, setPayee] = useState(props.check.payee);
   const [checkNumber, setCheckNumber] = useState(props.check.checkNumber);
-  const [category, setCategory] = useState(props.check.category);
   const [checkNumberError, setCheckNumberError] = useState<string | null>(null);
   const [userDescription, setUserDescription] = useState(props.check.userDescription);
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
@@ -43,7 +42,7 @@ const EditCheckDialog = (props: EditCheckDialogProps) => {
       setCheckNumberError('Check number must be a valid number');
       return;
     }
-    const updatedCheck: CheckTransaction = { ...props.check, payee, checkNumber, category, userDescription };
+    const updatedCheck: CheckTransaction = { ...props.check, payee, checkNumber, userDescription };
     props.onSave(updatedCheck);
     props.onClose();
   };
