@@ -315,25 +315,24 @@ export const updateTransaction = (transaction: Transaction): TrackerAnyPromiseTh
 
   return (dispatch: TrackerDispatch, getState: any) => {
 
-    dispatch(updateTransactionRedux(transaction));
-    // const path = serverUrl + apiUrlFragment + 'updateTransaction';
+    const path = serverUrl + apiUrlFragment + 'updateTransaction';
 
-    // const updateTransactionBody = { transaction };
+    const updateTransactionBody = { transaction };
 
-    // console.log('updateTransaction: ', updateTransactionBody);
-    return Promise.resolve();
-    // return axios.post(
-    //   path,
-    //   updateTransactionBody
-    // ).then((response) => {
-    //   console.log('updateTransaction');
-    //   console.log(response);
-    //   console.log(response.data);
-    //   return Promise.resolve(response.data as CheckTransaction);
-    // }).catch((error) => {
-    //   console.log('error');
-    //   console.log(error);
-    //   return '';
-    // });
+    console.log('updateTransaction: ', updateTransactionBody);
+    return axios.post(
+      path,
+      updateTransactionBody
+    ).then((response) => {
+      console.log('updateTransaction');
+      console.log(response);
+      console.log(response.data);
+      dispatch(updateTransactionRedux(transaction));
+      return Promise.resolve(response.data as CheckTransaction);
+    }).catch((error) => {
+      console.log('error');
+      console.log(error);
+      return '';
+    });
   };
 }
