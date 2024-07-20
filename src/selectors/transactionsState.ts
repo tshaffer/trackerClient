@@ -16,25 +16,21 @@ export const getTransactionById = (state: TrackerState, id: string): Transaction
   return state.transactionsState.byId[id];
 };
 
-// export const getTransactionsByCategory = (state: TrackerState, categoryId: string): Transaction[] => {
-//   return getTransactions(state).filter((transaction) => transaction.categoryId === categoryId);
-// };
-
 export const getTransactionsByCategory = (state: TrackerState): StringToTransactionsLUT => {
 
   const categorizedStatementData: CategorizedStatementData = doGetTransactionsByCategory(state);
   const { transactions } = categorizedStatementData;
 
-  const transactionsByCategory: StringToTransactionsLUT = {};
+  const transactionsByCategoryId: StringToTransactionsLUT = {};
   transactions.forEach((transaction: CategorizedTransaction) => {
-    const category: string = transaction.category.name;
-    if (!transactionsByCategory[category]) {
-      transactionsByCategory[category] = [];
+    const categoryId: string = transaction.categoryId;
+    if (!transactionsByCategoryId[categoryId]) {
+      transactionsByCategoryId[categoryId] = [];
     }
-    transactionsByCategory[category].push(transaction);
-    });
+    transactionsByCategoryId[categoryId].push(transaction);
+  });
 
-  return transactionsByCategory;
+  return transactionsByCategoryId;
 }
 
 export const doGetTransactionsByCategory = (state: TrackerState): CategorizedStatementData => {
@@ -63,7 +59,7 @@ export const doGetTransactionsByCategory = (state: TrackerState): CategorizedSta
   for (const categorizedTransaction of categorizedTransactions) {
     const transaction: CategorizedTransaction = {
       bankTransaction: categorizedTransaction.bankTransaction,
-      category: categorizedTransaction.category,
+      categoryId: categorizedTransaction.categoryId,
     };
     transactions.push(transaction);
     sum += transaction.bankTransaction.amount;
@@ -109,7 +105,7 @@ const categorizeTransactions = (
       } else {
         const categorizedTransaction: CategorizedTransaction = {
           bankTransaction: transaction,
-          category: category,
+          categoryId: category.id,
         };
         categorizedTransactions.push(categorizedTransaction);
 

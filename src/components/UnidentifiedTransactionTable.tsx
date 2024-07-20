@@ -85,20 +85,7 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
       categoryId
     };
     console.log('handleAddRule: ', categoryAssignmentRule, categoryAssignmentRule);
-    props.onAddCategoryAssignmentRule(categoryAssignmentRule)
-      .then(() => {
-        let includeCreditCardTransactions = true;
-        let includeCheckingAccountTransactions = true;
-        if (props.dateRangeType === DateRangeType.Statement) {
-          if (!isNil(props.reportStatement)) {
-            includeCreditCardTransactions = props.reportStatement.type === StatementType.CreditCard;
-            includeCheckingAccountTransactions = props.reportStatement.type === StatementType.Checking;
-          }
-        }
-        debugger; // when this gets called, see if there's an alternative to this function as no other code uses it.
-        props.onGetCategorizedTransactions(props.startDate, props.endDate, true, true);
-      }
-      );
+    props.onAddCategoryAssignmentRule(categoryAssignmentRule);
   }
 
   const handleCloseAddRuleDialog = () => {

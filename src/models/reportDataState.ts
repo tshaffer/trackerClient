@@ -34,7 +34,7 @@ export const setStatementData = (
   endDate: string,
   total: number,
 ): any => {
-
+  debugger;
   return {
     type: SET_STATEMENT_DATA,
     payload: {

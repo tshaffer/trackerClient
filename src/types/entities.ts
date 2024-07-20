@@ -45,7 +45,7 @@ export type BankTransaction = CreditCardTransaction | CheckingAccountTransaction
 
 export interface CategorizedTransaction {
   bankTransaction: BankTransaction;
-  category: Category;
+  categoryId: string;
 }
 
 export interface Statement {

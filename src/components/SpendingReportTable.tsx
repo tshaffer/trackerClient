@@ -4,12 +4,12 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
 import '../styles/Tracker.css';
-import { BankTransaction, BankTransactionType, CategorizedTransaction, CategoryExpensesData, CheckingAccountTransaction, CreditCardTransaction, StringToTransactionsLUT, Transaction } from '../types';
+import { BankTransaction, BankTransactionType, CategorizedTransaction, Category, CategoryExpensesData, CheckingAccountTransaction, CreditCardTransaction, StringToTransactionsLUT, Transaction } from '../types';
 import { formatCurrency, formatPercentage, formatDate, expensesPerMonth, roundTo } from '../utilities';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { TrackerDispatch } from '../models';
-import { getStartDate, getEndDate, getTransactionsByCategory, getGeneratedReportStartDate, getGeneratedReportEndDate } from '../selectors';
+import { getStartDate, getEndDate, getTransactionsByCategory, getGeneratedReportStartDate, getGeneratedReportEndDate, getCategories } from '../selectors';
 import { isEmpty } from 'lodash';
 import { Tooltip } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
@@ -17,11 +17,12 @@ import EditTransactionDialog from './EditTransactionDialog';
 import { updateTransaction } from '../controllers';
 
 interface SpendingReportTableProps {
+  categories: Category[];
   startDate: string;
   endDate: string;
   generatedReportStartDate: string;
   generatedReportEndDate: string;
-  transactionsByCategory: StringToTransactionsLUT,
+  transactionsByCategoryId: StringToTransactionsLUT,
   onUpdateTransaction: (transaction: Transaction) => any;
 }
 
@@ -30,6 +31,11 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   const [transactionId, setTransactionId] = React.useState('');
   const [showEditTransactionDialog, setShowEditTransactionDialog] = React.useState(false);
+
+  const getCategoryNameFromCategoryId = (categoryId: string): string => {
+    const category: Category | undefined = props.categories.find((category) => category.id === categoryId);
+    return category ? category.name : '';
+  }
 
   const sortCategoriesByTotalExpenses = (categoryExpenses: CategoryExpensesData[]): CategoryExpensesData[] => {
     return categoryExpenses.sort((a, b) => {
@@ -49,14 +55,14 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
 
     let categoryRowIndex = 0;
 
-    for (const categoryName in props.transactionsByCategory) {
-      if (Object.prototype.hasOwnProperty.call(props.transactionsByCategory, categoryName)) {
-        const transactions: CategorizedTransaction[] = props.transactionsByCategory[categoryName];
+    for (const categoryId in props.transactionsByCategoryId) {
+      if (Object.prototype.hasOwnProperty.call(props.transactionsByCategoryId, categoryId)) {
+        const transactions: CategorizedTransaction[] = props.transactionsByCategoryId[categoryId];
         const totalExpenses = -1 * roundTo((transactions.reduce((sum, transaction) => sum + transaction.bankTransaction.amount, 0)), 2);
 
         const categoryRow: CategoryExpensesData = {
           id: categoryRowIndex.toString(),
-          categoryName,
+          categoryName: getCategoryNameFromCategoryId(categoryId),
           transactions,
           totalExpenses,
           transactionCount: transactions.length,
@@ -76,7 +82,7 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
     return rows;
   }
 
-  if (isEmpty(props.transactionsByCategory)) {
+  if (isEmpty(props.transactionsByCategoryId)) {
     return null;
   }
 
@@ -180,11 +186,12 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
 
 function mapStateToProps(state: any) {
   return {
+    categories: getCategories(state),
     startDate: getStartDate(state),
     endDate: getEndDate(state),
     generatedReportStartDate: getGeneratedReportStartDate(state),
     generatedReportEndDate: getGeneratedReportEndDate(state),
-    transactionsByCategory: getTransactionsByCategory(state),
+    transactionsByCategoryId: getTransactionsByCategory(state),
   };
 }
 

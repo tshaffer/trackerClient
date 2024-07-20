@@ -5,12 +5,22 @@ import { TrackerModelBaseAction } from './baseAction';
 // ------------------------------------
 // Constants
 // ------------------------------------
+const CLEAR_TRANSACTIONS = 'CLEAR_TRANSACTIONS';
 const ADD_TRANSACTIONS = 'ADD_TRANSACTIONS';
 const UPDATE_TRANSACTION = 'UPDATE_TRANSACTION';
 
 // ------------------------------------
 // Actions
 // ------------------------------------
+
+export const clearTransactions = (
+): any => {
+  return {
+    type: CLEAR_TRANSACTIONS,
+    payload: null,
+  };
+};
+
 interface AddTransactionsPayload {
   transactions: Transaction[];
 }
@@ -54,6 +64,9 @@ export const transactionsStateReducer = (
   action: TrackerModelBaseAction<AddTransactionsPayload & UpdateTransactionPayload>
 ): TransactionsState => {
   switch (action.type) {
+    case CLEAR_TRANSACTIONS: {
+      return initialState;
+    }
     case ADD_TRANSACTIONS: {
       const newState = cloneDeep(state);
       const transactions = action.payload.transactions;

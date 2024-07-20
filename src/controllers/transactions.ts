@@ -20,6 +20,7 @@ import {
 } from "../types";
 import {
   addTransactions,
+  clearTransactions,
   setMinMaxTransactionDates,
   setStatementData,
   setTransactionsByCategory,
@@ -111,6 +112,7 @@ export const loadMinMaxTransactionDates = (): TrackerAnyPromiseThunkAction => {
 export const loadTransactions = (startDate: string, endDate: string, includeCreditCardTransactions: boolean, includeCheckingAccountTransactions: boolean): TrackerVoidPromiseThunkAction => {
   return async (dispatch: TrackerDispatch, getState: any) => {
     const transactionsFromDb: Transactions = await getTransactions(startDate, endDate, includeCreditCardTransactions, includeCheckingAccountTransactions);
+    dispatch(clearTransactions());
     const { creditCardTransactions, checkingAccountTransactions } = transactionsFromDb;
     dispatch(addTransactions(creditCardTransactions as Transaction[]));
     dispatch(addTransactions(checkingAccountTransactions as Transaction[]));
@@ -124,22 +126,21 @@ export const getCategorizedTransactions = (startDate: string, endDate: string, i
     const state = getState();
     return doGetCategorizedTransactions(state, startDate, endDate, includeCreditCardTransactions, includeCheckingAccountTransactions)
       .then((categorizedStatementData: CategorizedStatementData) => {
-        console.log(categorizedStatementData);
         const transactions: CategorizedTransaction[] = categorizedStatementData.transactions;
         const unidentifiedBankTransactions: BankTransaction[] = categorizedStatementData.unidentifiedBankTransactions;
-        const transactionsByCategory: StringToTransactionsLUT = {};
+        const transactionsByCategoryId: StringToTransactionsLUT = {};
         transactions.forEach((transaction: CategorizedTransaction) => {
-          const category: string = transaction.category.name;
-          if (!transactionsByCategory[category]) {
-            transactionsByCategory[category] = [];
+          const categoryId: string = transaction.categoryId;
+          if (!transactionsByCategoryId[categoryId]) {
+            transactionsByCategoryId[categoryId] = [];
           }
-          transactionsByCategory[category].push(transaction);
+          transactionsByCategoryId[categoryId].push(transaction);
 
           const { startDate, endDate, netDebits: netDebits } = categorizedStatementData;
           dispatch(setStatementData(startDate, endDate, netDebits));
   
-          console.log(transactionsByCategory);
-          dispatch(setTransactionsByCategory(transactionsByCategory));
+          console.log(transactionsByCategoryId);
+          dispatch(setTransactionsByCategory(transactionsByCategoryId));
   
           dispatch(setUnidentifiedBankTransactions(unidentifiedBankTransactions));
           });
@@ -176,7 +177,7 @@ export const doGetCategorizedTransactions = async (state: any, startDate: string
   for (const categorizedTransaction of categorizedTransactions) {
     const transaction: CategorizedTransaction = {
       bankTransaction: categorizedTransaction.bankTransaction,
-      category: categorizedTransaction.category,
+      categoryId: categorizedTransaction.categoryId,
     };
     transactions.push(transaction);
     sum += transaction.bankTransaction.amount;
@@ -192,7 +193,6 @@ export const doGetCategorizedTransactions = async (state: any, startDate: string
     unidentifiedBankTransactions,
   };
 
-  console.log(categorizedStatementData);
   return categorizedStatementData;
 }
 
@@ -236,7 +236,7 @@ const categorizeTransactions = (
       } else {
         const categorizedTransaction: CategorizedTransaction = {
           bankTransaction: transaction,
-          category: category,
+          categoryId: category.id,
         };
         categorizedTransactions.push(categorizedTransaction);
 
