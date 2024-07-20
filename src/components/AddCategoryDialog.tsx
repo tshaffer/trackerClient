@@ -195,10 +195,12 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
   // );
 
   const handleSelectClick = (event: { currentTarget: any; }) => {
+    console.log('handleSelectClick:', event.currentTarget);
     setAnchorEl(event.currentTarget);
   };
 
   const handleSelectClose = () => {
+    console.log('handleSelectClose');
     setAnchorEl(null);
   };
 
