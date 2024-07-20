@@ -230,9 +230,9 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
         map[category.parentId].children.push(map[category.id]);
       }
     });
-    const flattenTree = (nodes: any[], result = []) => {
-      nodes.forEach(node => {
-        result.push(node as never);
+    const flattenTree = (nodes: any, result: any[] = []) => {
+      nodes.forEach((node: any) => {
+        result.push(node);
         if (node.children.length > 0) {
           flattenTree(node.children, result);
         }
@@ -243,6 +243,11 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
   };
 
   const categoryMenuItems = buildMenuItems();
+
+  console.log('re-render:');
+  console.log('anchorEl: ', Boolean(anchorEl));
+  console.log('parentCategoryId: ', parentCategoryId);
+  console.log('categoryMenuItems: ', categoryMenuItems);
 
   return (
     <Dialog onClose={handleClose} open={open}>
