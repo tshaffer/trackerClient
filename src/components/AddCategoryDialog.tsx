@@ -5,7 +5,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { Button, Checkbox, DialogActions, DialogContent, FormControlLabel, Tooltip } from '@mui/material';
+import { Button, Checkbox, DialogActions, DialogContent, FormControl, FormControlLabel, InputLabel, ListItemText, Menu, MenuItem, Select, Tooltip } from '@mui/material';
 import { getAppInitialized, getCategories } from '../selectors';
 import { TreeItem, SimpleTreeView } from '@mui/x-tree-view';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -34,6 +34,9 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
   const [categoryLabel, setCategoryLabel] = React.useState('');
   const [isSubCategory, setIsSubCategory] = React.useState(false);
   const [parentCategoryId, setParentCategoryId] = React.useState('');
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+
   const textFieldRef = useRef(null);
 
   useEffect(() => {
@@ -117,23 +120,108 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
     setParentCategoryId(itemIds as string);
   }
 
-  const renderTree = (nodes: any) => (
-    <TreeItem
+  // const renderTree = (nodes: any) => (
+  //   <TreeItem
+  //     key={nodes.id}
+  //     label={nodes.name}
+  //     itemId={nodes.id}
+  //   >
+  //     {Array.isArray(nodes.children)
+  //       ? nodes.children.map((node: any) => renderTree(node))
+  //       : null}
+  //   </TreeItem>
+  // );
+
+  // const buildTree = () => {
+  //   const map: any = {};
+  //   const roots: any = [];
+  //   props.categories.forEach((category) => {
+  //     map[category.id] = { ...category, children: [] };
+  //   });
+  //   props.categories.forEach(category => {
+  //     if (category.parentId === '') {
+  //       roots.push(map[category.id]);
+  //     } else {
+  //       map[category.parentId].children.push(map[category.id]);
+  //     }
+  //   });
+  //   return roots;
+  // };
+
+  // const categoryTree = buildTree();
+
+  // return (
+  //   <Dialog onClose={handleClose} open={open}>
+  //     <DialogTitle>Add Category</DialogTitle>
+  //     <DialogContent style={{ paddingBottom: '0px' }}>
+  //       <Box component="form" noValidate autoComplete="off">
+  //         <div style={{ paddingBottom: '8px' }}>
+  //           <TextField
+  //             margin="normal"
+  //             label="Category Label"
+  //             value={categoryLabel}
+  //             onChange={(event) => setCategoryLabel(event.target.value)}
+  //             fullWidth
+  //           />
+  //         </div>
+  //         <FormControlLabel
+  //           control={<Checkbox checked={isSubCategory} onChange={handleCheckboxChange} />}
+  //           label="Is this a subcategory?"
+  //         />
+  //         {isSubCategory && (
+  //           <SimpleTreeView
+  //             onSelectedItemsChange={handleSelectedItemsChange}
+  //           >
+  //             {categoryTree.map((node: any) => renderTree(node))}
+  //           </SimpleTreeView>
+  //         )}
+  //       </Box>
+  //     </DialogContent>
+  //     <DialogActions>
+  //       <Button onClick={handleClose}>Cancel</Button>
+  //       <Tooltip title="Press Enter to add the category" arrow>
+  //         <Button
+  //           onClick={handleAddCategory}
+  //           autoFocus
+  //           variant="contained"
+  //           color="primary"
+  //           disabled={!categoryLabel || (isSubCategory && !parentCategoryId)}
+  //         >
+  //           Add
+  //         </Button>
+  //       </Tooltip>
+  //     </DialogActions>
+  //   </Dialog>
+  // );
+
+  const handleSelectClick = (event: { currentTarget: any; }) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleSelectClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleMenuItemClick = (id: string) => {
+    setParentCategoryId(id);
+    handleSelectClose();
+  };
+
+  const renderMenuItems = (nodes: any) => (
+    <MenuItem
       key={nodes.id}
-      label={nodes.name}
-      itemId={nodes.id}
+      onClick={() => handleMenuItemClick(nodes.id)}
+      style={{ paddingLeft: `${(nodes.level || 0) * 20}px` }}
     >
-      {Array.isArray(nodes.children)
-        ? nodes.children.map((node: any) => renderTree(node))
-        : null}
-    </TreeItem>
+      <ListItemText primary={nodes.name} />
+    </MenuItem>
   );
 
-  const buildTree = () => {
+  const buildMenuItems = () => {
     const map: any = {};
-    const roots: any = [];
-    props.categories.forEach((category) => {
-      map[category.id] = { ...category, children: [] };
+    const roots: any[] = [];
+    props.categories.forEach(category => {
+      map[category.id] = { ...category, children: [], level: (category.parentId !== '') ? map[category.parentId]?.level + 1 : 0 };
     });
     props.categories.forEach(category => {
       if (category.parentId === '') {
@@ -142,10 +230,19 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
         map[category.parentId].children.push(map[category.id]);
       }
     });
-    return roots;
+    const flattenTree = (nodes: any[], result = []) => {
+      nodes.forEach(node => {
+        result.push(node as never);
+        if (node.children.length > 0) {
+          flattenTree(node.children, result);
+        }
+      });
+      return result;
+    };
+    return flattenTree(roots);
   };
 
-  const categoryTree = buildTree();
+  const categoryMenuItems = buildMenuItems();
 
   return (
     <Dialog onClose={handleClose} open={open}>
@@ -166,11 +263,36 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
             label="Is this a subcategory?"
           />
           {isSubCategory && (
-            <SimpleTreeView
-              onSelectedItemsChange={handleSelectedItemsChange}
-            >
-              {categoryTree.map((node: any) => renderTree(node))}
-            </SimpleTreeView>
+            <FormControl fullWidth>
+              <InputLabel id="parent-category-label">Parent Category</InputLabel>
+              <Select
+                labelId="parent-category-label"
+                value={parentCategoryId}
+                onClick={handleSelectClick}
+                renderValue={(selected) => {
+                  if (!selected) {
+                    return <em>Select Parent Category</em>;
+                  }
+                  const selectedCategory = props.categories.find(category => category.id === selected);
+                  return selectedCategory ? selectedCategory.name : '';
+                }}
+              >
+                {categoryMenuItems.map((item) => renderMenuItems(item))}
+              </Select>
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleSelectClose}
+                PaperProps={{
+                  style: {
+                    maxHeight: 400,
+                    width: '20ch',
+                  },
+                }}
+              >
+                {categoryMenuItems.map((item) => renderMenuItems(item))}
+              </Menu>
+            </FormControl>
           )}
         </Box>
       </DialogContent>
@@ -190,6 +312,8 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
       </DialogActions>
     </Dialog>
   );
+
+
 };
 
 function mapStateToProps(state: any) {
