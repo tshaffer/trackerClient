@@ -21,12 +21,16 @@ const CategoriesContent: React.FC<CategoriesContentProps> = (props: CategoriesCo
 
   const [showAddCategoryDialog, setShowAddCategoryDialog] = React.useState(false);
 
-  const handleAddCategory = (categoryLabel: string): void => {
+  const handleAddCategory = (
+    categoryLabel: string,
+    isSubCategory: boolean,
+    parentId: string,
+  ): void => {
     const id: string = uuidv4();
     const category: Category = {
       id,
       name: categoryLabel,
-      parentId: '',
+      parentId,
       disregardLevel: DisregardLevel.None,
     };
     props.onAddCategory(category);
