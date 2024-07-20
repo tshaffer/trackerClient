@@ -142,10 +142,10 @@ const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableP
   const buildTree = () => {
     const map: any = {};
     const roots: any = [];
-    props.categories.forEach((category) => {
+    categories.forEach((category) => {
       map[category.id] = { ...category, children: [] };
     });
-    props.categories.forEach(category => {
+    categories.forEach(category => {
       if (category.parentId === '') {
         roots.push(map[category.id]);
       } else {
