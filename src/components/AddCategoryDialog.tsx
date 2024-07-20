@@ -214,6 +214,7 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
       key={nodes.id}
       onClick={() => handleMenuItemClick(nodes.id)}
       style={{ paddingLeft: `${(nodes.level || 0) * 20}px` }}
+      value={nodes.id}
     >
       <ListItemText primary={nodes.name} />
     </MenuItem>
