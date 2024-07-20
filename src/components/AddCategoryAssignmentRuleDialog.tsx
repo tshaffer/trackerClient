@@ -136,6 +136,7 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
     const category: Category = {
       id,
       name: newCategoryName,
+      parentId: '',
       disregardLevel: DisregardLevel.None,
     };
     setNewCategoryDialogOpen(false);

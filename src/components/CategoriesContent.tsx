@@ -26,6 +26,7 @@ const CategoriesContent: React.FC<CategoriesContentProps> = (props: CategoriesCo
     const category: Category = {
       id,
       name: categoryLabel,
+      parentId: '',
       disregardLevel: DisregardLevel.None,
     };
     props.onAddCategory(category);
