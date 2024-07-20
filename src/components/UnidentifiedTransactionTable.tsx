@@ -5,16 +5,15 @@ import { bindActionCreators } from 'redux';
 import { v4 as uuidv4 } from 'uuid';
 
 import '../styles/Tracker.css';
-import { BankTransaction, BankTransactionType, Category, CategoryAssignmentRule, CheckTransaction, CheckingAccountTransaction, CheckingAccountTransactionType, CreditCardTransaction, DateRangeType, DisregardLevel, Statement, StatementType, Transaction } from '../types';
+import { BankTransaction, BankTransactionType, Category, CategoryAssignmentRule, CheckTransaction, CheckingAccountTransaction, CheckingAccountTransactionType, DateRangeType, Statement, Transaction } from '../types';
 import { formatCurrency, formatDate } from '../utilities';
 import { IconButton, Tooltip } from '@mui/material';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import EditIcon from '@mui/icons-material/Edit';
 import AddRuleDialog from './AddCategoryAssignmentRuleDialog';
-import { addCategoryAssignmentRuleServerAndRedux, addCategoryServerAndRedux, getCategorizedTransactions, updateCheckTransaction, updateTransaction } from '../controllers';
+import { addCategoryAssignmentRuleServerAndRedux, addCategoryServerAndRedux, updateCheckTransaction, updateTransaction } from '../controllers';
 import { TrackerDispatch } from '../models';
 import { getStartDate, getEndDate, getUnidentifiedBankTransactions, getGeneratedReportEndDate, getGeneratedReportStartDate, getDateRangeType, getReportStatement, getReportStatementId } from '../selectors';
-import { isNil } from 'lodash';
 import EditCheckDialog from './EditCheckDialog';
 import EditTransactionDialog from './EditTransactionDialog';
 
@@ -30,7 +29,6 @@ interface NotIdentifiedTransactionTableProps {
   onAddCategoryAssignmentRule: (categoryAssignmentRule: CategoryAssignmentRule) => any;
   onUpdateTransaction: (transaction: Transaction) => any;
   onUpdateCheckTransaction: (check: CheckTransaction) => any;
-  onGetCategorizedTransactions: (startDate: string, endDate: string, includeCreditCardTransactions: boolean, includeCheckingAccountTransactions: boolean) => any;
 }
 
 const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps> = (props: NotIdentifiedTransactionTableProps) => {
@@ -220,7 +218,6 @@ const mapDispatchToProps = (dispatch: TrackerDispatch) => {
     onAddCategoryAssignmentRule: addCategoryAssignmentRuleServerAndRedux,
     onUpdateCheckTransaction: updateCheckTransaction,
     onUpdateTransaction: updateTransaction,
-    onGetCategorizedTransactions: getCategorizedTransactions,
   }, dispatch);
 };
 
