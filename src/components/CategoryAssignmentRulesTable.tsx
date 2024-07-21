@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import '../styles/Tracker.css';
-import { Category, CategoryAssignmentRule, SidebarMenuButton } from '../types';
+import { Category, CategoryAssignmentRule, CategoryMenuItem, SidebarMenuButton, StringToCategoryMenuItemLUT } from '../types';
 import { Box, FormControl, IconButton, InputLabel, ListItemText, Menu, MenuItem, Select, TextField, Tooltip, Typography } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -81,6 +81,31 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
   const updatedCategoryAssignmentRuleCombinationExistsInProps = (pattern: string, categoryId: string): boolean => {
     return props.categoryAssignmentRules.some((categoryAssignmentRule: CategoryAssignmentRule) => categoryAssignmentRule.pattern === pattern && categoryAssignmentRule.categoryId === categoryId);
   }
+
+  const buildCategoryMenuItems = () => {
+    const map: StringToCategoryMenuItemLUT = {};
+    const roots: CategoryMenuItem[] = [];
+    props.categories.forEach(category => {
+      map[category.id] = { ...category, children: [], level: (category.parentId !== '') ? map[category.parentId]?.level + 1 : 0 };
+    });
+    props.categories.forEach(category => {
+      if (category.parentId === '') {
+        roots.push(map[category.id]);
+      } else {
+        map[category.parentId].children.push(map[category.id]);
+      }
+    });
+    const flattenTree = (categoryMenuItems: CategoryMenuItem[], result: CategoryMenuItem[] = []) => {
+      categoryMenuItems.forEach((categoryMenuItem: CategoryMenuItem) => {
+        result.push(categoryMenuItem);
+        if (categoryMenuItem.children.length > 0) {
+          flattenTree(categoryMenuItem.children, result);
+        }
+      });
+      return result;
+    };
+    return flattenTree(roots);
+  };
 
   function handleSaveCategoryAssignmentRule(categoryAssignmentRuleId: string): void {
     console.log('handleSaveCategoryAssignmentRule');
@@ -194,11 +219,14 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
   };
 
   const handleCategoryChange = (categoryAssignmentRuleId: string, categoryId: string) => {
-    // debugger;
     const currentCategoryIdByCategoryAssignmentRuleId: { [categoryAssignmentRuleId: string]: string } = cloneDeep(categoryIdByCategoryAssignmentRuleId);
     currentCategoryIdByCategoryAssignmentRuleId[categoryAssignmentRuleId] = categoryId;
     setCategoryIdByCategoryAssignmentRuleId(currentCategoryIdByCategoryAssignmentRuleId);
   }
+
+  const handleSelectClose = () => {
+    setAnchorEl(null);
+  };
 
   let alphabetizedCategories: Category[] = cloneDeep(props.categories);
   alphabetizedCategories = sortCategories(alphabetizedCategories);
@@ -211,53 +239,21 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
     return <></>;
   }
 
-  const handleSelectClose = () => {
-    console.log('handleSelectClose');
-    setAnchorEl(null);
+  const renderCategoryMenuItem = (categoryAssignmentRuleId: string, categoryMenuItem: CategoryMenuItem) => {
+    return (
+      <MenuItem
+        key={categoryMenuItem.id}
+        onClick={() => handleCategoryChange(categoryAssignmentRuleId, categoryMenuItem.id)}
+        style={{ paddingLeft: `${(categoryMenuItem.level || 0) * 20}px` }}
+        value={categoryMenuItem.id}
+      >
+        <ListItemText primary={categoryMenuItem.name} />
+      </MenuItem>
+    );
   };
 
-  const handleMenuItemClick = (id: string) => {
-    setParentCategoryId(id);
-    handleSelectClose();
-  };
 
-  const renderMenuItems = (nodes: any) => (
-    <MenuItem
-      key={nodes.id}
-      onClick={() => handleMenuItemClick(nodes.id)}
-      style={{ paddingLeft: `${(nodes.level || 0) * 20}px` }}
-      value={nodes.id}
-    >
-      <ListItemText primary={nodes.name} />
-    </MenuItem>
-  );
-
-  const buildMenuItems = () => {
-    const map: any = {};
-    const roots: any[] = [];
-    props.categories.forEach(category => {
-      map[category.id] = { ...category, children: [], level: (category.parentId !== '') ? map[category.parentId]?.level + 1 : 0 };
-    });
-    props.categories.forEach(category => {
-      if (category.parentId === '') {
-        roots.push(map[category.id]);
-      } else {
-        map[category.parentId].children.push(map[category.id]);
-      }
-    });
-    const flattenTree = (nodes: any, result: any[] = []) => {
-      nodes.forEach((node: any) => {
-        result.push(node);
-        if (node.children.length > 0) {
-          flattenTree(node.children, result);
-        }
-      });
-      return result;
-    };
-    return flattenTree(roots);
-  };
-
-  const categoryMenuItems = buildMenuItems();
+  const categoryMenuItems = buildCategoryMenuItems();
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -281,31 +277,12 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
                   helperText="Edit the pattern"
                 />
               </div>
-
-              {/* <div className="table-cell-category-assignment-rule">
-                <TextField
-                  id="category"
-                  select
-                  value={categoryIdByCategoryAssignmentRuleId[categoryAssignmentRule.id]}
-                  helperText="Select the associated category"
-                  variant="standard"
-                  onChange={(event) => handleCategoryChange(categoryAssignmentRule.id, event.target.value)}
-                >
-                  {alphabetizedCategories.map((category) => (
-                    <MenuItem key={category.id} value={category.id}>
-                      {category.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </div> */}
-
               <div className="table-cell-category-assignment-rule">
                 <FormControl fullWidth>
                   <InputLabel id="parent-category-label">Parent Category</InputLabel>
                   <Select
                     labelId="parent-category-label"
                     value={categoryIdByCategoryAssignmentRuleId[categoryAssignmentRule.id]}
-                    // onClick={(event) => handleCategoryChange(event, categoryAssignmentRule.id, (event.target as any).value as string)}
                     onChange={(event) => handleCategoryChange(categoryAssignmentRule.id, event.target.value as string)}
                     renderValue={(selected) => {
                       if (!selected) {
@@ -315,7 +292,7 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
                       return selectedCategory ? selectedCategory.name : '';
                     }}
                   >
-                    {categoryMenuItems.map((item) => renderMenuItems(item))}
+                    {categoryMenuItems.map((item) => renderCategoryMenuItem(categoryAssignmentRule.id, item))}
                   </Select>
                   <Menu
                     anchorEl={anchorEl}
@@ -328,12 +305,10 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
                       },
                     }}
                   >
-                    {categoryMenuItems.map((item) => renderMenuItems(item))}
+                    {categoryMenuItems.map((item) => renderCategoryMenuItem(categoryAssignmentRule.id, item))}
                   </Menu>
                 </FormControl>
               </div>
-
-
               <div className="table-cell-category-assignment-rule" style={{ marginLeft: '32px' }}>
                 <Tooltip title="Save" arrow>
                   <IconButton onClick={() => handleSaveCategoryAssignmentRule(categoryAssignmentRule.id)}>
