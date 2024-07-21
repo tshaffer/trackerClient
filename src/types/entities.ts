@@ -109,3 +109,13 @@ export type CategoryExpensesData = {
   totalExpenses: number,
   percentageOfTotal: number,
 }
+
+export interface CategoryMenuItem extends Category {
+  children: CategoryMenuItem[];
+  level: number;
+}
+
+export type StringToCategoryMenuItemLUT = {
+  [key: string]: CategoryMenuItem;
+}
+

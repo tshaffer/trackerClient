@@ -14,18 +14,9 @@ import TextField from '@mui/material/TextField';
 import { Button, DialogActions, DialogContent, DialogContentText, FormControl, InputLabel, ListItemText, Menu, MenuItem, Select, SelectChangeEvent, Tooltip } from '@mui/material';
 
 import { getAppInitialized, getCategories, getUnidentifiedBankTransactionById } from '../selectors';
-import { BankTransaction, Category, DisregardLevel, SidebarMenuButton } from '../types';
+import { BankTransaction, Category, CategoryMenuItem, DisregardLevel, SidebarMenuButton, StringToCategoryMenuItemLUT } from '../types';
 import { addCategoryServerAndRedux } from '../controllers';
 import { TrackerDispatch } from '../models';
-
-interface CategoryMenuItem extends Category {
-  children: CategoryMenuItem[];
-  level: number;
-}
-
-type StringToCategoryMenuItemLUT = {
-  [key: string]: CategoryMenuItem;
-}
 
 export interface AddRuleDialogPropsFromParent {
   open: boolean;
