@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { TrackerDispatch } from '../models';
 import { getStartDate, getEndDate, getTransactionsByCategory, getGeneratedReportStartDate, getGeneratedReportEndDate, getCategories } from '../selectors';
-import { isEmpty } from 'lodash';
+import { cloneDeep, isEmpty } from 'lodash';
 import { Tooltip } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import EditTransactionDialog from './EditTransactionDialog';
@@ -37,50 +37,50 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
     return category ? category.name : '';
   }
 
-  const sortCategoriesByTotalExpenses = (categoryExpenses: CategoryExpensesData[]): CategoryExpensesData[] => {
-    return categoryExpenses.sort((a, b) => {
-      if (a.totalExpenses < b.totalExpenses) {
-        return 1;
-      }
-      if (a.totalExpenses > b.totalExpenses) {
-        return -1;
-      }
-      return 0;
-    });
-  };
+  // const sortCategoriesByTotalExpenses = (categoryExpenses: CategoryExpensesData[]): CategoryExpensesData[] => {
+  //   return categoryExpenses.sort((a, b) => {
+  //     if (a.totalExpenses < b.totalExpenses) {
+  //       return 1;
+  //     }
+  //     if (a.totalExpenses > b.totalExpenses) {
+  //       return -1;
+  //     }
+  //     return 0;
+  //   });
+  // };
 
-  const getRows = (): CategoryExpensesData[] => {
+  // const getRows = (): CategoryExpensesData[] => {
 
-    const rows: CategoryExpensesData[] = [];
+  //   const rows: CategoryExpensesData[] = [];
 
-    let categoryRowIndex = 0;
+  //   let categoryRowIndex = 0;
 
-    for (const categoryId in props.transactionsByCategoryId) {
-      if (Object.prototype.hasOwnProperty.call(props.transactionsByCategoryId, categoryId)) {
-        const transactions: CategorizedTransaction[] = props.transactionsByCategoryId[categoryId];
-        const totalExpenses = -1 * roundTo((transactions.reduce((sum, transaction) => sum + transaction.bankTransaction.amount, 0)), 2);
+  //   for (const categoryId in props.transactionsByCategoryId) {
+  //     if (Object.prototype.hasOwnProperty.call(props.transactionsByCategoryId, categoryId)) {
+  //       const transactions: CategorizedTransaction[] = props.transactionsByCategoryId[categoryId];
+  //       const totalExpenses = -1 * roundTo((transactions.reduce((sum, transaction) => sum + transaction.bankTransaction.amount, 0)), 2);
 
-        const categoryRow: CategoryExpensesData = {
-          id: categoryRowIndex.toString(),
-          categoryName: getCategoryNameFromCategoryId(categoryId),
-          transactions,
-          totalExpenses,
-          transactionCount: transactions.length,
-          percentageOfTotal: 0,
-        };
-        rows.push(categoryRow);
+  //       const categoryRow: CategoryExpensesData = {
+  //         id: categoryRowIndex.toString(),
+  //         categoryName: getCategoryNameFromCategoryId(categoryId),
+  //         transactions,
+  //         totalExpenses,
+  //         transactionCount: transactions.length,
+  //         percentageOfTotal: 0,
+  //       };
+  //       rows.push(categoryRow);
 
-        categoryRowIndex += 1;
-      }
-    }
+  //       categoryRowIndex += 1;
+  //     }
+  //   }
 
-    const totalAmount = rows.reduce((sum, row) => sum + row.totalExpenses, 0);
-    for (const row of rows) {
-      row.percentageOfTotal = roundTo((row.totalExpenses / totalAmount) * 100, 2);
-    }
+  //   const totalAmount = rows.reduce((sum, row) => sum + row.totalExpenses, 0);
+  //   for (const row of rows) {
+  //     row.percentageOfTotal = roundTo((row.totalExpenses / totalAmount) * 100, 2);
+  //   }
 
-    return rows;
-  }
+  //   return rows;
+  // }
 
   if (isEmpty(props.transactionsByCategoryId)) {
     return null;
@@ -103,14 +103,84 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
     setShowEditTransactionDialog(false);
   }
 
-  const rows: CategoryExpensesData[] = getRows();
+  // const rows: CategoryExpensesData[] = getRows();
+
+  // let totalAmount = 0;
+  // for (const row of rows) {
+  //   totalAmount += row.totalExpenses;
+  // }
+
+  // const sortedRows = sortCategoriesByTotalExpenses(rows);
+
+  const buildCategoryTree = (categories: any[]) => {
+    const map: any = {};
+    const roots: any[] = [];
+
+    categories.forEach(category => {
+      map[category.id] = { ...category, children: [] };
+    });
+
+    categories.forEach(category => {
+      if (category.parentId === '') {
+        roots.push(map[category.id]);
+      } else {
+        console.log('category.parentId', category.parentId);
+        console.log('category', category.name);
+        map[category.parentId].children.push(map[category.id]);
+      }
+    });
+
+    return roots;
+  };
+
+  const getRows = (categories: any[]) => {
+    const rows: any[] = [];
+
+    const processCategory = (category: any, level = 0) => {
+      const transactions = props.transactionsByCategoryId[category.id] || [];
+      const totalExpenses = -1 * roundTo(transactions.reduce((sum, transaction) => sum + transaction.bankTransaction.amount, 0), 2);
+
+      if (level > 0) {
+        console.log('child category:', category.name);
+      }
+
+      const spaces = '\u00A0'.repeat(level * 8);
+
+      const categoryRow = {
+        id: category.id,
+        categoryName: `${spaces}${category.name}`,
+        transactions,
+        totalExpenses,
+        transactionCount: transactions.length,
+        percentageOfTotal: 0,
+      };
+      rows.push(categoryRow);
+
+      category.children.forEach((subCategory: any) => processCategory(subCategory, level + 1));
+    };
+
+    categories.forEach(category => processCategory(category));
+
+    const totalAmount = rows.reduce((sum: any, row: { totalExpenses: any; }) => sum + row.totalExpenses, 0);
+    rows.forEach((row: { percentageOfTotal: number; totalExpenses: number; }) => {
+      row.percentageOfTotal = roundTo((row.totalExpenses / totalAmount) * 100, 2);
+    });
+
+    return rows;
+  };
+
+  const categoryTree = buildCategoryTree(props.categories);
+  console.log('categoryTree', categoryTree);
+
+  const rows: any = getRows(categoryTree);
 
   let totalAmount = 0;
   for (const row of rows) {
     totalAmount += row.totalExpenses;
   }
 
-  const sortedRows = sortCategoriesByTotalExpenses(rows);
+  // const sortedRows = rows.sort((a: { totalExpenses: number; }, b: { totalExpenses: number; }) => b.totalExpenses - a.totalExpenses);
+  const sortedRows = cloneDeep(rows);
 
   return (
     <React.Fragment>
@@ -123,7 +193,7 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
       <h4>Date Range {formatDate(props.generatedReportStartDate)} - {formatDate(props.generatedReportEndDate)}</h4>
       <h4>Total Amount: {formatCurrency(totalAmount)}</h4>
       <h4>Per Month: {expensesPerMonth(totalAmount, props.generatedReportStartDate, props.generatedReportEndDate)}</h4>
-      <div className="table-container">
+      {/* <div className="table-container">
         <div className="table-header">
           <div className="table-row">
             <div className="table-cell"></div>
@@ -159,6 +229,62 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
                   </div>
                   <div className="table-body">
                     {categoryExpenses.transactions.map((transaction: CategorizedTransaction) => (
+                      <div className="table-row" key={transaction.bankTransaction.id}>
+                        <div className="table-cell">
+                          <Tooltip title="Edit transaction">
+                            <IconButton onClick={() => handleEditTransaction(transaction.bankTransaction)}>
+                              <EditIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </div>
+                        <div className="table-cell">{formatDate(transaction.bankTransaction.transactionDate)}</div>
+                        <div className="table-cell">{formatCurrency(-transaction.bankTransaction.amount)}</div>
+                        <div className="table-cell">{transaction.bankTransaction.userDescription}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </React.Fragment>
+          ))}
+        </div>
+      </div> */}
+      <div className="table-container">
+        <div className="table-header">
+          <div className="table-row">
+            <div className="table-cell"></div>
+            <div className="table-cell">Category</div>
+            <div className="table-cell">Transaction Count</div>
+            <div className="table-cell">Total Amount</div>
+            <div className="table-cell">Percentage of Total</div>
+          </div>
+        </div>
+        <div className="spending-report-table-body">
+          {sortedRows.map((categoryExpenses: { id: React.Key | null | undefined; categoryName: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; transactionCount: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; totalExpenses: number; percentageOfTotal: number; transactions: any[]; }) => (
+            <React.Fragment key={categoryExpenses.id}>
+              <div className="table-row">
+                <div className="table-cell">
+                  <IconButton onClick={() => handleButtonClick(categoryExpenses.id as string)}>
+                    {selectedRowId === categoryExpenses.id ? <RemoveIcon /> : <AddIcon />}
+                  </IconButton>
+                </div>
+                <div className="table-cell">{categoryExpenses.categoryName}</div>
+                <div className="table-cell">{categoryExpenses.transactionCount}</div>
+                <div className="table-cell">{formatCurrency(categoryExpenses.totalExpenses)}</div>
+                <div className="table-cell">{formatPercentage(categoryExpenses.percentageOfTotal)}</div>
+              </div>
+              {selectedRowId === categoryExpenses.id && (
+                <div className="details-table-container">
+                  <div className="table-header">
+                    <div className="table-row">
+                      <div className="table-cell"></div>
+                      <div className="table-cell">Date</div>
+                      <div className="table-cell">Amount</div>
+                      <div className="table-cell">Description</div>
+                    </div>
+                  </div>
+                  <div className="table-body">
+                    {categoryExpenses.transactions.map((transaction: { bankTransaction: Transaction; }) => (
                       <div className="table-row" key={transaction.bankTransaction.id}>
                         <div className="table-cell">
                           <Tooltip title="Edit transaction">
