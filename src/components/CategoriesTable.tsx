@@ -1,7 +1,7 @@
 import React from 'react';
 
 import '../styles/Tracker.css';
-import { Category, CategoryAssignmentRule } from '../types';
+import { Category, CategoryAssignmentRule, CategoryMenuItem, StringToCategoryMenuItemLUT } from '../types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -46,57 +46,6 @@ const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableP
     .map((category: Category) => category)
     .sort((a, b) => (a.name).localeCompare(b.name));
 
-  // return (
-  //   <Box sx={{ width: '100%' }}>
-  //     <div className="table-container">
-  //       <div className="table-header">
-  //         <div className="table-row">
-  //           <div className="table-cell"></div>
-  //           <div className="table-cell">Category Name</div>
-  //           <div className="table-cell">Number of Rules</div>
-  //         </div>
-  //       </div>
-  //       <div className="catalog-table-body">
-  //         {categories.map((category: Category) => (
-  //           <React.Fragment key={category.id}>
-  //             <div className="table-row">
-  //               <div className="table-cell">
-  //                 <IconButton onClick={() => handleToggle(category.id)}>
-  //                   {openRows[category.id] ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-  //                 </IconButton>
-  //               </div>
-  //               <div className="table-cell">{category.name}</div>
-  //               <div className="table-cell">{getNumberOfRulesByCategory(category.id)}</div>
-  //             </div>
-  //             <div className="table-row">
-  //               <div className="category-table-cell" style={{ paddingBottom: 0, paddingTop: 0 }}>
-  //                 <Collapse in={openRows[category.id]} timeout="auto" unmountOnExit>
-  //                   <Box margin={1}>
-  //                     <div className="table-container">
-  //                       <div className="table-header">
-  //                         <div className="table-row">
-  //                           <div className="category-category-table-cell">Pattern</div>
-  //                         </div>
-  //                       </div>
-  //                       <div className="catalog-table-body">
-  //                         {getRulesByCategory(category.id).map((rule, index) => (
-  //                           <div className="table-row" key={index}>
-  //                             <div className="category-category-table-cell">{rule.pattern}</div>
-  //                           </div>
-  //                         ))}
-  //                       </div>
-  //                     </div>
-  //                   </Box>
-  //                 </Collapse>
-  //               </div>
-  //             </div>
-  //           </React.Fragment>
-  //         ))}
-  //       </div>
-  //     </div>
-  //   </Box>
-  // );
-
   const renderTree = (nodes: any) => (
     <TreeItem
       key={nodes.id}
@@ -139,11 +88,11 @@ const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableP
     </TreeItem>
   );
 
-  const buildTree = () => {
-    const map: any = {};
-    const roots: any = [];
-    categories.forEach((category) => {
-      map[category.id] = { ...category, children: [] };
+  const buildCategoryTree = () => {
+    const map: StringToCategoryMenuItemLUT = {};
+    const roots: CategoryMenuItem[] = [];
+    categories.forEach(category => {
+      map[category.id] = { ...category, children: [], level: (category.parentId !== '') ? map[category.parentId]?.level + 1 : 0 };
     });
     categories.forEach(category => {
       if (category.parentId === '') {
@@ -155,7 +104,8 @@ const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableP
     return roots;
   };
 
-  const categoryTree = buildTree();
+
+  const categoryTree = buildCategoryTree();
 
   return (
     <Box sx={{ width: '100%' }}>
