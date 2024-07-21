@@ -268,6 +268,9 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
                   }}
                 >
                   {categoryMenuItems.map((item) => renderMenuItems(item))}
+                  <MenuItem onClick={handleOpenNewCategoryDialog}>
+                    <Button fullWidth>Add New Category</Button>
+                  </MenuItem>
                 </Select>
                 <Menu
                   anchorEl={anchorEl}
@@ -281,6 +284,9 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
                   }}
                 >
                   {categoryMenuItems.map((item) => renderMenuItems(item))}
+                  <MenuItem onClick={handleOpenNewCategoryDialog}>
+                    <Button fullWidth>Add New Category</Button>
+                  </MenuItem>
                 </Menu>
               </FormControl>
             </div>
