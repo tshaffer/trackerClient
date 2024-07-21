@@ -279,14 +279,14 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
               </div>
               <div className="table-cell-category-assignment-rule">
                 <FormControl fullWidth>
-                  <InputLabel id="parent-category-label">Parent Category</InputLabel>
+                  <InputLabel id="parent-category-label">Category</InputLabel>
                   <Select
                     labelId="parent-category-label"
                     value={categoryIdByCategoryAssignmentRuleId[categoryAssignmentRule.id]}
                     onChange={(event) => handleCategoryChange(categoryAssignmentRule.id, event.target.value as string)}
                     renderValue={(selected) => {
                       if (!selected) {
-                        return <em>Select Parent Category</em>;
+                        return <em>Select Category</em>;
                       }
                       const selectedCategory = props.categories.find(category => category.id === selected);
                       return selectedCategory ? selectedCategory.name : '';
