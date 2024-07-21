@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, ReactNode } from 'react';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -11,12 +11,21 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { Button, DialogActions, DialogContent, DialogContentText, FormControl, InputLabel, ListItemText, Menu, MenuItem, Select, Tooltip } from '@mui/material';
+import { Button, DialogActions, DialogContent, DialogContentText, FormControl, InputLabel, ListItemText, Menu, MenuItem, Select, SelectChangeEvent, Tooltip } from '@mui/material';
 
 import { getAppInitialized, getCategories, getUnidentifiedBankTransactionById } from '../selectors';
-import { BankTransaction, BankTransactionType, Category, CheckingAccountTransaction, CreditCardTransaction, DisregardLevel, SidebarMenuButton } from '../types';
+import { BankTransaction, Category, DisregardLevel, SidebarMenuButton } from '../types';
 import { addCategoryServerAndRedux } from '../controllers';
 import { TrackerDispatch } from '../models';
+
+interface CategoryMenuItem extends Category {
+  children: CategoryMenuItem[];
+  level: number;
+}
+
+type StringToCategoryMenuItemLUT = {
+  [key: string]: CategoryMenuItem;
+}
 
 export interface AddRuleDialogPropsFromParent {
   open: boolean;
@@ -38,7 +47,6 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
   const [newCategoryName, setNewCategoryName] = useState('');
   const [alertDialogOpen, setAlertDialogOpen] = useState(false);
 
-  const [parentCategoryId, setParentCategoryId] = React.useState('');
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const getTransactionDetails = (bankTransaction: BankTransaction | null): string => {
@@ -116,17 +124,9 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
     setPattern(event.target.value);
   };
 
-  // function handleCategoryChange(event: React.ChangeEvent<HTMLInputElement>): void {
-  //   console.log('handleCategoryChange event: ', event.target.value);
-  //   setSelectedCategoryId(event.target.value as string);
-  // }
-
-  const handleCategoryChange = (categoryAssignmentRuleId: string, categoryId: string) => {
-    // debugger;
-    // const currentCategoryIdByCategoryAssignmentRuleId: { [categoryAssignmentRuleId: string]: string } = cloneDeep(categoryIdByCategoryAssignmentRuleId);
-    // currentCategoryIdByCategoryAssignmentRuleId[categoryAssignmentRuleId] = categoryId;
-    // setCategoryIdByCategoryAssignmentRuleId(currentCategoryIdByCategoryAssignmentRuleId);
-    setSelectedCategoryId(categoryId)
+  function handleCategoryChange(event: SelectChangeEvent<string>): void {
+    console.log('handleCategoryChange event, categoryId: ', event.target.value);
+    setSelectedCategoryId(event.target.value)
   }
 
   const handleOpenNewCategoryDialog = () => {
@@ -179,40 +179,42 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
     setAnchorEl(null);
   };
 
-  const handleMenuItemClick = (id: string) => {
-    setParentCategoryId(id);
+  const handleMenuItemClick = (categoryId: string) => {
+    setSelectedCategoryId(categoryId);
     handleSelectClose();
   };
 
-  const renderMenuItems = (nodes: any) => (
-    <MenuItem
-      key={nodes.id}
-      onClick={() => handleMenuItemClick(nodes.id)}
-      style={{ paddingLeft: `${(nodes.level || 0) * 20}px` }}
-      value={nodes.id}
-    >
-      <ListItemText primary={nodes.name} />
-    </MenuItem>
-  );
+  const renderCategoryMenuItem = (categoryMenuItem: CategoryMenuItem) => {
+    return (
+      <MenuItem
+        key={categoryMenuItem.id}
+        onClick={() => handleMenuItemClick(categoryMenuItem.id)}
+        style={{ paddingLeft: `${(categoryMenuItem.level || 0) * 20}px` }}
+        value={categoryMenuItem.id}
+      >
+        <ListItemText primary={categoryMenuItem.name} />
+      </MenuItem>
+    );
+  };
 
-  const buildMenuItems = () => {
-    const map: any = {};
-    const roots: any[] = [];
-    props.categories.forEach(category => {
+  const buildCategoryMenuItems = () => {
+    const map: StringToCategoryMenuItemLUT = {};
+    const roots: CategoryMenuItem[] = [];
+    alphabetizedCategories.forEach(category => {
       map[category.id] = { ...category, children: [], level: (category.parentId !== '') ? map[category.parentId]?.level + 1 : 0 };
     });
-    props.categories.forEach(category => {
+    alphabetizedCategories.forEach(category => {
       if (category.parentId === '') {
         roots.push(map[category.id]);
       } else {
         map[category.parentId].children.push(map[category.id]);
       }
     });
-    const flattenTree = (nodes: any, result: any[] = []) => {
-      nodes.forEach((node: any) => {
-        result.push(node);
-        if (node.children.length > 0) {
-          flattenTree(node.children, result);
+    const flattenTree = (categoryMenuItems: CategoryMenuItem[], result: CategoryMenuItem[] = []) => {
+      categoryMenuItems.forEach((categoryMenuItem: CategoryMenuItem) => {
+        result.push(categoryMenuItem);
+        if (categoryMenuItem.children.length > 0) {
+          flattenTree(categoryMenuItem.children, result);
         }
       });
       return result;
@@ -220,7 +222,7 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
     return flattenTree(roots);
   };
 
-  const categoryMenuItems = buildMenuItems();
+  const categoryMenuItems: CategoryMenuItem[] = buildCategoryMenuItems();
 
   return (
     <>
@@ -254,20 +256,20 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
 
             <div>
               <FormControl fullWidth>
-                <InputLabel id="parent-category-label">Parent Category</InputLabel>
+                <InputLabel id="category-label">Category</InputLabel>
                 <Select
-                  labelId="parent-category-label"
+                  labelId="category-label"
                   value={selectedCategoryId}
-                  onChange={(event) => handleCategoryChange(selectedCategoryId, event.target.value as string)}
+                  onChange={handleCategoryChange}
                   renderValue={(selected) => {
                     if (!selected) {
-                      return <em>Select Parent Category</em>;
+                      return <em>Select the associated category</em>;
                     }
-                    const selectedCategory = props.categories.find(category => category.id === selected);
+                    const selectedCategory = alphabetizedCategories.find(category => category.id === selected);
                     return selectedCategory ? selectedCategory.name : '';
                   }}
                 >
-                  {categoryMenuItems.map((item) => renderMenuItems(item))}
+                  {categoryMenuItems.map((item) => renderCategoryMenuItem(item))}
                   <MenuItem onClick={handleOpenNewCategoryDialog}>
                     <Button fullWidth>Add New Category</Button>
                   </MenuItem>
@@ -283,7 +285,7 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
                     },
                   }}
                 >
-                  {categoryMenuItems.map((item) => renderMenuItems(item))}
+                  {categoryMenuItems.map((item) => renderCategoryMenuItem(item))}
                   <MenuItem onClick={handleOpenNewCategoryDialog}>
                     <Button fullWidth>Add New Category</Button>
                   </MenuItem>
