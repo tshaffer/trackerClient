@@ -4,12 +4,12 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 
 import '../styles/Tracker.css';
-import { BankTransaction, BankTransactionType, CategorizedTransaction, Category, CategoryExpensesData, CategoryMenuItem, CheckingAccountTransaction, CreditCardTransaction, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
+import { BankTransaction, BankTransactionType, CategorizedTransaction, Category, CategoryExpensesData, CategoryMenuItem, CheckingAccountTransaction, CreditCardTransaction, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
 import { formatCurrency, formatPercentage, formatDate, expensesPerMonth, roundTo } from '../utilities';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { TrackerDispatch } from '../models';
-import { getStartDate, getEndDate, getTransactionsByCategory, getGeneratedReportStartDate, getGeneratedReportEndDate, getCategories } from '../selectors';
+import { getStartDate, getEndDate, getTransactionsByCategory, getGeneratedReportStartDate, getGeneratedReportEndDate, getCategories, getCategoryByCategoryNameLUT } from '../selectors';
 import { cloneDeep, isEmpty } from 'lodash';
 import { Tooltip } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
@@ -18,6 +18,7 @@ import { updateTransaction } from '../controllers';
 
 interface SpendingReportTableProps {
   categories: Category[];
+  categoryByCategoryNameLUT: StringToCategoryLUT;
   startDate: string;
   endDate: string;
   generatedReportStartDate: string;
@@ -201,65 +202,179 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
   //   return rows;
   // };
 
+  // const getRows = (categories: CategoryMenuItem[]): CategoryExpensesData[] => {
+  //   const rows: CategoryExpensesData[] = [];
+
+  //   const processCategory = (category: CategoryMenuItem, level = 0, parentTotalExpenses = 0): { totalExpenses: number, transactionCount: number } => {
+  //     const transactions = props.transactionsByCategoryId[category.id] || [];
+  //     const categoryTotalExpenses = -1 * roundTo(transactions.reduce((sum, transaction) => sum + transaction.bankTransaction.amount, 0), 2);
+  //     const categoryTransactionCount = transactions.length;
+
+  //     let totalExpenses = categoryTotalExpenses;
+  //     let transactionCount = categoryTransactionCount;
+
+  //     const spaces = '\u00A0'.repeat(level * 8);
+
+  //     // Create the category row for the current category
+  //     const categoryRow: CategoryExpensesData = {
+  //       id: category.id,
+  //       categoryName: `${spaces}${category.name}`,
+  //       transactions,
+  //       totalExpenses,
+  //       transactionCount,
+  //       percentageOfTotal: parentTotalExpenses ? roundTo((categoryTotalExpenses / parentTotalExpenses) * 100, 2) : 0,
+  //     };
+
+  //     // Add the current category row before processing children
+  //     rows.push(categoryRow);
+
+  //     // Process children recursively
+  //     category.children.forEach((subCategory: CategoryMenuItem) => {
+  //       const subCategoryData = processCategory(subCategory, level + 1, totalExpenses);
+  //       totalExpenses += subCategoryData.totalExpenses;
+  //       transactionCount += subCategoryData.transactionCount;
+  //     });
+
+  //     // Update the current category row with the accumulated values
+  //     categoryRow.totalExpenses = totalExpenses;
+  //     categoryRow.transactionCount = transactionCount;
+
+  //     return { totalExpenses, transactionCount };
+  //   };
+
+  //   categories.forEach(category => processCategory(category));
+
+  //   const totalAmount = rows.reduce((sum: number, row: { totalExpenses: number }) => sum + row.totalExpenses, 0);
+  //   rows.forEach((row: { percentageOfTotal: number, totalExpenses: number }) => {
+  //     if (row.percentageOfTotal === 0 && totalAmount !== 0) {
+  //       row.percentageOfTotal = roundTo((row.totalExpenses / totalAmount) * 100, 2);
+  //     }
+  //   });
+
+  //   return rows;
+  // };
+
+  // const getRows = (categories: CategoryMenuItem[]): CategoryExpensesData[] => {
+  //   const rows: CategoryExpensesData[] = [];
+  //   const categoryExpensesMap = new Map<string, number>();
+  
+  //   // First pass to accumulate the total expenses for each category
+  //   const accumulateExpenses = (category: CategoryMenuItem): number => {
+  //     const transactions = props.transactionsByCategoryId[category.id] || [];
+  //     const categoryTotalExpenses = -1 * roundTo(transactions.reduce((sum, transaction) => sum + transaction.bankTransaction.amount, 0), 2);
+  //     let totalExpenses = categoryTotalExpenses;
+  
+  //     category.children.forEach((subCategory) => {
+  //       totalExpenses += accumulateExpenses(subCategory);
+  //     });
+  
+  //     categoryExpensesMap.set(category.id, totalExpenses);
+  //     return totalExpenses;
+  //   };
+  
+  //   categories.forEach(category => accumulateExpenses(category));
+  
+  //   // Second pass to build rows and calculate percentages
+  //   const processCategory = (category: CategoryMenuItem, level = 0, parentTotalExpenses = 0) => {
+  //     const transactions = props.transactionsByCategoryId[category.id] || [];
+  //     const categoryTotalExpenses = categoryExpensesMap.get(category.id) || 0;
+  //     const categoryTransactionCount = transactions.length;
+  
+  //     const spaces = '\u00A0'.repeat(level * 8);
+  
+  //     const percentageOfParent = parentTotalExpenses ? roundTo((categoryTotalExpenses / parentTotalExpenses) * 100, 2) : 0;
+  
+  //     const categoryRow: CategoryExpensesData = {
+  //       id: category.id,
+  //       categoryName: `${spaces}${category.name}`,
+  //       transactions,
+  //       totalExpenses: categoryTotalExpenses,
+  //       transactionCount: categoryTransactionCount,
+  //       percentageOfTotal: percentageOfParent,
+  //     };
+  
+  //     rows.push(categoryRow);
+  
+  //     category.children.forEach((subCategory) => {
+  //       processCategory(subCategory, level + 1, categoryTotalExpenses);
+  //     });
+  //   };
+  
+  //   categories.forEach(category => processCategory(category));
+  
+  //   return rows;
+  // };
+
   const getRows = (categories: CategoryMenuItem[]): CategoryExpensesData[] => {
     const rows: CategoryExpensesData[] = [];
-
-    const processCategory = (category: CategoryMenuItem, level = 0, parentTotalExpenses = 0): { totalExpenses: number, transactionCount: number } => {
+    const categoryExpensesMap = new Map<string, number>();
+    let totalTopLevelExpenses = 0;
+  
+    // First pass to accumulate the total expenses for each category
+    const accumulateExpenses = (category: CategoryMenuItem): number => {
       const transactions = props.transactionsByCategoryId[category.id] || [];
       const categoryTotalExpenses = -1 * roundTo(transactions.reduce((sum, transaction) => sum + transaction.bankTransaction.amount, 0), 2);
-      const categoryTransactionCount = transactions.length;
-
       let totalExpenses = categoryTotalExpenses;
-      let transactionCount = categoryTransactionCount;
-
+  
+      category.children.forEach((subCategory) => {
+        totalExpenses += accumulateExpenses(subCategory);
+      });
+  
+      categoryExpensesMap.set(category.id, totalExpenses);
+  
+      // Accumulate total expenses for top-level categories
+      if (category.parentId === '') {
+        totalTopLevelExpenses += totalExpenses;
+      }
+  
+      return totalExpenses;
+    };
+  
+    categories.forEach(category => accumulateExpenses(category));
+  
+    // Second pass to build rows and calculate percentages
+    const processCategory = (category: CategoryMenuItem, level = 0, parentTotalExpenses = 0) => {
+      const transactions = props.transactionsByCategoryId[category.id] || [];
+      const categoryTotalExpenses = categoryExpensesMap.get(category.id) || 0;
+      const categoryTransactionCount = transactions.length;
+  
       const spaces = '\u00A0'.repeat(level * 8);
-
-      // Create the category row for the current category
+  
+      const percentageOfParent = parentTotalExpenses ? roundTo((categoryTotalExpenses / parentTotalExpenses) * 100, 2) : 0;
+      const percentageOfTotal = parentTotalExpenses === 0 && totalTopLevelExpenses !== 0 
+        ? roundTo((categoryTotalExpenses / totalTopLevelExpenses) * 100, 2) 
+        : percentageOfParent;
+  
       const categoryRow: CategoryExpensesData = {
         id: category.id,
         categoryName: `${spaces}${category.name}`,
         transactions,
-        totalExpenses,
-        transactionCount,
-        percentageOfTotal: parentTotalExpenses ? roundTo((categoryTotalExpenses / parentTotalExpenses) * 100, 2) : 0,
+        totalExpenses: categoryTotalExpenses,
+        transactionCount: categoryTransactionCount,
+        percentageOfTotal: percentageOfTotal,
       };
-
-      // Add the current category row before processing children
+  
       rows.push(categoryRow);
-
-      // Process children recursively
-      category.children.forEach((subCategory: CategoryMenuItem) => {
-        const subCategoryData = processCategory(subCategory, level + 1, totalExpenses);
-        totalExpenses += subCategoryData.totalExpenses;
-        transactionCount += subCategoryData.transactionCount;
+  
+      category.children.forEach((subCategory) => {
+        processCategory(subCategory, level + 1, categoryTotalExpenses);
       });
-
-      // Update the current category row with the accumulated values
-      categoryRow.totalExpenses = totalExpenses;
-      categoryRow.transactionCount = transactionCount;
-
-      return { totalExpenses, transactionCount };
     };
-
+  
     categories.forEach(category => processCategory(category));
-
-    const totalAmount = rows.reduce((sum: number, row: { totalExpenses: number }) => sum + row.totalExpenses, 0);
-    rows.forEach((row: { percentageOfTotal: number, totalExpenses: number }) => {
-      if (row.percentageOfTotal === 0 && totalAmount !== 0) {
-        row.percentageOfTotal = roundTo((row.totalExpenses / totalAmount) * 100, 2);
-      }
-    });
-
+  
     return rows;
   };
-
   const categoryMenuItems: CategoryMenuItem[] = buildCategoryMenuItems(props.categories);
 
   const rows: CategoryExpensesData[] = getRows(categoryMenuItems);
 
   let totalAmount = 0;
-  for (const row of rows) {
-    totalAmount += row.totalExpenses;
+  for (const categoryExpensesData of rows) {
+    const category: Category = props.categoryByCategoryNameLUT[categoryExpensesData.categoryName.trim()];
+    if (category.parentId === '') {
+      totalAmount += categoryExpensesData.totalExpenses;
+    }
   }
 
   // const sortedRows = rows.sort((a: { totalExpenses: number; }, b: { totalExpenses: number; }) => b.totalExpenses - a.totalExpenses);
@@ -340,6 +455,7 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
 function mapStateToProps(state: any) {
   return {
     categories: getCategories(state),
+    categoryByCategoryNameLUT: getCategoryByCategoryNameLUT(state),
     startDate: getStartDate(state),
     endDate: getEndDate(state),
     generatedReportStartDate: getGeneratedReportStartDate(state),

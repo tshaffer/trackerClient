@@ -119,3 +119,6 @@ export type StringToCategoryMenuItemLUT = {
   [key: string]: CategoryMenuItem;
 }
 
+export type StringToCategoryLUT = {
+  [key: string]: Category;
+}
