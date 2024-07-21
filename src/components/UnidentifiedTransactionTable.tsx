@@ -4,16 +4,18 @@ import { bindActionCreators } from 'redux';
 
 import { v4 as uuidv4 } from 'uuid';
 
-import '../styles/Tracker.css';
-import { BankTransaction, BankTransactionType, Category, CategoryAssignmentRule, CheckTransaction, CheckingAccountTransaction, CheckingAccountTransactionType, DateRangeType, Statement, Transaction } from '../types';
-import { formatCurrency, formatDate } from '../utilities';
 import { IconButton, Tooltip } from '@mui/material';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import EditIcon from '@mui/icons-material/Edit';
-import AddRuleDialog from './AddCategoryAssignmentRuleDialog';
+
+import '../styles/Tracker.css';
+
+import { BankTransaction, BankTransactionType, Category, CategoryAssignmentRule, CheckTransaction, CheckingAccountTransaction, CheckingAccountTransactionType, DateRangeType, Statement, Transaction } from '../types';
+import { formatCurrency, formatDate } from '../utilities';
 import { addCategoryAssignmentRuleServerAndRedux, addCategoryServerAndRedux, updateCheckTransaction, updateTransaction } from '../controllers';
 import { TrackerDispatch } from '../models';
 import { getStartDate, getEndDate, getUnidentifiedBankTransactions, getGeneratedReportEndDate, getGeneratedReportStartDate, getDateRangeType, getReportStatement, getReportStatementId } from '../selectors';
+import AddRuleDialog from './AddCategoryAssignmentRuleDialog';
 import EditCheckDialog from './EditCheckDialog';
 import EditTransactionDialog from './EditTransactionDialog';
 

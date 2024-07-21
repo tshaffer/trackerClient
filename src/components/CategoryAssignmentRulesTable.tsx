@@ -300,7 +300,7 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
               </div> */}
 
               <div className="table-cell-category-assignment-rule">
-              <FormControl fullWidth>
+                <FormControl fullWidth>
                   <InputLabel id="parent-category-label">Parent Category</InputLabel>
                   <Select
                     labelId="parent-category-label"

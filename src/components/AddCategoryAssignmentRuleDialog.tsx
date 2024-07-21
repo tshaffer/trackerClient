@@ -11,7 +11,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import { Button, DialogActions, DialogContent, DialogContentText, MenuItem, Tooltip } from '@mui/material';
+import { Button, DialogActions, DialogContent, DialogContentText, FormControl, InputLabel, ListItemText, Menu, MenuItem, Select, Tooltip } from '@mui/material';
 
 import { getAppInitialized, getCategories, getUnidentifiedBankTransactionById } from '../selectors';
 import { BankTransaction, BankTransactionType, Category, CheckingAccountTransaction, CreditCardTransaction, DisregardLevel, SidebarMenuButton } from '../types';
@@ -37,6 +37,9 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
   const [newCategoryDialogOpen, setNewCategoryDialogOpen] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
   const [alertDialogOpen, setAlertDialogOpen] = useState(false);
+
+  const [parentCategoryId, setParentCategoryId] = React.useState('');
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
   const getTransactionDetails = (bankTransaction: BankTransaction | null): string => {
     if (isNil(bankTransaction)) {
@@ -113,9 +116,17 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
     setPattern(event.target.value);
   };
 
-  function handleCategoryChange(event: React.ChangeEvent<HTMLInputElement>): void {
-    console.log('handleCategoryChange event: ', event.target.value);
-    setSelectedCategoryId(event.target.value as string);
+  // function handleCategoryChange(event: React.ChangeEvent<HTMLInputElement>): void {
+  //   console.log('handleCategoryChange event: ', event.target.value);
+  //   setSelectedCategoryId(event.target.value as string);
+  // }
+
+  const handleCategoryChange = (categoryAssignmentRuleId: string, categoryId: string) => {
+    // debugger;
+    // const currentCategoryIdByCategoryAssignmentRuleId: { [categoryAssignmentRuleId: string]: string } = cloneDeep(categoryIdByCategoryAssignmentRuleId);
+    // currentCategoryIdByCategoryAssignmentRuleId[categoryAssignmentRuleId] = categoryId;
+    // setCategoryIdByCategoryAssignmentRuleId(currentCategoryIdByCategoryAssignmentRuleId);
+    setSelectedCategoryId(categoryId)
   }
 
   const handleOpenNewCategoryDialog = () => {
@@ -163,6 +174,54 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
   let alphabetizedCategories: Category[] = cloneDeep(props.categories);
   alphabetizedCategories = sortCategories(alphabetizedCategories);
 
+  const handleSelectClose = () => {
+    console.log('handleSelectClose');
+    setAnchorEl(null);
+  };
+
+  const handleMenuItemClick = (id: string) => {
+    setParentCategoryId(id);
+    handleSelectClose();
+  };
+
+  const renderMenuItems = (nodes: any) => (
+    <MenuItem
+      key={nodes.id}
+      onClick={() => handleMenuItemClick(nodes.id)}
+      style={{ paddingLeft: `${(nodes.level || 0) * 20}px` }}
+      value={nodes.id}
+    >
+      <ListItemText primary={nodes.name} />
+    </MenuItem>
+  );
+
+  const buildMenuItems = () => {
+    const map: any = {};
+    const roots: any[] = [];
+    props.categories.forEach(category => {
+      map[category.id] = { ...category, children: [], level: (category.parentId !== '') ? map[category.parentId]?.level + 1 : 0 };
+    });
+    props.categories.forEach(category => {
+      if (category.parentId === '') {
+        roots.push(map[category.id]);
+      } else {
+        map[category.parentId].children.push(map[category.id]);
+      }
+    });
+    const flattenTree = (nodes: any, result: any[] = []) => {
+      nodes.forEach((node: any) => {
+        result.push(node);
+        if (node.children.length > 0) {
+          flattenTree(node.children, result);
+        }
+      });
+      return result;
+    };
+    return flattenTree(roots);
+  };
+
+  const categoryMenuItems = buildMenuItems();
+
   return (
     <>
       <Dialog open={open} onClose={handleClose}>
@@ -192,7 +251,43 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
               inputRef={textFieldRef}
 
             />
+
             <div>
+              <FormControl fullWidth>
+                <InputLabel id="parent-category-label">Parent Category</InputLabel>
+                <Select
+                  labelId="parent-category-label"
+                  value={selectedCategoryId}
+                  onChange={(event) => handleCategoryChange(selectedCategoryId, event.target.value as string)}
+                  renderValue={(selected) => {
+                    if (!selected) {
+                      return <em>Select Parent Category</em>;
+                    }
+                    const selectedCategory = props.categories.find(category => category.id === selected);
+                    return selectedCategory ? selectedCategory.name : '';
+                  }}
+                >
+                  {categoryMenuItems.map((item) => renderMenuItems(item))}
+                </Select>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleSelectClose}
+                  PaperProps={{
+                    style: {
+                      maxHeight: 400,
+                      width: '20ch',
+                    },
+                  }}
+                >
+                  {categoryMenuItems.map((item) => renderMenuItems(item))}
+                </Menu>
+              </FormControl>
+            </div>
+
+
+
+            {/* <div>
               <TextField
                 id="category"
                 select
@@ -211,7 +306,7 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
                   <Button fullWidth>Add New Category</Button>
                 </MenuItem>
               </TextField>
-            </div>
+            </div> */}
           </Box>
         </DialogContent>
         <DialogActions>
