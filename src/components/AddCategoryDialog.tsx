@@ -115,10 +115,10 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
     }
   };
 
-  function handleSelectedItemsChange(event: SyntheticEvent<Element, Event>, itemIds: string | null): void {
-    console.log('handleSelectedItemsChange', itemIds);
-    setParentCategoryId(itemIds as string);
-  }
+  // function handleSelectedItemsChange(event: SyntheticEvent<Element, Event>, itemIds: string | null): void {
+  //   console.log('handleSelectedItemsChange', itemIds);
+  //   setParentCategoryId(itemIds as string);
+  // }
 
   // const renderTree = (nodes: any) => (
   //   <TreeItem
@@ -205,6 +205,7 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
   };
 
   const handleMenuItemClick = (id: string) => {
+    console.log('handleMenuItemClick:', id);
     setParentCategoryId(id);
     handleSelectClose();
   };
@@ -248,9 +249,9 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
   const categoryMenuItems = buildMenuItems();
 
   console.log('re-render:');
-  console.log('anchorEl: ', Boolean(anchorEl));
-  console.log('parentCategoryId: ', parentCategoryId);
-  console.log('categoryMenuItems: ', categoryMenuItems);
+  // console.log('anchorEl: ', Boolean(anchorEl));
+  // console.log('parentCategoryId: ', parentCategoryId);
+  // console.log('categoryMenuItems: ', categoryMenuItems);
 
   return (
     <Dialog onClose={handleClose} open={open}>
@@ -276,7 +277,8 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
               <Select
                 labelId="parent-category-label"
                 value={parentCategoryId}
-                onClick={handleSelectClick}
+                // onClick={handleSelectClick}
+                onChange={handleSelectClick}
                 renderValue={(selected) => {
                   if (!selected) {
                     return <em>Select Parent Category</em>;
@@ -312,7 +314,7 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
             autoFocus
             variant="contained"
             color="primary"
-            disabled={!categoryLabel || (isSubCategory && !parentCategoryId)}
+            // disabled={!categoryLabel || (isSubCategory && !parentCategoryId)}
           >
             Add
           </Button>
