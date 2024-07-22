@@ -305,6 +305,79 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
   //   return rows;
   // };
 
+  // const getRows = (categories: CategoryMenuItem[]): CategoryExpensesData[] => {
+  //   const rows: CategoryExpensesData[] = [];
+  //   const categoryExpensesMap = new Map<string, number>();
+  //   let totalTopLevelExpenses = 0;
+  
+  //   // First pass to accumulate the total expenses for each category
+  //   const accumulateExpenses = (category: CategoryMenuItem): number => {
+  //     const transactions = props.transactionsByCategoryId[category.id] || [];
+  //     const categoryTotalExpenses = -1 * roundTo(transactions.reduce((sum, transaction) => sum + transaction.bankTransaction.amount, 0), 2);
+  //     let totalExpenses = categoryTotalExpenses;
+  
+  //     category.children.forEach((subCategory) => {
+  //       totalExpenses += accumulateExpenses(subCategory);
+  //     });
+  
+  //     categoryExpensesMap.set(category.id, totalExpenses);
+  
+  //     // Accumulate total expenses for top-level categories
+  //     if (category.parentId === '') {
+  //       totalTopLevelExpenses += totalExpenses;
+  //     }
+  
+  //     return totalExpenses;
+  //   };
+  
+  //   categories.forEach(category => accumulateExpenses(category));
+  
+  //   // Second pass to build rows and calculate percentages
+  //   const processCategory = (category: CategoryMenuItem, level = 0, parentTotalExpenses = 0) => {
+  //     const transactions = props.transactionsByCategoryId[category.id] || [];
+  //     const categoryTotalExpenses = categoryExpensesMap.get(category.id) || 0;
+  //     const categoryTransactionCount = transactions.length;
+  
+  //     const spaces = '\u00A0'.repeat(level * 8);
+  
+  //     const percentageOfParent = parentTotalExpenses ? roundTo((categoryTotalExpenses / parentTotalExpenses) * 100, 2) : 0;
+  //     const percentageOfTotal = parentTotalExpenses === 0 && totalTopLevelExpenses !== 0 
+  //       ? roundTo((categoryTotalExpenses / totalTopLevelExpenses) * 100, 2) 
+  //       : percentageOfParent;
+  
+  //     const categoryRow: CategoryExpensesData = {
+  //       id: category.id,
+  //       categoryName: `${spaces}${category.name}`,
+  //       transactions,
+  //       totalExpenses: categoryTotalExpenses,
+  //       transactionCount: categoryTransactionCount,
+  //       percentageOfTotal: percentageOfTotal,
+  //     };
+  
+  //     rows.push(categoryRow);
+  
+  //     category.children.forEach((subCategory) => {
+  //       processCategory(subCategory, level + 1, categoryTotalExpenses);
+  //     });
+  //   };
+  
+  //   categories.forEach(category => processCategory(category));
+  
+  //   return rows;
+  // };
+  
+  const sortCategoriesRecursively = (categories: CategoryExpensesData[]): CategoryExpensesData[] => {
+    const sortedCategories = [...categories].sort((a, b) => b.totalExpenses - a.totalExpenses);
+  
+    sortedCategories.forEach((category) => {
+      if (category.children && category.children.length > 0) {
+        category.children = sortCategoriesRecursively(category.children);
+      }
+    });
+  
+    return sortedCategories;
+  };
+  
   const getRows = (categories: CategoryMenuItem[]): CategoryExpensesData[] => {
     const rows: CategoryExpensesData[] = [];
     const categoryExpensesMap = new Map<string, number>();
@@ -352,19 +425,37 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
         totalExpenses: categoryTotalExpenses,
         transactionCount: categoryTransactionCount,
         percentageOfTotal: percentageOfTotal,
+        children: []
       };
   
       rows.push(categoryRow);
   
       category.children.forEach((subCategory) => {
-        processCategory(subCategory, level + 1, categoryTotalExpenses);
+        const subCategoryRow = processCategory(subCategory, level + 1, categoryTotalExpenses);
+        categoryRow.children.push(subCategoryRow);
       });
+  
+      return categoryRow;
     };
   
     categories.forEach(category => processCategory(category));
   
-    return rows;
-  };
+    const sortedRows = sortCategoriesRecursively(rows);
+  
+    // Flatten the sorted structure for rendering
+    const flattenRows = (sortedRows: CategoryExpensesData[], flatRows: CategoryExpensesData[] = []): CategoryExpensesData[] => {
+      sortedRows.forEach((row) => {
+        flatRows.push(row);
+        if (row.children && row.children.length > 0) {
+          flattenRows(row.children, flatRows);
+        }
+      });
+      return flatRows;
+    };
+  
+    return flattenRows(sortedRows);
+  };  
+  
   const categoryMenuItems: CategoryMenuItem[] = buildCategoryMenuItems(props.categories);
 
   const rows: CategoryExpensesData[] = getRows(categoryMenuItems);
@@ -378,7 +469,8 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
   }
 
   // const sortedRows = rows.sort((a: { totalExpenses: number; }, b: { totalExpenses: number; }) => b.totalExpenses - a.totalExpenses);
-  const sortedRows = cloneDeep(rows);
+  // const sortedRows = cloneDeep(rows);
+  const sortedRows = rows.sort((a, b) => b.totalExpenses - a.totalExpenses);
 
   return (
     <React.Fragment>
