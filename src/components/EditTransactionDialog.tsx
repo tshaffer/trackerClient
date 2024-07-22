@@ -38,7 +38,7 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
 
   return (
     <Dialog open={props.open} onClose={props.onClose}>
-      <DialogTitle>Edit Check</DialogTitle>
+      <DialogTitle>Edit Transaction</DialogTitle>
       <DialogContent>
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '300px' }}>
           <TextField
