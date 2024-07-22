@@ -46,45 +46,55 @@ const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableP
     .map((category: Category) => category)
     .sort((a, b) => (a.name).localeCompare(b.name));
 
-  const renderTree = (nodes: any) => (
+  const renderPatternTable = (categoryMenuItem: CategoryMenuItem): JSX.Element | null => {
+    const categoryAssignmentRules: CategoryAssignmentRule[] = getRulesByCategory(categoryMenuItem.id);
+    if (categoryAssignmentRules.length === 0) {
+      return null;
+    }
+    return (
+      <div className="table-container">
+        <div className="table-header">
+          <div className="table-row">
+            <div className="category-table-cell">Pattern</div>
+          </div>
+        </div>
+        <div className="catalog-table-body">
+          {categoryAssignmentRules.map((rule: CategoryAssignmentRule, index: number) => (
+            <div className="table-row" key={index}>
+              <div className="category-table-cell">{rule.pattern}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  const renderTree = (categoryMenuItem: CategoryMenuItem) => (
     <TreeItem
-      key={nodes.id}
-      itemId={nodes.id}
+      key={categoryMenuItem.id}
+      itemId={categoryMenuItem.id}
       label={
         <div className="table-row">
           <div className="table-cell">
-            <IconButton onClick={() => handleToggle(nodes.id)}>
-              {openRows[nodes.id] ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+            <IconButton onClick={() => handleToggle(categoryMenuItem.id)}>
+              {openRows[categoryMenuItem.id] ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
             </IconButton>
           </div>
-          <div className="table-cell">{nodes.name}</div>
-          <div className="table-cell">{getNumberOfRulesByCategory(nodes.id)}</div>
+          <div className="table-cell">{categoryMenuItem.name}</div>
+          <div className="table-cell">{getNumberOfRulesByCategory(categoryMenuItem.id)}</div>
         </div>
       }
     >
       <div className="table-row">
         <div className="category-table-cell" style={{ paddingBottom: 0, paddingTop: 0 }}>
-          <Collapse in={openRows[nodes.id]} timeout="auto" unmountOnExit>
+          <Collapse in={openRows[categoryMenuItem.id]} timeout="auto" unmountOnExit>
             <Box margin={1}>
-              <div className="table-container">
-                <div className="table-header">
-                  <div className="table-row">
-                    <div className="category-category-table-cell">Pattern</div>
-                  </div>
-                </div>
-                <div className="catalog-table-body">
-                  {getRulesByCategory(nodes.id).map((rule, index) => (
-                    <div className="table-row" key={index}>
-                      <div className="category-category-table-cell">{rule.pattern}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              {renderPatternTable(categoryMenuItem)}
             </Box>
           </Collapse>
         </div>
       </div>
-      {Array.isArray(nodes.children) ? nodes.children.map((node: any) => renderTree(node)) : null}
+      {Array.isArray(categoryMenuItem.children) ? categoryMenuItem.children.map((node: any) => renderTree(node)) : null}
     </TreeItem>
   );
 
@@ -120,7 +130,7 @@ const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableP
         <div className="catalog-table-body">
           <SimpleTreeView
           >
-            {categoryTree.map((node: any) => renderTree(node))}
+            {categoryTree.map((node: CategoryMenuItem) => renderTree(node))}
           </SimpleTreeView>
         </div>
       </div>
