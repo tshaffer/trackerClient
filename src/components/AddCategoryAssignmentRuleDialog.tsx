@@ -17,6 +17,7 @@ import { getAppInitialized, getCategories, getUnidentifiedBankTransactionById } 
 import { BankTransaction, Category, CategoryMenuItem, DisregardLevel, SidebarMenuButton, StringToCategoryMenuItemLUT } from '../types';
 import { addCategoryServerAndRedux } from '../controllers';
 import { TrackerDispatch } from '../models';
+import AddCategoryDialog from './AddCategoryDialog';
 
 export interface AddRuleDialogPropsFromParent {
   open: boolean;
@@ -154,16 +155,18 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
     setAlertDialogOpen(false);
   };
 
-  const handleAddNewCategory = (): void => {
+  const handleAddCategory = (
+    categoryLabel: string,
+    isSubCategory: boolean,
+    parentId: string,
+  ): void => {
     const id: string = uuidv4();
     const category: Category = {
       id,
-      name: newCategoryName,
-      parentId: '',
+      name: categoryLabel,
+      parentId,
       disregardLevel: DisregardLevel.None,
     };
-    setNewCategoryDialogOpen(false);
-    setNewCategoryName('');
     const addedCategory: Category = props.onAddCategory(category);
     console.log('addedCategory: ', addedCategory);
     setSelectedCategoryId(category.id);
@@ -287,25 +290,12 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
         </DialogActions>
       </Dialog>
 
-      <Dialog onClose={handleCloseNewCategoryDialog} open={newCategoryDialogOpen}>
-        <DialogTitle>Add New Category</DialogTitle>
-        <DialogContent>
-          <TextField
-            margin="normal"
-            label="New Category Name"
-            variant="outlined"
-            value={newCategoryName}
-            onChange={(e) => setNewCategoryName(e.target.value)}
-            fullWidth
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseNewCategoryDialog}>Cancel</Button>
-          <Button onClick={handleAddNewCategory} variant="contained" color="primary">
-            Add
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <AddCategoryDialog
+        open={newCategoryDialogOpen}
+        onAddCategory={handleAddCategory}
+        onClose={handleCloseNewCategoryDialog}
+      />
+
       <Dialog onClose={handleCloseAlertDialog} open={alertDialogOpen}
       >
         <DialogTitle id="alert-dialog-title">
