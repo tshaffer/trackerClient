@@ -128,11 +128,8 @@ const categorizeTransaction = (
   categories: Category[],
   categoryAssignmentRules: CategoryAssignmentRule[]): Category | null => {
 
-  const transactionDetails: string = transaction.bankTransactionType === BankTransactionType.CreditCard ?
-    (transaction as CreditCardTransaction).description : (transaction as CheckingAccountTransaction).name;
-
   for (const categoryAssignmentRule of categoryAssignmentRules) {
-    if (transactionDetails.includes(categoryAssignmentRule.pattern)) {
+    if (transaction.userDescription.includes(categoryAssignmentRule.pattern)) {
       const categoryId = categoryAssignmentRule.categoryId;
       for (const category of categories) {
         if (category.id === categoryId) {
