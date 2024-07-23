@@ -27,15 +27,21 @@ interface EditCheckDialogProps extends EditCheckDialogPropsFromParent {
 
 const EditCheckDialog = (props: EditCheckDialogProps) => {
 
-  if (!props.open) {
-    return null;
-  }
-
   const [payee, setPayee] = useState(props.check.payee);
   const [checkNumber, setCheckNumber] = useState(props.check.checkNumber);
   const [checkNumberError, setCheckNumberError] = useState<string | null>(null);
   const [userDescription, setUserDescription] = useState(props.check.userDescription);
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
+
+  React.useEffect(() => {
+    if (isCheckboxChecked) {
+      setUserDescription(`Check number: ${checkNumber}, ${payee}`);
+    }
+  }, [checkNumber, payee, isCheckboxChecked]);
+
+  if (!props.open) {
+    return null;
+  }
 
   const handleSave = () => {
     if (!validateCheckNumber(checkNumber)) {
@@ -66,12 +72,6 @@ const EditCheckDialog = (props: EditCheckDialogProps) => {
       setUserDescription(`Check number: ${checkNumber}, ${payee}`);
     }
   };
-
-  React.useEffect(() => {
-    if (isCheckboxChecked) {
-      setUserDescription(`Check number: ${checkNumber}, ${payee}`);
-    }
-  }, [checkNumber, payee, isCheckboxChecked]);
 
   return (
     <Dialog open={props.open} onClose={props.onClose}>
@@ -116,6 +116,7 @@ const EditCheckDialog = (props: EditCheckDialogProps) => {
           <TextField
             label="Description"
             value={userDescription}
+            onChange={(e) => setUserDescription(e.target.value)}
             disabled={isCheckboxChecked}
             fullWidth
           />

@@ -145,6 +145,21 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
 
   const { debits, credits } = getDebitsCredits(props.unidentifiedBankTransactions);
 
+  const renderEditCheckDialog = (): JSX.Element | null => {
+    if (showEditCheckDialog) {
+      const check = props.unidentifiedBankTransactions.find((unidentifiedBankTransaction: BankTransaction) => unidentifiedBankTransaction.id === unidentifiedBankTransactionId) as CheckTransaction;
+      return (
+        <EditCheckDialog
+          open={showEditCheckDialog}
+          unidentifiedBankTransactionId={unidentifiedBankTransactionId}
+          onClose={handleCloseEditCheckDialog}
+          onSave={handleSaveCheck}
+        />
+      );
+    }
+    return null;
+  }
+
   return (
     <React.Fragment>
       <AddRuleDialog
@@ -153,12 +168,7 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
         onClose={handleCloseAddRuleDialog}
         unidentifiedBankTransactionId={unidentifiedBankTransactionId}
       />
-      <EditCheckDialog
-        open={showEditCheckDialog}
-        unidentifiedBankTransactionId={unidentifiedBankTransactionId}
-        onClose={handleCloseEditCheckDialog}
-        onSave={handleSaveCheck}
-      />
+      {renderEditCheckDialog()}
       <EditTransactionDialog
         open={showEditTransactionDialog}
         transactionId={unidentifiedBankTransactionId}
