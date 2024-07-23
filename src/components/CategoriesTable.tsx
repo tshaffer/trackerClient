@@ -44,16 +44,16 @@ const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableP
       return null;
     }
     return (
-      <div className="table-container">
-        <div className="table-header">
-          <div className="table-row">
-            <div className="category-table-cell">Pattern</div>
+      <div className="chatgpt-category-table-container">
+        <div className="chatgpt-category-table-header">
+          <div className="chatgpt-category-table-row">
+            <div className="chatgpt-category-table-cell">Pattern</div>
           </div>
         </div>
-        <div className="catalog-table-body">
+        <div className="chatgpt-category-table-body">
           {categoryAssignmentRules.map((rule: CategoryAssignmentRule, index: number) => (
-            <div className="table-row" key={index}>
-              <div className="category-table-cell">{rule.pattern}</div>
+            <div className="chatgpt-category-table-row" key={index}>
+              <div className="chatgpt-category-table-cell">{rule.pattern}</div>
             </div>
           ))}
         </div>
@@ -63,22 +63,22 @@ const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableP
 
   const renderTree = (categoryMenuItem: CategoryMenuItem) => (
     <React.Fragment key={categoryMenuItem.id}>
-      <tr className="table-row">
-        <td className="table-cell">
+      <tr className="chatgpt-category-table-row">
+        <td className="chatgpt-category-table-cell">
           <IconButton onClick={() => handleToggle(categoryMenuItem.id)}>
             {openRows[categoryMenuItem.id] ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
           </IconButton>
         </td>
-        <td className="table-cell">{categoryMenuItem.name}</td>
-        <td className="table-cell">{getNumberOfRulesByCategory(categoryMenuItem.id)}</td>
+        <td className="chatgpt-category-table-cell">{categoryMenuItem.name}</td>
+        <td className="chatgpt-category-table-cell">{getNumberOfRulesByCategory(categoryMenuItem.id)}</td>
       </tr>
-      <tr className="table-row">
-        <td className="table-cell" colSpan={3}>
+      <tr className="chatgpt-category-table-row">
+        <td className="chatgpt-category-table-cell" colSpan={3}>
           <Collapse in={openRows[categoryMenuItem.id]} timeout="auto" unmountOnExit>
             <Box margin={1}>
               {renderPatternTable(categoryMenuItem)}
               {Array.isArray(categoryMenuItem.children) && categoryMenuItem.children.length > 0 && (
-                <div className="catalog-table-body">
+                <div className="chatgpt-category-table-body">
                   {categoryMenuItem.children.map((child) => renderTree(child))}
                 </div>
               )}
@@ -109,15 +109,15 @@ const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableP
 
   return (
     <Box sx={{ width: '100%' }}>
-      <table className="table-container">
-        <thead className="table-header">
-          <tr className="table-row">
-            <th className="table-cell"></th>
-            <th className="table-cell">Category Name</th>
-            <th className="table-cell">Number of Rules</th>
+      <table className="chatgpt-category-table-container">
+        <thead className="chatgpt-category-table-header">
+          <tr className="chatgpt-category-table-row">
+            <th className="chatgpt-category-table-cell"></th>
+            <th className="chatgpt-category-table-cell">Category Name</th>
+            <th className="chatgpt-category-table-cell">Number of Rules</th>
           </tr>
         </thead>
-        <tbody className="catalog-table-body">
+        <tbody className="chatgpt-category-table-body">
           {categoryTree.map((node: CategoryMenuItem) => renderTree(node))}
         </tbody>
       </table>

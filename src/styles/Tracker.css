@@ -122,3 +122,26 @@
   align-items: center;
 }
 
+.chatgpt-category-table-container {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.chatgpt-category-table-header {
+  background-color: #f5f5f5;
+  font-weight: bold;
+}
+
+.chatgpt-category-table-row {
+  border-bottom: 1px solid #ccc;
+}
+
+.chatgpt-category-table-cell {
+  padding: 8px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.chatgpt-category-table-body {
+  width: 100%;
+}
