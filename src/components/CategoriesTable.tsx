@@ -61,38 +61,39 @@ const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableP
     );
   };
 
-  const renderTree = (categoryMenuItem: CategoryMenuItem) => {
-    console.log('renderTree', categoryMenuItem);
-    return (
-      <React.Fragment key={categoryMenuItem.id}>
-        <div className="table-row">
-          <div className="table-cell">
-            <IconButton onClick={() => handleToggle(categoryMenuItem.id)}>
-              {openRows[categoryMenuItem.id] ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-            </IconButton>
-          </div>
-          <div className="table-cell">{categoryMenuItem.name}</div>
-          <div className="table-cell">{getNumberOfRulesByCategory(categoryMenuItem.id)}</div>
-        </div>
-        <Collapse in={openRows[categoryMenuItem.id]} timeout="auto" unmountOnExit>
-          <Box margin={1}>
-            {renderPatternTable(categoryMenuItem)}
-            {Array.isArray(categoryMenuItem.children) && categoryMenuItem.children.length > 0 && (
-              <div className="catalog-table-body">
-                {categoryMenuItem.children.map((child) => renderTree(child))}
-              </div>
-            )}
-          </Box>
-        </Collapse>
-      </React.Fragment>
-    );
-  };
+  const renderTree = (categoryMenuItem: CategoryMenuItem) => (
+    <React.Fragment key={categoryMenuItem.id}>
+      <tr className="table-row">
+        <td className="table-cell">
+          <IconButton onClick={() => handleToggle(categoryMenuItem.id)}>
+            {openRows[categoryMenuItem.id] ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+          </IconButton>
+        </td>
+        <td className="table-cell">{categoryMenuItem.name}</td>
+        <td className="table-cell">{getNumberOfRulesByCategory(categoryMenuItem.id)}</td>
+      </tr>
+      <tr className="table-row">
+        <td className="table-cell" colSpan={3}>
+          <Collapse in={openRows[categoryMenuItem.id]} timeout="auto" unmountOnExit>
+            <Box margin={1}>
+              {renderPatternTable(categoryMenuItem)}
+              {Array.isArray(categoryMenuItem.children) && categoryMenuItem.children.length > 0 && (
+                <div className="catalog-table-body">
+                  {categoryMenuItem.children.map((child) => renderTree(child))}
+                </div>
+              )}
+            </Box>
+          </Collapse>
+        </td>
+      </tr>
+    </React.Fragment>
+  );
 
   const buildCategoryTree = () => {
     const map: StringToCategoryMenuItemLUT = {};
     const roots: CategoryMenuItem[] = [];
     categories.forEach(category => {
-      map[category.id] = { ...category, children: [], level: 0 };
+      map[category.id] = { ...category, children: [], level: 0};
     });
     categories.forEach(category => {
       if (category.parentId === '') {
@@ -108,18 +109,18 @@ const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableP
 
   return (
     <Box sx={{ width: '100%' }}>
-      <div className="table-container">
-        <div className="table-header">
-          <div className="table-row">
-            <div className="table-cell"></div>
-            <div className="table-cell">Category Name</div>
-            <div className="table-cell">Number of Rules</div>
-          </div>
-        </div>
-        <div className="catalog-table-body">
+      <table className="table-container">
+        <thead className="table-header">
+          <tr className="table-row">
+            <th className="table-cell"></th>
+            <th className="table-cell">Category Name</th>
+            <th className="table-cell">Number of Rules</th>
+          </tr>
+        </thead>
+        <tbody className="catalog-table-body">
           {categoryTree.map((node: CategoryMenuItem) => renderTree(node))}
-        </div>
-      </div>
+        </tbody>
+      </table>
     </Box>
   );
 };
