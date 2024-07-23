@@ -42,6 +42,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
     <Box
       sx={{
         width: '280px',
+        minWidth: '280px',
         height: '100vh',
         backgroundColor: '#f0f0f0',
         padding: '10px',
