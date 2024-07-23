@@ -1,17 +1,12 @@
 import React from 'react';
-
-import '../styles/Tracker.css';
-import { Category, CategoryAssignmentRule, CategoryMenuItem, StringToCategoryMenuItemLUT } from '../types';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-
 import { Box, Collapse, IconButton } from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
-
-import { TrackerDispatch } from '../models';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { getAppInitialized, getCategories, getCategoryAssignmentRules } from '../selectors';
-import { SimpleTreeView, TreeItem } from '@mui/x-tree-view';
-
+import { Category, CategoryAssignmentRule, CategoryMenuItem, StringToCategoryMenuItemLUT } from '../types';
+import { TrackerDispatch } from '../models';
+import '../styles/Tracker.css';
 
 interface CategoriesTableProps {
   appInitialized: boolean;
@@ -20,7 +15,6 @@ interface CategoriesTableProps {
 }
 
 const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableProps) => {
-
   if (!props.appInitialized) {
     return null;
   }
@@ -29,11 +23,11 @@ const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableP
 
   const getRulesByCategory = (categoryId: string): CategoryAssignmentRule[] => {
     return props.categoryAssignmentRules.filter((rule: CategoryAssignmentRule) => rule.categoryId === categoryId);
-  }
+  };
 
   const getNumberOfRulesByCategory = (categoryId: string): number => {
     return getRulesByCategory(categoryId).length;
-  }
+  };
 
   const handleToggle = (id: string) => {
     setOpenRows((prevOpenRows) => ({
@@ -42,9 +36,7 @@ const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableP
     }));
   };
 
-  const categories: Category[] = props.categories
-    .map((category: Category) => category)
-    .sort((a, b) => (a.name).localeCompare(b.name));
+  const categories: Category[] = props.categories.sort((a, b) => a.name.localeCompare(b.name));
 
   const renderPatternTable = (categoryMenuItem: CategoryMenuItem): JSX.Element | null => {
     const categoryAssignmentRules: CategoryAssignmentRule[] = getRulesByCategory(categoryMenuItem.id);
@@ -66,14 +58,13 @@ const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableP
           ))}
         </div>
       </div>
-    )
-  }
+    );
+  };
 
-  const renderTree = (categoryMenuItem: CategoryMenuItem) => (
-    <TreeItem
-      key={categoryMenuItem.id}
-      itemId={categoryMenuItem.id}
-      label={
+  const renderTree = (categoryMenuItem: CategoryMenuItem) => {
+    console.log('renderTree', categoryMenuItem);
+    return (
+      <React.Fragment key={categoryMenuItem.id}>
         <div className="table-row">
           <div className="table-cell">
             <IconButton onClick={() => handleToggle(categoryMenuItem.id)}>
@@ -83,26 +74,25 @@ const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableP
           <div className="table-cell">{categoryMenuItem.name}</div>
           <div className="table-cell">{getNumberOfRulesByCategory(categoryMenuItem.id)}</div>
         </div>
-      }
-    >
-      <div className="table-row">
-        <div className="category-table-cell" style={{ paddingBottom: 0, paddingTop: 0 }}>
-          <Collapse in={openRows[categoryMenuItem.id]} timeout="auto" unmountOnExit>
-            <Box margin={1}>
-              {renderPatternTable(categoryMenuItem)}
-            </Box>
-          </Collapse>
-        </div>
-      </div>
-      {Array.isArray(categoryMenuItem.children) ? categoryMenuItem.children.map((node: any) => renderTree(node)) : null}
-    </TreeItem>
-  );
+        <Collapse in={openRows[categoryMenuItem.id]} timeout="auto" unmountOnExit>
+          <Box margin={1}>
+            {renderPatternTable(categoryMenuItem)}
+            {Array.isArray(categoryMenuItem.children) && categoryMenuItem.children.length > 0 && (
+              <div className="catalog-table-body">
+                {categoryMenuItem.children.map((child) => renderTree(child))}
+              </div>
+            )}
+          </Box>
+        </Collapse>
+      </React.Fragment>
+    );
+  };
 
   const buildCategoryTree = () => {
     const map: StringToCategoryMenuItemLUT = {};
     const roots: CategoryMenuItem[] = [];
     categories.forEach(category => {
-      map[category.id] = { ...category, children: [], level: (category.parentId !== '') ? map[category.parentId]?.level + 1 : 0 };
+      map[category.id] = { ...category, children: [], level: 0 };
     });
     categories.forEach(category => {
       if (category.parentId === '') {
@@ -113,7 +103,6 @@ const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableP
     });
     return roots;
   };
-
 
   const categoryTree = buildCategoryTree();
 
@@ -128,29 +117,23 @@ const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableP
           </div>
         </div>
         <div className="catalog-table-body">
-          <SimpleTreeView
-          >
-            {categoryTree.map((node: CategoryMenuItem) => renderTree(node))}
-          </SimpleTreeView>
+          {categoryTree.map((node: CategoryMenuItem) => renderTree(node))}
         </div>
       </div>
     </Box>
   );
-
 };
-
 
 function mapStateToProps(state: any) {
   return {
     appInitialized: getAppInitialized(state),
     categories: getCategories(state),
     categoryAssignmentRules: getCategoryAssignmentRules(state),
-  }
+  };
 }
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
-  return bindActionCreators({
-  }, dispatch);
+  return bindActionCreators({}, dispatch);
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CategoriesTable);
