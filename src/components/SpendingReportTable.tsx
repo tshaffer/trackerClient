@@ -628,7 +628,6 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
       });
       return flatRows;
     };
-
     return flattenRows(sortedRows);
   };
 
@@ -646,7 +645,7 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
 
   // const sortedRows = rows.sort((a: { totalExpenses: number; }, b: { totalExpenses: number; }) => b.totalExpenses - a.totalExpenses);
   // const sortedRows = cloneDeep(rows);
-  const sortedRows = rows.sort((a, b) => b.totalExpenses - a.totalExpenses);
+  // const sortedRows = rows.sort((a, b) => b.totalExpenses - a.totalExpenses);
 
   return (
     <React.Fragment>
@@ -670,7 +669,7 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
           </div>
         </div>
         <div className="spending-report-table-body">
-          {sortedRows.map((categoryExpenses: { id: React.Key | null | undefined; categoryName: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; transactionCount: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; totalExpenses: number; percentageOfTotal: number; transactions: any[]; }) => (
+          {rows.map((categoryExpenses: { id: React.Key | null | undefined; categoryName: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; transactionCount: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; totalExpenses: number; percentageOfTotal: number; transactions: any[]; }) => (
             <React.Fragment key={categoryExpenses.id}>
               <div className="table-row">
                 <div className="table-cell">
