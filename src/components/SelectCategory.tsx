@@ -132,44 +132,42 @@ const SelectCategory = (props: SelectCategoryProps) => {
 
   return (
     <React.Fragment>
-      <div>
-        <FormControl fullWidth>
-          <InputLabel id="category-label">Category</InputLabel>
-          <Select
-            labelId="category-label"
-            value={selectedCategoryId}
-            onChange={handleCategoryChange}
-            renderValue={(selected) => {
-              if (!selected) {
-                return <em>Select the associated category</em>;
-              }
-              const selectedCategory = alphabetizedCategories.find(category => category.id === selected);
-              return selectedCategory ? selectedCategory.name : '';
-            }}
-          >
-            {categoryMenuItems.map((item) => renderCategoryMenuItem(item))}
-            <MenuItem onClick={handleOpenNewCategoryDialog}>
-              <Button fullWidth>Add New Category</Button>
-            </MenuItem>
-          </Select>
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleSelectClose}
-            PaperProps={{
-              style: {
-                maxHeight: 400,
-                width: '20ch',
-              },
-            }}
-          >
-            {categoryMenuItems.map((item) => renderCategoryMenuItem(item))}
-            <MenuItem onClick={handleOpenNewCategoryDialog}>
-              <Button fullWidth>Add New Category</Button>
-            </MenuItem>
-          </Menu>
-        </FormControl>
-      </div>
+      <FormControl fullWidth>
+        <InputLabel id="category-label">Category</InputLabel>
+        <Select
+          labelId="category-label"
+          value={selectedCategoryId}
+          onChange={handleCategoryChange}
+          renderValue={(selected) => {
+            if (!selected) {
+              return <em>Select the associated category</em>;
+            }
+            const selectedCategory = alphabetizedCategories.find(category => category.id === selected);
+            return selectedCategory ? selectedCategory.name : '';
+          }}
+        >
+          {categoryMenuItems.map((item) => renderCategoryMenuItem(item))}
+          <MenuItem onClick={handleOpenNewCategoryDialog}>
+            <Button fullWidth>Add New Category</Button>
+          </MenuItem>
+        </Select>
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleSelectClose}
+          PaperProps={{
+            style: {
+              maxHeight: 400,
+              width: '20ch',
+            },
+          }}
+        >
+          {categoryMenuItems.map((item) => renderCategoryMenuItem(item))}
+          <MenuItem onClick={handleOpenNewCategoryDialog}>
+            <Button fullWidth>Add New Category</Button>
+          </MenuItem>
+        </Menu>
+      </FormControl>
 
       <AddCategoryDialog
         open={newCategoryDialogOpen}

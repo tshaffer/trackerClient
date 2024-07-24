@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 
 import '../styles/Tracker.css';
 import { Category, CategoryAssignmentRule, CategoryMenuItem, SidebarMenuButton, StringToCategoryMenuItemLUT } from '../types';
-import { Box, FormControl, IconButton, InputLabel, ListItemText, Menu, MenuItem, Select, TextField, Tooltip, Typography } from '@mui/material';
+import { Box, IconButton, TextField, Tooltip, Typography } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -12,6 +12,7 @@ import { TrackerAnyPromiseThunkAction, TrackerDispatch } from '../models';
 import { getCategories, getCategoryAssignmentRules } from '../selectors/categoryState';
 import { addCategoryAssignmentRuleServerAndRedux, deleteCategoryAssignmentRuleServerAndRedux, updateCategoryAssignmentRuleServerAndRedux } from '../controllers';
 import { cloneDeep, isEmpty } from 'lodash';
+import SelectCategory from './SelectCategory';
 
 interface CategoryAssignmentRulesTableProps {
   categoryAssignmentRules: CategoryAssignmentRule[];
@@ -26,9 +27,6 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
   const [categoryAssignmentRuleById, setCategoryAssignmentRuleById] = React.useState<{ [categoryAssignmentRuleId: string]: CategoryAssignmentRule }>({}); // key is categoryAssignmentRuleId, value is CategoryAssignmentRule
   const [selectCategoryAssignmentRuleById, setSelectCategoryAssignmentRuleById] = React.useState<{ [categoryAssignmentRuleId: string]: string }>({}); // key is categoryAssignmentRuleId, value is pattern
   const [categoryIdByCategoryAssignmentRuleId, setCategoryIdByCategoryAssignmentRuleId] = React.useState<{ [categoryAssignmentRuleId: string]: string }>({}); // key is categoryAssignmentRuleId, value is categoryId
-
-  const [parentCategoryId, setParentCategoryId] = React.useState('');
-  const [anchorEl, setAnchorEl] = React.useState(null);
 
   const generateReactState = (): void => {
     const localCategoryAssignmentRuleById: { [categoryAssignmentRuleId: string]: CategoryAssignmentRule } = {};
@@ -81,31 +79,6 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
   const updatedCategoryAssignmentRuleCombinationExistsInProps = (pattern: string, categoryId: string): boolean => {
     return props.categoryAssignmentRules.some((categoryAssignmentRule: CategoryAssignmentRule) => categoryAssignmentRule.pattern === pattern && categoryAssignmentRule.categoryId === categoryId);
   }
-
-  const buildCategoryMenuItems = () => {
-    const map: StringToCategoryMenuItemLUT = {};
-    const roots: CategoryMenuItem[] = [];
-    props.categories.forEach(category => {
-      map[category.id] = { ...category, children: [], level: (category.parentId !== '') ? map[category.parentId]?.level + 1 : 0 };
-    });
-    props.categories.forEach(category => {
-      if (category.parentId === '') {
-        roots.push(map[category.id]);
-      } else {
-        map[category.parentId].children.push(map[category.id]);
-      }
-    });
-    const flattenTree = (categoryMenuItems: CategoryMenuItem[], result: CategoryMenuItem[] = []) => {
-      categoryMenuItems.forEach((categoryMenuItem: CategoryMenuItem) => {
-        result.push(categoryMenuItem);
-        if (categoryMenuItem.children.length > 0) {
-          flattenTree(categoryMenuItem.children, result);
-        }
-      });
-      return result;
-    };
-    return flattenTree(roots);
-  };
 
   function handleSaveCategoryAssignmentRule(categoryAssignmentRuleId: string): void {
     console.log('handleSaveCategoryAssignmentRule');
@@ -199,18 +172,6 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
     return props.categories.find((category: Category) => category.id === categoryId) as Category;
   };
 
-  const sortCategories = (categories: Category[]): Category[] => {
-    return categories.sort((a, b) => {
-      if (a.name < b.name) {
-        return -1;
-      }
-      if (a.name > b.name) {
-        return 1;
-      }
-      return 0;
-    });
-  };
-
   const handleCategoryAssignmentRuleChange = (categoryAssignmentRule: CategoryAssignmentRule, pattern: string) => {
     const currentCategoryAssignmentRuleById: { [pattern: string]: CategoryAssignmentRule } = cloneDeep(categoryAssignmentRuleById);
     const currentCategoryByPattern: CategoryAssignmentRule = currentCategoryAssignmentRuleById[categoryAssignmentRule.id];
@@ -224,13 +185,6 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
     setCategoryIdByCategoryAssignmentRuleId(currentCategoryIdByCategoryAssignmentRuleId);
   }
 
-  const handleSelectClose = () => {
-    setAnchorEl(null);
-  };
-
-  let alphabetizedCategories: Category[] = cloneDeep(props.categories);
-  alphabetizedCategories = sortCategories(alphabetizedCategories);
-
   if (props.categoryAssignmentRules.length === 0) {
     return <></>;
   }
@@ -238,22 +192,6 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
   if (isEmpty(categoryAssignmentRuleById)) {
     return <></>;
   }
-
-  const renderCategoryMenuItem = (categoryAssignmentRuleId: string, categoryMenuItem: CategoryMenuItem) => {
-    return (
-      <MenuItem
-        key={categoryMenuItem.id}
-        onClick={() => handleCategoryChange(categoryAssignmentRuleId, categoryMenuItem.id)}
-        style={{ paddingLeft: `${(categoryMenuItem.level || 0) * 20}px` }}
-        value={categoryMenuItem.id}
-      >
-        <ListItemText primary={categoryMenuItem.name} />
-      </MenuItem>
-    );
-  };
-
-
-  const categoryMenuItems = buildCategoryMenuItems();
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -277,38 +215,10 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
                   helperText="Edit the pattern"
                 />
               </div>
-              <div className="table-cell-category-assignment-rule">
-                <FormControl fullWidth>
-                  <InputLabel id="parent-category-label">Category</InputLabel>
-                  <Select
-                    labelId="parent-category-label"
-                    value={categoryIdByCategoryAssignmentRuleId[categoryAssignmentRule.id]}
-                    onChange={(event) => handleCategoryChange(categoryAssignmentRule.id, event.target.value as string)}
-                    renderValue={(selected) => {
-                      if (!selected) {
-                        return <em>Select Category</em>;
-                      }
-                      const selectedCategory = props.categories.find(category => category.id === selected);
-                      return selectedCategory ? selectedCategory.name : '';
-                    }}
-                  >
-                    {categoryMenuItems.map((item) => renderCategoryMenuItem(categoryAssignmentRule.id, item))}
-                  </Select>
-                  <Menu
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    onClose={handleSelectClose}
-                    PaperProps={{
-                      style: {
-                        maxHeight: 400,
-                        width: '20ch',
-                      },
-                    }}
-                  >
-                    {categoryMenuItems.map((item) => renderCategoryMenuItem(categoryAssignmentRule.id, item))}
-                  </Menu>
-                </FormControl>
-              </div>
+              <SelectCategory
+                selectedCategoryId={categoryIdByCategoryAssignmentRuleId[categoryAssignmentRule.id]}
+                onSetCategoryId={(categoryId: string) => handleCategoryChange(categoryAssignmentRule.id, categoryId)}
+              />
               <div className="table-cell-category-assignment-rule" style={{ marginLeft: '32px' }}>
                 <Tooltip title="Save" arrow>
                   <IconButton onClick={() => handleSaveCategoryAssignmentRule(categoryAssignmentRule.id)}>
