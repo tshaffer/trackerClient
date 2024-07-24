@@ -138,6 +138,7 @@ const SelectCategory = (props: SelectCategoryProps) => {
           labelId="category-label"
           value={selectedCategoryId}
           onChange={handleCategoryChange}
+          label="Category"
           renderValue={(selected) => {
             if (!selected) {
               return <em>Select the associated category</em>;

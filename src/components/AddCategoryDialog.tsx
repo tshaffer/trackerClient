@@ -188,6 +188,7 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
                 labelId="parent-category-label"
                 value={parentCategoryId}
                 onChange={handleSelectClick}
+                label="Parent Category"
                 renderValue={(selected) => {
                   if (!selected) {
                     return <em>Select Parent Category</em>;

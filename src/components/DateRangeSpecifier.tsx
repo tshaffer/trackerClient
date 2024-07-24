@@ -164,7 +164,7 @@ const DateRangeSpecifier: React.FC<DateRangeSpecifierProps> = (props: DateRangeS
 
     return (
       <FormControl sx={{ ml: 2, minWidth: 120 }}>
-        <InputLabel id="statement-select-label">Name</InputLabel>
+        <InputLabel id="statement-select-label">Statement</InputLabel>
         <Select
           labelId="statement-select-label"
           id="statement-select"
