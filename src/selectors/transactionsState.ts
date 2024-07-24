@@ -152,7 +152,7 @@ const categorizeTransaction = (
   return null;
 };
 
-export const getCategoryByTransactionId = (state: TrackerState, transactionId: string): Category | null | undefined => {
+export const my_getCategoryByTransactionId = (state: TrackerState, transactionId: string): Category | null | undefined => {
 
   const transactionsByCategory: StringToTransactionsLUT = getTransactionsByCategory(state);
   for (const categoryId in transactionsByCategory) {
@@ -168,3 +168,17 @@ export const getCategoryByTransactionId = (state: TrackerState, transactionId: s
   return null;
 }
 
+export const getCategoryByTransactionId = (state: TrackerState, transactionId: string): Category | null | undefined => {
+  
+  const transactionsByCategory: StringToTransactionsLUT = getTransactionsByCategory(state);
+
+  for (const categoryId in transactionsByCategory) {
+    if (Object.prototype.hasOwnProperty.call(transactionsByCategory, categoryId)) {
+      const categorizedTransaction = transactionsByCategory[categoryId].find(transaction => transaction.bankTransaction.id === transactionId);
+      if (categorizedTransaction) {
+        return getCategoryById(state, categoryId);
+      }
+    }
+  }
+  return null;
+};
