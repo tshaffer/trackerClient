@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import {
-  Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Box
+  Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Box,
+  Checkbox,
+  FormControlLabel
 } from '@mui/material';
 import { Category, Transaction } from '../types';
 import { TrackerDispatch } from '../models';
@@ -29,6 +31,7 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
     return null;
   }
 
+  const [overrideCategory, setOverrideCategory] = React.useState(false);
   const [userDescription, setUserDescription] = useState(props.transaction.userDescription);
 
   const handleSave = () => {
@@ -36,6 +39,10 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
     props.onSave(updatedTransaction);
     props.onClose();
   };
+
+  function handleCheckboxChange(event: ChangeEvent<HTMLInputElement>, checked: boolean): void {
+    setOverrideCategory(event.target.checked);
+  }
 
   return (
     <Dialog open={props.open} onClose={props.onClose}>
@@ -71,6 +78,10 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
               readOnly: true,
             }}
             fullWidth
+          />
+          <FormControlLabel
+            control={<Checkbox checked={overrideCategory} onChange={handleCheckboxChange} />}
+            label="Override category?"
           />
         </Box>
       </DialogContent>
