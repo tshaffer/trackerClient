@@ -115,6 +115,7 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
             />
             {overrideCategory && (
               <SelectCategory
+                selectedCategoryId={overrideCategoryId}
                 onSetCategoryId={handleSetCategoryId}
               />
             )}

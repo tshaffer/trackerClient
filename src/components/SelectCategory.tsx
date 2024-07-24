@@ -16,6 +16,7 @@ import { addCategoryServerAndRedux } from '../controllers';
 import { getCategories } from '../selectors';
 
 export interface SelectCategoryPropsFromParent {
+  selectedCategoryId: string;
   onSetCategoryId: (categoryId: string) => void;
 }
 
@@ -28,7 +29,7 @@ const SelectCategory = (props: SelectCategoryProps) => {
 
   const [newCategoryDialogOpen, setNewCategoryDialogOpen] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [selectedCategoryId, setSelectedCategoryId] = React.useState<string>('');
+  const [selectedCategoryId, setSelectedCategoryId] = React.useState<string>(props.selectedCategoryId);
 
   const sortCategories = (categories: Category[]): Category[] => {
     return categories.sort((a, b) => {
