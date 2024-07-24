@@ -6,7 +6,8 @@ import { connect } from 'react-redux';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Box,
   Checkbox,
-  FormControlLabel} from '@mui/material';
+  FormControlLabel
+} from '@mui/material';
 import { Category, Transaction } from '../types';
 import { TrackerDispatch, setOverrideCategory, setOverrideCategoryId } from '../models';
 import { getCategories, getCategoryByTransactionId, getOverrideCategory, getOverrideCategoryId, getTransactionById } from '../selectors';
@@ -39,9 +40,9 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
     return null;
   }
 
-  // const [overrideCategory, setOverrideCategory] = React.useState(false);
   const [userDescription, setUserDescription] = useState(props.transaction.userDescription);
-  // const [selectedCategoryId, setSelectedCategoryId] = React.useState<string>('');
+  const [overrideCategory, setOverrideCategory] = React.useState(props.transaction.overrideCategory);
+  const [overrideCategoryId, setOverrideCategoryId] = React.useState(props.transaction.overrideCategoryId);
 
   const sortCategories = (categories: Category[]): Category[] => {
     return categories.sort((a, b) => {
@@ -56,22 +57,21 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
   };
 
   const handleSave = () => {
-    const updatedTransaction: Transaction = { ...props.transaction, userDescription };
+    const updatedTransaction: Transaction = { ...props.transaction, userDescription, overrideCategory, overrideCategoryId };
     props.onSave(updatedTransaction);
     props.onClose();
   };
 
   function handleCheckboxChange(event: ChangeEvent<HTMLInputElement>, checked: boolean): void {
-    props.onSetOverrideCategory(props.transactionId, event.target.checked);
+    setOverrideCategory(event.target.checked);
+  }
+
+  function handleSetCategoryId(categoryId: string): void {
+    setOverrideCategoryId(categoryId);
   }
 
   let alphabetizedCategories: Category[] = cloneDeep(props.categories);
   alphabetizedCategories = sortCategories(alphabetizedCategories);
-
-
-  function handleSetCategoryId(categoryId: string): void {
-    console.log('handleSetCategoryId:', categoryId);
-  }
 
   return (
     <React.Fragment>
@@ -110,12 +110,14 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
               fullWidth
             />
             <FormControlLabel
-              control={<Checkbox checked={props.transaction.overrideCategory} onChange={handleCheckboxChange} />}
+              control={<Checkbox checked={overrideCategory} onChange={handleCheckboxChange} />}
               label="Override category?"
             />
-            <SelectCategory
-              onSetCategoryId={handleSetCategoryId}
-            />
+            {overrideCategory && (
+              <SelectCategory
+                onSetCategoryId={handleSetCategoryId}
+              />
+            )}
           </Box>
         </DialogContent>
         <DialogActions>

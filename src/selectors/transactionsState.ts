@@ -128,6 +128,14 @@ const categorizeTransaction = (
   categories: Category[],
   categoryAssignmentRules: CategoryAssignmentRule[]): Category | null => {
 
+  if (transaction.overrideCategory && transaction.overrideCategoryId !== '') {
+    for (const category of categories) {
+      if (category.id === transaction.overrideCategoryId) {
+        return category;
+      }
+    }
+  }
+
   for (const categoryAssignmentRule of categoryAssignmentRules) {
     if (transaction.userDescription.includes(categoryAssignmentRule.pattern)) {
       const categoryId = categoryAssignmentRule.categoryId;
@@ -169,7 +177,7 @@ export const my_getCategoryByTransactionId = (state: TrackerState, transactionId
 }
 
 export const getCategoryByTransactionId = (state: TrackerState, transactionId: string): Category | null | undefined => {
-  
+
   const transactionsByCategory: StringToTransactionsLUT = getTransactionsByCategory(state);
 
   for (const categoryId in transactionsByCategory) {
