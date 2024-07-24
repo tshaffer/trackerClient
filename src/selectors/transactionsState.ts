@@ -182,3 +182,18 @@ export const getCategoryByTransactionId = (state: TrackerState, transactionId: s
   }
   return null;
 };
+
+export const getOverrideCategory = (state: TrackerState, transactionId: string): boolean => {
+  const transaction = getTransactionById(state, transactionId);
+  return transaction?.overrideCategory ?? false;
+}
+
+export const getOverrideCategoryId = (state: TrackerState, transactionId: string): string => {
+  const transaction = getTransactionById(state, transactionId);
+  if (!isNil(transaction)) {
+    if (transaction.overrideCategory) {
+      return transaction.overrideCategoryId;
+    }
+  }
+  return '';
+}

@@ -8,6 +8,8 @@ import { TrackerModelBaseAction } from './baseAction';
 const CLEAR_TRANSACTIONS = 'CLEAR_TRANSACTIONS';
 const ADD_TRANSACTIONS = 'ADD_TRANSACTIONS';
 const UPDATE_TRANSACTION = 'UPDATE_TRANSACTION';
+const SET_OVERRIDE_CATEGORY = 'SET_OVERRIDE_CATEGORY';
+const SET_OVERRIDE_CATEGORY_ID = 'SET_OVERRIDE_CATEGORY_ID';
 
 // ------------------------------------
 // Actions
@@ -51,6 +53,42 @@ export const updateTransactionRedux = (
   };
 };
 
+interface SetOverrideCategoryPayload {
+  transactionId: string;
+  overrideCategory: boolean;
+}
+
+export const setOverrideCategory = (
+  transactionId: string,
+  overrideCategory: boolean
+): any => {
+  return {
+    type: SET_OVERRIDE_CATEGORY,
+    payload: {
+      transactionId,
+      overrideCategory,
+    },
+  };
+};
+
+interface SetOverrideCategoryIdPayload {
+  transactionId: string;
+  overrideCategoryId: string;
+}
+
+export const setOverrideCategoryId = (
+  transactionId: string,
+  overrideCategoryId: string
+): any => {
+  return {
+    type: SET_OVERRIDE_CATEGORY_ID,
+    payload: {
+      transactionId,
+      overrideCategoryId,
+    },
+  };
+};
+
 // ------------------------------------
 // Reducer
 // ------------------------------------
@@ -61,7 +99,7 @@ const initialState: TransactionsState = {
 
 export const transactionsStateReducer = (
   state: TransactionsState = initialState,
-  action: TrackerModelBaseAction<AddTransactionsPayload & UpdateTransactionPayload>
+  action: TrackerModelBaseAction<AddTransactionsPayload & UpdateTransactionPayload & SetOverrideCategoryPayload & SetOverrideCategoryIdPayload>
 ): TransactionsState => {
   switch (action.type) {
     case CLEAR_TRANSACTIONS: {
@@ -83,6 +121,22 @@ export const transactionsStateReducer = (
       const id = action.payload.transaction.id;
       if (newState.byId[id]) {
         newState.byId[id].userDescription = action.payload.transaction.userDescription;
+      }
+      return newState;
+    }
+    case SET_OVERRIDE_CATEGORY: {
+      const newState = clone(state);
+      const id = action.payload.transactionId;
+      if (newState.byId[id]) {
+        newState.byId[id].overrideCategory = action.payload.overrideCategory;
+      }
+      return newState;
+    }
+    case SET_OVERRIDE_CATEGORY_ID: {
+      const newState = clone(state);
+      const id = action.payload.transactionId;
+      if (newState.byId[id]) {
+        newState.byId[id].overrideCategoryId = action.payload.overrideCategoryId;
       }
       return newState;
     }
