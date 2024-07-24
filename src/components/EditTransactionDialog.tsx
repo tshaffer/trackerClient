@@ -18,10 +18,10 @@ import {
   ListItemText
 } from '@mui/material';
 import { Category, CategoryMenuItem, DisregardLevel, StringToCategoryMenuItemLUT, Transaction } from '../types';
-import { TrackerDispatch } from '../models';
-import { getCategories, getCategoryByTransactionId, getTransactionById } from '../selectors';
+import { TrackerDispatch, setOverrideCategory, setOverrideCategoryId } from '../models';
+import { getCategories, getCategoryByTransactionId, getOverrideCategory, getOverrideCategoryId, getTransactionById } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, over } from 'lodash';
 import AddCategoryDialog from './AddCategoryDialog';
 import { addCategoryServerAndRedux } from '../controllers';
 
@@ -36,7 +36,11 @@ interface EditTransactionDialogProps extends EditTransactionDialogPropsFromParen
   transaction: Transaction;
   inferredCategory: Category | null | undefined;
   categories: Category[];
+  overrideCategory: boolean;
+  overrideCategoryId: string;
   onAddCategory: (category: Category) => any;
+  onSetOverrideCategory: (transactionId: string, overrideCategory: boolean) => any;
+  onSetOverrideCategoryId: (transactionId: string, overrideCategoryId: string) => any;
 }
 
 const EditTransactionDialog = (props: EditTransactionDialogProps) => {
@@ -45,11 +49,11 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
     return null;
   }
 
-  const [overrideCategory, setOverrideCategory] = React.useState(false);
+  // const [overrideCategory, setOverrideCategory] = React.useState(false);
   const [userDescription, setUserDescription] = useState(props.transaction.userDescription);
   const [newCategoryDialogOpen, setNewCategoryDialogOpen] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
-  const [selectedCategoryId, setSelectedCategoryId] = React.useState<string>('');
+  // const [selectedCategoryId, setSelectedCategoryId] = React.useState<string>('');
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const sortCategories = (categories: Category[]): Category[] => {
@@ -97,7 +101,7 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
   };
 
   function handleCheckboxChange(event: ChangeEvent<HTMLInputElement>, checked: boolean): void {
-    setOverrideCategory(event.target.checked);
+    props.onSetOverrideCategory(props.transactionId, event.target.checked);
   }
 
   const handleAddCategory = (
@@ -125,7 +129,6 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
     setSelectedCategoryId(categoryId);
     handleSelectClose();
   };
-
 
   function handleCategoryChange(event: SelectChangeEvent<string>, child: ReactNode): void {
     setSelectedCategoryId(event.target.value)
@@ -200,7 +203,7 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
               fullWidth
             />
             <FormControlLabel
-              control={<Checkbox checked={overrideCategory} onChange={handleCheckboxChange} />}
+              control={<Checkbox checked={props.transaction.overrideCategory} onChange={handleCheckboxChange} />}
               label="Override category?"
             />
             <div>
@@ -261,12 +264,16 @@ function mapStateToProps(state: any, ownProps: EditTransactionDialogPropsFromPar
     transaction: getTransactionById(state, ownProps.transactionId) as Transaction,
     inferredCategory: getCategoryByTransactionId(state, ownProps.transactionId),
     categories: getCategories(state),
+    overrideCategory: getOverrideCategory(state, ownProps.transactionId),
+    overrideCategoryId: getOverrideCategoryId(state, ownProps.transactionId),
   };
 }
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
     onAddCategory: addCategoryServerAndRedux,
+    onSetOverrideCategory: setOverrideCategory,
+    onSetOverrideCategoryId: setOverrideCategoryId,
   }, dispatch);
 };
 
