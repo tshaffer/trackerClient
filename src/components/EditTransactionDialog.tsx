@@ -6,9 +6,9 @@ import { connect } from 'react-redux';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Box
 } from '@mui/material';
-import { Transaction } from '../types';
+import { Category, Transaction } from '../types';
 import { TrackerDispatch } from '../models';
-import { getTransactionById } from '../selectors';
+import { getCategoryByTransactionId, getTransactionById } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
 
 export interface EditTransactionDialogPropsFromParent {
@@ -20,6 +20,7 @@ export interface EditTransactionDialogPropsFromParent {
 
 interface EditTransactionDialogProps extends EditTransactionDialogPropsFromParent {
   transaction: Transaction;
+  inferredCategory: Category | null | undefined;
 }
 
 const EditTransactionDialog = (props: EditTransactionDialogProps) => {
@@ -63,6 +64,14 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
             onChange={(event) => setUserDescription(event.target.value)}
             fullWidth
           />
+          <TextField
+            label="Inferred Category"
+            value={props.inferredCategory?.name || 'Uncategorized'}
+            InputProps={{
+              readOnly: true,
+            }}
+            fullWidth
+          />
         </Box>
       </DialogContent>
       <DialogActions>
@@ -80,6 +89,7 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
 function mapStateToProps(state: any, ownProps: EditTransactionDialogPropsFromParent) {
   return {
     transaction: getTransactionById(state, ownProps.transactionId) as Transaction,
+    inferredCategory: getCategoryByTransactionId(state, ownProps.transactionId),
   };
 }
 

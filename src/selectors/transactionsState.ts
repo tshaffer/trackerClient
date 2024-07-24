@@ -1,6 +1,6 @@
 import { isNil } from 'lodash';
 import { BankTransaction, BankTransactionType, CategorizedStatementData, CategorizedTransaction, Category, CategoryAssignmentRule, CheckingAccountTransaction, CreditCardTransaction, DisregardLevel, ReviewedTransactions, StringToTransactionsLUT, TrackerState, Transaction } from '../types';
-import { getCategories, getCategoryAssignmentRules, getCategoryByName } from './categoryState';
+import { getCategories, getCategoryAssignmentRules, getCategoryById, getCategoryByName } from './categoryState';
 import { getEndDate, getStartDate } from './reportDataState';
 import { roundTo } from '../utilities';
 
@@ -152,4 +152,19 @@ const categorizeTransaction = (
   return null;
 };
 
+export const getCategoryByTransactionId = (state: TrackerState, transactionId: string): Category | null | undefined => {
+
+  const transactionsByCategory: StringToTransactionsLUT = getTransactionsByCategory(state);
+  for (const categoryId in transactionsByCategory) {
+    if (Object.prototype.hasOwnProperty.call(transactionsByCategory, categoryId)) {
+      const categorizedTransactions: CategorizedTransaction[] = transactionsByCategory[categoryId];
+      for (const categorizedTransaction of categorizedTransactions) {
+        if (categorizedTransaction.bankTransaction.id === transactionId) {
+          return getCategoryById(state, categoryId);
+        }
+      }
+    }
+  }
+  return null;
+}
 
