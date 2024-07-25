@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, SyntheticEvent } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import DialogTitle from '@mui/material/DialogTitle';
@@ -15,6 +15,7 @@ export interface AddCategoryDialogPropsFromParent {
     categoryLabel: string,
     isSubCategory: boolean,
     parentCategoryId: string,
+    transactionsRequired: boolean,
   ) => void;
   onClose: () => void;
 }
@@ -29,10 +30,10 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
   const { open, onClose } = props;
 
   const [categoryLabel, setCategoryLabel] = React.useState('');
+  const [areTransactionsRequired, setAreTransactionsRequired] = React.useState(false);
   const [isSubCategory, setIsSubCategory] = React.useState(false);
   const [parentCategoryId, setParentCategoryId] = React.useState('');
   const [anchorEl, setAnchorEl] = React.useState(null);
-
 
   const textFieldRef = useRef(null);
 
@@ -60,7 +61,7 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
 
   const handleAddCategory = (): void => {
     if (categoryLabel !== '') {
-      props.onAddCategory(categoryLabel, isSubCategory, parentCategoryId);
+      props.onAddCategory(categoryLabel, isSubCategory, parentCategoryId, areTransactionsRequired);
       props.onClose();
     }
   };
@@ -72,7 +73,11 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
     }
   };
 
-  const handleCheckboxChange = (event: any) => {
+  const handleTransactionsRequiredChanged = (event: any) => {
+    setAreTransactionsRequired(event.target.checked);
+  };
+
+  const handleIsSubCategoryChanged = (event: any) => {
     setIsSubCategory(event.target.checked);
     if (!event.target.checked) {
       setParentCategoryId('');
@@ -88,6 +93,7 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
     console.log('handleSelectClose');
     setAnchorEl(null);
   };
+
 
   const handleMenuItemClick = (id: string) => {
     console.log('handleMenuItemClick:', id);
@@ -105,31 +111,6 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
       <ListItemText primary={categoryMenuItem.name} />
     </MenuItem>
   );
-
-  // const buildCategoryMenuItems = () => {
-  //   const map: any = {};
-  //   const roots: any[] = [];
-  //   props.categories.forEach(category => {
-  //     map[category.id] = { ...category, children: [], level: (category.parentId !== '') ? map[category.parentId]?.level + 1 : 0 };
-  //   });
-  //   props.categories.forEach(category => {
-  //     if (category.parentId === '') {
-  //       roots.push(map[category.id]);
-  //     } else {
-  //       map[category.parentId].children.push(map[category.id]);
-  //     }
-  //   });
-  //   const flattenTree = (nodes: any, result: any[] = []) => {
-  //     nodes.forEach((node: any) => {
-  //       result.push(node);
-  //       if (node.children.length > 0) {
-  //         flattenTree(node.children, result);
-  //       }
-  //     });
-  //     return result;
-  //   };
-  //   return flattenTree(roots);
-  // };
 
   const buildCategoryMenuItems = () => {
     const map: StringToCategoryMenuItemLUT = {};
@@ -178,7 +159,11 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
             />
           </div>
           <FormControlLabel
-            control={<Checkbox checked={isSubCategory} onChange={handleCheckboxChange} />}
+            control={<Checkbox checked={areTransactionsRequired} onChange={handleTransactionsRequiredChanged} />}
+            label="Are all transactions in this category mandatory?"
+          />
+          <FormControlLabel
+            control={<Checkbox checked={isSubCategory} onChange={handleIsSubCategoryChanged} />}
             label="Is this a subcategory?"
           />
           {isSubCategory && (

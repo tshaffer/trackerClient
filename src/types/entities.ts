@@ -94,6 +94,7 @@ export interface Category {
   id: string;
   name: string;
   parentId: string;
+  transactionsRequired: boolean;
   disregardLevel: DisregardLevel;
 }
 
