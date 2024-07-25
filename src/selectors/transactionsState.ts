@@ -205,3 +205,14 @@ export const getOverrideCategoryId = (state: TrackerState, transactionId: string
   }
   return '';
 }
+
+export const getOverrideTransactionsRequired = (state: TrackerState, transactionId: string): boolean => {
+  const transaction = getTransactionById(state, transactionId);
+  return transaction?.overrideTransactionsRequired ?? false;
+}
+
+export const getOverriddenTransactionsRequired = (state: TrackerState, transactionId: string): boolean => {
+  const transaction = getTransactionById(state, transactionId);
+  return transaction?.overriddenTransactionRequired ?? false;
+}
+

@@ -10,6 +10,8 @@ const ADD_TRANSACTIONS = 'ADD_TRANSACTIONS';
 const UPDATE_TRANSACTION = 'UPDATE_TRANSACTION';
 const SET_OVERRIDE_CATEGORY = 'SET_OVERRIDE_CATEGORY';
 const SET_OVERRIDE_CATEGORY_ID = 'SET_OVERRIDE_CATEGORY_ID';
+const SET_OVERRIDE_TRANSACTIONS_REQUIRED = 'SET_OVERRIDE_TRANSACTIONS_REQUIRED';
+const SET_OVERRIDDEN_TRANSACTIONS_REQUIRED = 'SET_OVERRIDDEN_TRANSACTIONS_REQUIRED';
 
 // ------------------------------------
 // Actions
@@ -89,6 +91,43 @@ export const setOverrideCategoryId = (
   };
 };
 
+interface setOverrideTransactionsRequiredPayload {
+  transactionId: string;
+  overrideTransactionsRequired: boolean;
+}
+
+export const setOverrideTransactionsRequired = (
+  transactionId: string,
+  overrideTransactionsRequired: boolean
+): any => {
+  return {
+    type: SET_OVERRIDE_TRANSACTIONS_REQUIRED,
+    payload: {
+      transactionId,
+      overrideTransactionsRequired,
+    },
+  };
+};
+
+interface setOverriddenTransactionsRequiredPayload {
+  transactionId: string;
+  overriddenTransactionsRequired: boolean;
+}
+
+export const setOverriddenTransactionsRequired = (
+  transactionId: string,
+  overriddenTransactionsRequired: boolean
+): any => {
+  return {
+    type: SET_OVERRIDDEN_TRANSACTIONS_REQUIRED,
+    payload: {
+      transactionId,
+      overriddenTransactionsRequired,
+    },
+  };
+};
+
+
 // ------------------------------------
 // Reducer
 // ------------------------------------
@@ -99,7 +138,7 @@ const initialState: TransactionsState = {
 
 export const transactionsStateReducer = (
   state: TransactionsState = initialState,
-  action: TrackerModelBaseAction<AddTransactionsPayload & UpdateTransactionPayload & SetOverrideCategoryPayload & SetOverrideCategoryIdPayload>
+  action: TrackerModelBaseAction<AddTransactionsPayload & UpdateTransactionPayload & SetOverrideCategoryPayload & SetOverrideCategoryIdPayload & setOverrideTransactionsRequiredPayload & setOverriddenTransactionsRequiredPayload>
 ): TransactionsState => {
   switch (action.type) {
     case CLEAR_TRANSACTIONS: {

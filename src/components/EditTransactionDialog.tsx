@@ -37,19 +37,36 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
   const [userDescription, setUserDescription] = useState(props.transaction.userDescription);
   const [overrideCategory, setOverrideCategory] = React.useState(props.transaction.overrideCategory);
   const [overrideCategoryId, setOverrideCategoryId] = React.useState(props.transaction.overrideCategoryId);
+  const [overrideTransactionsRequired, setOverrideTransactionsRequired] = React.useState(props.transaction.overrideTransactionsRequired);
+  const [overriddenTransactionRequired, setOverriddenTransactionRequired] = React.useState(props.transaction.overriddenTransactionRequired);
 
   const handleSave = () => {
-    const updatedTransaction: Transaction = { ...props.transaction, userDescription, overrideCategory, overrideCategoryId };
+    const updatedTransaction: Transaction = {
+      ...props.transaction,
+      userDescription,
+      overrideCategory,
+      overrideCategoryId,
+      overrideTransactionsRequired,
+      overriddenTransactionRequired,
+    };
     props.onSave(updatedTransaction);
     props.onClose();
   };
 
-  function handleCheckboxChange(event: ChangeEvent<HTMLInputElement>, checked: boolean): void {
+  function handleSetOverrideCategory(event: ChangeEvent<HTMLInputElement>, checked: boolean): void {
     setOverrideCategory(event.target.checked);
   }
 
-  function handleSetCategoryId(categoryId: string): void {
+  function handleSetOverrideCategoryId(categoryId: string): void {
     setOverrideCategoryId(categoryId);
+  }
+
+  function handleSetOverrideTransactionsRequired(event: ChangeEvent<HTMLInputElement>, checked: boolean): void {
+    setOverrideTransactionsRequired(event.target.checked);
+  }
+
+  function handleSetOverriddenTransactionRequired(event: ChangeEvent<HTMLInputElement>, checked: boolean): void {
+    setOverriddenTransactionRequired(event.target.checked);
   }
 
   return (
@@ -89,13 +106,23 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
               fullWidth
             />
             <FormControlLabel
-              control={<Checkbox checked={overrideCategory} onChange={handleCheckboxChange} />}
+              control={<Checkbox checked={overrideCategory} onChange={handleSetOverrideCategory} />}
               label="Override category?"
             />
             {overrideCategory && (
               <SelectCategory
                 selectedCategoryId={overrideCategoryId}
-                onSetCategoryId={handleSetCategoryId}
+                onSetCategoryId={handleSetOverrideCategoryId}
+              />
+            )}
+            <FormControlLabel
+              control={<Checkbox checked={overrideTransactionsRequired} onChange={handleSetOverrideTransactionsRequired} />}
+              label="Override transactions required?"
+            />
+            {overrideTransactionsRequired && (
+              <FormControlLabel
+                control={<Checkbox checked={overriddenTransactionRequired} onChange={handleSetOverriddenTransactionRequired} />}
+                label="Transaction required?"
               />
             )}
           </Box>
