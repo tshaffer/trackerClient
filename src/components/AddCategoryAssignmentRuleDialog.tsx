@@ -19,21 +19,21 @@ import { addCategoryServerAndRedux } from '../controllers';
 import { TrackerDispatch } from '../models';
 import SelectCategory from './SelectCategory';
 
-export interface AddRuleDialogPropsFromParent {
+export interface AddCategoryAssignmentRuleDialogPropsFromParent {
   open: boolean;
   unidentifiedBankTransactionId: string;
   onAddRule: (pattern: string, categoryId: string) => void;
   onClose: () => void;
 }
 
-export interface AddRuleDialogProps extends AddRuleDialogPropsFromParent {
+export interface AddCategoryAssignmentRuleDialogProps extends AddCategoryAssignmentRuleDialogPropsFromParent {
   appInitialized: boolean;
   unidentifiedBankTransaction: BankTransaction | null;
   categories: Category[];
   onAddCategory: (category: Category) => any;
 }
 
-const AddRuleDialog = (props: AddRuleDialogProps) => {
+const AddCategoryAssignmentRuleDialog = (props: AddCategoryAssignmentRuleDialogProps) => {
 
   const [alertDialogOpen, setAlertDialogOpen] = useState(false);
 
@@ -190,7 +190,7 @@ const AddRuleDialog = (props: AddRuleDialogProps) => {
   );
 };
 
-function mapStateToProps(state: any, ownProps: AddRuleDialogPropsFromParent) {
+function mapStateToProps(state: any, ownProps: AddCategoryAssignmentRuleDialogPropsFromParent) {
   return {
     appInitialized: getAppInitialized(state),
     unidentifiedBankTransaction: getUnidentifiedBankTransactionById(state, ownProps.unidentifiedBankTransactionId),
@@ -204,4 +204,4 @@ const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   }, dispatch);
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddRuleDialog);
+export default connect(mapStateToProps, mapDispatchToProps)(AddCategoryAssignmentRuleDialog);

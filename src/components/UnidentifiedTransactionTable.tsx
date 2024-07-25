@@ -15,7 +15,7 @@ import { formatCurrency, formatDate } from '../utilities';
 import { addCategoryAssignmentRuleServerAndRedux, addCategoryServerAndRedux, updateCheckTransaction, updateTransaction } from '../controllers';
 import { TrackerDispatch } from '../models';
 import { getStartDate, getEndDate, getUnidentifiedBankTransactions, getGeneratedReportEndDate, getGeneratedReportStartDate, getDateRangeType, getReportStatement, getReportStatementId } from '../selectors';
-import AddRuleDialog from './AddCategoryAssignmentRuleDialog';
+import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
 import EditCheckDialog from './EditCheckDialog';
 import EditTransactionDialog from './EditTransactionDialog';
 
@@ -36,7 +36,7 @@ interface NotIdentifiedTransactionTableProps {
 const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps> = (props: NotIdentifiedTransactionTableProps) => {
 
   const [unidentifiedBankTransactionId, setUnidentifiedBankTransactionId] = React.useState('');
-  const [showAddRuleDialog, setShowAddRuleDialog] = React.useState(false);
+  const [showAddCategoryAssignmentRuleDialog, setShowAddCategoryAssignmentRuleDialog] = React.useState(false);
   const [showEditCheckDialog, setShowEditCheckDialog] = React.useState(false);
   const [showEditTransactionDialog, setShowEditTransactionDialog] = React.useState(false);
 
@@ -74,7 +74,7 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
 
   const handleAssignCategory = (unidentifiedBankTransaction: BankTransaction) => {
     setUnidentifiedBankTransactionId(unidentifiedBankTransaction.id);
-    setShowAddRuleDialog(true);
+    setShowAddCategoryAssignmentRuleDialog(true);
   };
 
   const handleAddRule = (pattern: string, categoryId: string): void => {
@@ -88,8 +88,8 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
     props.onAddCategoryAssignmentRule(categoryAssignmentRule);
   }
 
-  const handleCloseAddRuleDialog = () => {
-    setShowAddRuleDialog(false);
+  const handleCloseAddCategoryAssignmentRuleDialog = () => {
+    setShowAddCategoryAssignmentRuleDialog(false);
   };
 
   const handleEditCheck = (unidentifiedBankTransaction: BankTransaction) => {
@@ -162,10 +162,10 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
 
   return (
     <React.Fragment>
-      <AddRuleDialog
-        open={showAddRuleDialog}
+      <AddCategoryAssignmentRuleDialog
+        open={showAddCategoryAssignmentRuleDialog}
         onAddRule={handleAddRule}
-        onClose={handleCloseAddRuleDialog}
+        onClose={handleCloseAddCategoryAssignmentRuleDialog}
         unidentifiedBankTransactionId={unidentifiedBankTransactionId}
       />
       {renderEditCheckDialog()}
