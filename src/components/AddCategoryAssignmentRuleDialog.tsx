@@ -13,22 +13,22 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Button, DialogActions, DialogContent, DialogContentText, Tooltip } from '@mui/material';
 
-import { getAppInitialized, getCategories, getUnidentifiedBankTransactionById } from '../selectors';
-import { BankTransaction, Category, DisregardLevel, SidebarMenuButton } from '../types';
+import { getAppInitialized, getCategories, getTransactionById, getUnidentifiedBankTransactionById } from '../selectors';
+import { BankTransaction, Category, DisregardLevel, SidebarMenuButton, Transaction } from '../types';
 import { addCategoryServerAndRedux } from '../controllers';
 import { TrackerDispatch } from '../models';
 import SelectCategory from './SelectCategory';
 
 export interface AddCategoryAssignmentRuleDialogPropsFromParent {
   open: boolean;
-  unidentifiedBankTransactionId: string;
+  transactionId: string;
   onAddRule: (pattern: string, categoryId: string) => void;
   onClose: () => void;
 }
 
 export interface AddCategoryAssignmentRuleDialogProps extends AddCategoryAssignmentRuleDialogPropsFromParent {
   appInitialized: boolean;
-  unidentifiedBankTransaction: BankTransaction | null;
+  transaction: Transaction | undefined;
   categories: Category[];
   onAddCategory: (category: Category) => any;
 }
@@ -37,23 +37,23 @@ const AddCategoryAssignmentRuleDialog = (props: AddCategoryAssignmentRuleDialogP
 
   const [alertDialogOpen, setAlertDialogOpen] = useState(false);
 
-  const getTransactionDetails = (bankTransaction: BankTransaction | null): string => {
-    if (isNil(bankTransaction)) {
+  const getTransactionDetails = (transaction: Transaction | undefined): string => {
+    if (isNil(transaction) || isNil(transaction.userDescription)) {
       // debugger;
       return '';
     }
-    return bankTransaction.userDescription;
+    return transaction.userDescription;
   }
 
   const { open, onClose } = props;
 
-  const [pattern, setPattern] = React.useState(getTransactionDetails(props.unidentifiedBankTransaction));
+  const [pattern, setPattern] = React.useState(getTransactionDetails(props.transaction));
   const [selectedCategoryId, setSelectedCategoryId] = React.useState<string>('');
   const textFieldRef = useRef(null);
 
   useEffect(() => {
-    setPattern(getTransactionDetails(props.unidentifiedBankTransaction));
-  }, [props.open, props.unidentifiedBankTransactionId, props.unidentifiedBankTransaction]);
+    setPattern(getTransactionDetails(props.transaction));
+  }, [props.open, props.transactionId, props.transaction]);
 
   useEffect(() => {
     if (open) {
@@ -69,18 +69,6 @@ const AddCategoryAssignmentRuleDialog = (props: AddCategoryAssignmentRuleDialogP
   if (!open) {
     return null;
   }
-
-  const sortCategories = (categories: Category[]): Category[] => {
-    return categories.sort((a, b) => {
-      if (a.name < b.name) {
-        return -1;
-      }
-      if (a.name > b.name) {
-        return 1;
-      }
-      return 0;
-    });
-  };
 
   const handleClose = () => {
     onClose();
@@ -113,12 +101,12 @@ const AddCategoryAssignmentRuleDialog = (props: AddCategoryAssignmentRuleDialogP
     setAlertDialogOpen(false);
   };
 
-  const renderUnidentifiedBankTransaction = (): JSX.Element => {
-    if (isNil(props.unidentifiedBankTransaction)) {
+  const renderTransactionDetails = (): JSX.Element => {
+    if (isNil(props.transaction)) {
       return <></>;
     } else {
       return <TextField
-        defaultValue={getTransactionDetails(props.unidentifiedBankTransaction)}
+        defaultValue={getTransactionDetails(props.transaction)}
         inputProps={{ readOnly: true }}
         disabled
       />
@@ -143,7 +131,7 @@ const AddCategoryAssignmentRuleDialog = (props: AddCategoryAssignmentRuleDialogP
             onKeyDown={handleKeyDown}
             sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '500px' }}
           >
-            {renderUnidentifiedBankTransaction()}
+            {renderTransactionDetails()}
             <TextField
               label="Pattern"
               value={pattern}
@@ -193,7 +181,7 @@ const AddCategoryAssignmentRuleDialog = (props: AddCategoryAssignmentRuleDialogP
 function mapStateToProps(state: any, ownProps: AddCategoryAssignmentRuleDialogPropsFromParent) {
   return {
     appInitialized: getAppInitialized(state),
-    unidentifiedBankTransaction: getUnidentifiedBankTransactionById(state, ownProps.unidentifiedBankTransactionId),
+    transaction: getTransactionById(state, ownProps.transactionId),
     categories: getCategories(state),
   };
 }
