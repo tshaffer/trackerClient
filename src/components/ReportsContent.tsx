@@ -11,6 +11,7 @@ import { loadTransactions } from '../controllers';
 import DateRangeSpecifier from './DateRangeSpecifier';
 import SpendingReportTable from './SpendingReportTable';
 import UnIdentifiedTransactionTable from './UnidentifiedTransactionTable';
+import FixedExpensesReport from './FixedExpensesReport';
 import { DateRangeType, SidebarMenuButton, Statement, StatementType } from '../types';
 import { isNil } from 'lodash';
 
@@ -56,29 +57,13 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
     props.onLoadTransactions(props.startDate, props.endDate, includeCreditCardTransactions, includeCheckingAccountTransactions);
   };
 
-  const handleGenerateUnidentifiedTransactionsGenerateReport = () => {
-
-    props.onSetGeneratedReportStartDate(props.startDate);
-    props.onSetGeneratedReportEndDate(props.endDate);
-
-    let includeCreditCardTransactions = true;
-    let includeCheckingAccountTransactions = true;
-    if (props.dateRangeType === DateRangeType.Statement) {
-      if (!isNil(props.reportStatement)) {
-        includeCreditCardTransactions = props.reportStatement.type === StatementType.CreditCard;
-        includeCheckingAccountTransactions = props.reportStatement.type === StatementType.Checking;
-      }
-    }
-
-    props.onLoadTransactions(props.startDate, props.endDate, includeCreditCardTransactions, includeCheckingAccountTransactions);
-  }
-
   return (
     <Box sx={{ width: '100%' }}>
       <Typography variant="h5">{SidebarMenuButton.Reports}</Typography>
       <Tabs value={tabIndex} onChange={handleTabChange}>
         <Tab label="Spending" />
         <Tab label="Unidentified Transactions" />
+        <Tab label="Fixed Expenses" />
       </Tabs>
       <Box sx={{ padding: '20px' }}>
         {tabIndex === 0 && (
@@ -98,12 +83,25 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
           <Box>
             <DateRangeSpecifier />
             <Box sx={{ mt: 3 }}>
-              <Button variant="contained" color="primary" onClick={handleGenerateUnidentifiedTransactionsGenerateReport}>
+              <Button variant="contained" color="primary" onClick={handleGenerateReport}>
                 Generate  Report
               </Button>
             </Box>
             <Box>
               <UnIdentifiedTransactionTable />
+            </Box>
+          </Box>
+        )}
+        {tabIndex === 2 && (
+          <Box>
+            <DateRangeSpecifier />
+            <Box sx={{ mt: 3 }}>
+              <Button variant="contained" color="primary" onClick={handleGenerateReport}>
+                Generate Report
+              </Button>
+            </Box>
+            <Box>
+              <FixedExpensesReport />
             </Box>
           </Box>
         )}

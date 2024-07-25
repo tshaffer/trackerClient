@@ -5,6 +5,7 @@ export interface CategorizedStatementData {
   endDate: string;
   transactions: CategorizedTransaction[];
   unidentifiedBankTransactions: BankTransaction[];
+  fixedExpenses: CategorizedTransaction[];
   netDebits: number;
 }
 
@@ -84,7 +85,8 @@ export interface CategoryAssignmentRule {
 export interface ReviewedTransactions {
   categorizedTransactions: CategorizedTransaction[];
   ignoredTransactions: BankTransaction[];
-  uncategorizedTransactions: BankTransaction[]
+  uncategorizedTransactions: BankTransaction[];
+  fixedExpenses: CategorizedTransaction[];
 }
 
 export interface MinMaxDates {

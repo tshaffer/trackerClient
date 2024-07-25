@@ -33,6 +33,29 @@ export const getTransactionsByCategory = (state: TrackerState): StringToTransact
   return transactionsByCategoryId;
 }
 
+export const getUnidentifiedBankTransactions = (state: TrackerState): BankTransaction[] => {
+  const categorizedStatementData: CategorizedStatementData = doGetTransactionsByCategory(state);
+  const { unidentifiedBankTransactions } = categorizedStatementData;
+  return unidentifiedBankTransactions;
+}
+
+export const getFixedExpensesByCategory = (state: TrackerState): StringToTransactionsLUT => {
+  
+  const categorizedStatementData: CategorizedStatementData = doGetTransactionsByCategory(state);
+  const { fixedExpenses } = categorizedStatementData;
+
+  const fixedExpensesByCategoryId: StringToTransactionsLUT = {};
+  fixedExpenses.forEach((fixedExpenseTransaction: CategorizedTransaction) => {
+    const categoryId: string = fixedExpenseTransaction.categoryId;
+    if (!fixedExpensesByCategoryId[categoryId]) {
+      fixedExpensesByCategoryId[categoryId] = [];
+    }
+    fixedExpensesByCategoryId[categoryId].push(fixedExpenseTransaction);
+  });
+
+  return fixedExpensesByCategoryId;
+}
+
 export const doGetTransactionsByCategory = (state: TrackerState): CategorizedStatementData => {
 
   const allCategories: Category[] = getCategories(state);
@@ -52,6 +75,7 @@ export const doGetTransactionsByCategory = (state: TrackerState): CategorizedSta
 
   const categorizedTransactions: CategorizedTransaction[] = reviewedTransactionEntities.categorizedTransactions;
   const unidentifiedBankTransactions: BankTransaction[] = reviewedTransactionEntities.uncategorizedTransactions;
+  const fixedExpenses: CategorizedTransaction[] = reviewedTransactionEntities.fixedExpenses
 
   const transactions: CategorizedTransaction[] = [];
   let sum = 0;
@@ -73,15 +97,10 @@ export const doGetTransactionsByCategory = (state: TrackerState): CategorizedSta
     transactions,
     netDebits: sum,
     unidentifiedBankTransactions,
+    fixedExpenses,
   };
 
   return categorizedStatementData;
-}
-
-export const getUnidentifiedBankTransactions = (state: TrackerState): BankTransaction[] => {
-  const categorizedStatementData: CategorizedStatementData = doGetTransactionsByCategory(state);
-  const { unidentifiedBankTransactions } = categorizedStatementData;
-  return unidentifiedBankTransactions;
 }
 
 const categorizeTransactions = (
@@ -94,6 +113,7 @@ const categorizeTransactions = (
   const categorizedTransactions: CategorizedTransaction[] = [];
   const uncategorizedTransactions: BankTransaction[] = [];
   const ignoredTransactions: BankTransaction[] = [];
+  const fixedExpenses: CategorizedTransaction[] = [];
 
   let sum: number = 0;
 
@@ -109,6 +129,10 @@ const categorizeTransactions = (
         };
         categorizedTransactions.push(categorizedTransaction);
 
+        if (category.transactionsRequired) {
+          fixedExpenses.push(categorizedTransaction);
+        }
+
         sum += transaction.amount;
       }
     } else {
@@ -120,6 +144,7 @@ const categorizeTransactions = (
     categorizedTransactions,
     uncategorizedTransactions,
     ignoredTransactions,
+    fixedExpenses,
   };
 };
 
