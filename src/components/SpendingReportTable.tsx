@@ -1,20 +1,26 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+
+import { v4 as uuidv4 } from 'uuid';
+
 import IconButton from '@mui/material/IconButton';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import AssignmentIcon from '@mui/icons-material/Assignment';
 
 import '../styles/Tracker.css';
-import { Category, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
+import { Category, CategoryAssignmentRule, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
 import { formatCurrency, formatPercentage, formatDate, expensesPerMonth, roundTo } from '../utilities';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { TrackerDispatch } from '../models';
 import { getStartDate, getEndDate, getTransactionsByCategory, getGeneratedReportStartDate, getGeneratedReportEndDate, getCategories, getCategoryByCategoryNameLUT } from '../selectors';
 import { isEmpty } from 'lodash';
 import { Tooltip } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import EditTransactionDialog from './EditTransactionDialog';
-import { updateTransaction } from '../controllers';
+import { addCategoryAssignmentRuleServerAndRedux, updateTransaction } from '../controllers';
+
+import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
 
 interface SpendingReportTableProps {
   categories: Category[];
@@ -25,12 +31,14 @@ interface SpendingReportTableProps {
   generatedReportEndDate: string;
   transactionsByCategoryId: StringToTransactionsLUT,
   onUpdateTransaction: (transaction: Transaction) => any;
+  onAddCategoryAssignmentRule: (categoryAssignmentRule: CategoryAssignmentRule) => any;
 }
 
 const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: SpendingReportTableProps) => {
 
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   const [transactionId, setTransactionId] = React.useState('');
+  const [showAddCategoryAssignmentRuleDialog, setShowAddCategoryAssignmentRuleDialog] = React.useState(false);
   const [showEditTransactionDialog, setShowEditTransactionDialog] = React.useState(false);
 
   const getCategoryNameFromCategoryId = (categoryId: string): string => {
@@ -59,6 +67,27 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
     setShowEditTransactionDialog(false);
   }
 
+  const handleAssignCategory = (transaction: Transaction) => {
+    setTransactionId(transaction.id);
+    setShowAddCategoryAssignmentRuleDialog(true);
+  };
+
+  const handleAddRule = (pattern: string, categoryId: string): void => {
+    const id: string = uuidv4();
+    const categoryAssignmentRule: CategoryAssignmentRule = {
+      id,
+      pattern,
+      categoryId
+    };
+    console.log('handleAddRule: ', categoryAssignmentRule, categoryAssignmentRule);
+    props.onAddCategoryAssignmentRule(categoryAssignmentRule);
+  }
+
+  const handleCloseAddRuleDialog = () => {
+    setShowAddCategoryAssignmentRuleDialog(false);
+  };
+
+
   const buildCategoryMenuItems = (categories: Category[]): CategoryMenuItem[] => {
     const map: StringToCategoryMenuItemLUT = {};
     const categoryMenuItems: CategoryMenuItem[] = [];
@@ -79,7 +108,7 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
   };
 
   const sortCategoriesRecursively = (categories: CategoryExpensesData[]): CategoryExpensesData[] => {
-    
+
     // Sort top-level categories by total expenses
     const sortedCategories = [...categories].sort((a, b) => b.totalExpenses - a.totalExpenses);
 
@@ -187,6 +216,12 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
 
   return (
     <React.Fragment>
+      <AddCategoryAssignmentRuleDialog
+        open={showAddCategoryAssignmentRuleDialog}
+        onAddRule={handleAddRule}
+        onClose={handleCloseAddRuleDialog}
+        transactionId={transactionId}
+      />
       <EditTransactionDialog
         open={showEditTransactionDialog}
         transactionId={transactionId}
@@ -231,9 +266,13 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
                     </div>
                   </div>
                   <div className="table-body">
-                    {categoryExpenses.transactions.map((transaction: { bankTransaction: Transaction; }) => (
+                    {categoryExpenses.transactions.map((transaction: { bankTransaction: Transaction }) => (
                       <div className="table-row" key={transaction.bankTransaction.id}>
                         <div className="table-cell">
+                          <IconButton onClick={() => handleAssignCategory(transaction.bankTransaction)}>
+                            <AssignmentIcon />
+                          </IconButton>
+
                           <Tooltip title="Edit transaction">
                             <IconButton onClick={() => handleEditTransaction(transaction.bankTransaction)}>
                               <EditIcon />
@@ -271,6 +310,7 @@ function mapStateToProps(state: any) {
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
+    onAddCategoryAssignmentRule: addCategoryAssignmentRuleServerAndRedux,
     onUpdateTransaction: updateTransaction,
   }, dispatch);
 };
