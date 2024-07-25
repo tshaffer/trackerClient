@@ -14,6 +14,7 @@ import UnIdentifiedTransactionTable from './UnidentifiedTransactionTable';
 import FixedExpensesReport from './FixedExpensesReport';
 import { DateRangeType, SidebarMenuButton, Statement, StatementType } from '../types';
 import { isNil } from 'lodash';
+import ReportFiltersDialog from './ReportFiltersDialog';
 
 export interface ReportsContentPropsFromParent {
   activeTab: number;
@@ -30,7 +31,9 @@ interface ReportsContentProps extends ReportsContentPropsFromParent {
 }
 
 const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProps) => {
+
   const [tabIndex, setTabIndex] = React.useState(props.activeTab);
+  const [reportFiltersDialogOpen, setReportFiltersDialogOpen] = React.useState(false);
 
   React.useEffect(() => {
     setTabIndex(props.activeTab);
@@ -38,6 +41,14 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);
+  };
+
+  const handleOpenReportFiltersDialog = () => {
+    setReportFiltersDialogOpen(true);
+  };
+
+  const handleCloseReportFiltersDialog = () => {
+    setReportFiltersDialogOpen(false);
   };
 
   const handleGenerateReport = () => {
@@ -53,60 +64,71 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
         includeCheckingAccountTransactions = props.reportStatement.type === StatementType.Checking;
       }
     }
-  
+
     props.onLoadTransactions(props.startDate, props.endDate, includeCreditCardTransactions, includeCheckingAccountTransactions);
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Typography variant="h5">{SidebarMenuButton.Reports}</Typography>
-      <Tabs value={tabIndex} onChange={handleTabChange}>
-        <Tab label="Spending" />
-        <Tab label="Unidentified Transactions" />
-        <Tab label="Fixed Expenses" />
-      </Tabs>
-      <Box sx={{ padding: '20px' }}>
-        {tabIndex === 0 && (
-          <Box>
-            <DateRangeSpecifier />
-            <Box sx={{ mt: 3 }}>
-              <Button variant="contained" color="primary" onClick={handleGenerateReport}>
-                Generate Report
-              </Button>
-            </Box>
+    <React.Fragment>
+      <ReportFiltersDialog
+        open={reportFiltersDialogOpen}
+        onClose={handleCloseReportFiltersDialog}
+        items={[{label: 'pizza'}, {label: 'hot dogs'}, {label: 'burritos'}]}
+      />
+      <Box sx={{ width: '100%' }}>
+        <Typography variant="h5">{SidebarMenuButton.Reports}</Typography>
+        <Tabs value={tabIndex} onChange={handleTabChange}>
+          <Tab label="Spending" />
+          <Tab label="Unidentified Transactions" />
+          <Tab label="Fixed Expenses" />
+        </Tabs>
+        <Box sx={{ padding: '20px' }}>
+          {tabIndex === 0 && (
             <Box>
-              <SpendingReportTable />
+              <DateRangeSpecifier />
+              <Box sx={{ mt: 3 }}>
+                <Button variant="contained" color="primary" onClick={handleGenerateReport}>
+                  Generate Report
+                </Button>
+              </Box>
+              <Box>
+                <SpendingReportTable />
+              </Box>
             </Box>
-          </Box>
-        )}
-        {tabIndex === 1 && (
-          <Box>
-            <DateRangeSpecifier />
-            <Box sx={{ mt: 3 }}>
-              <Button variant="contained" color="primary" onClick={handleGenerateReport}>
-                Generate  Report
-              </Button>
-            </Box>
+          )}
+          {tabIndex === 1 && (
             <Box>
-              <UnIdentifiedTransactionTable />
+              <DateRangeSpecifier />
+              <Box sx={{ mt: 3 }}>
+                <Button variant="contained" color="primary" onClick={handleGenerateReport}>
+                  Generate  Report
+                </Button>
+              </Box>
+              <Box>
+                <UnIdentifiedTransactionTable />
+              </Box>
             </Box>
-          </Box>
-        )}
-        {tabIndex === 2 && (
-          <Box>
-            <DateRangeSpecifier />
-            <Box sx={{ mt: 3 }}>
-              <Button variant="contained" color="primary" onClick={handleGenerateReport}>
-                Generate Report
-              </Button>
-            </Box>
+          )}
+          {tabIndex === 2 && (
             <Box>
-              <FixedExpensesReport />
+              <DateRangeSpecifier />
+              <Box sx={{ mt: 3 }}>
+                <Button variant="contained" color="secondary" onClick={handleOpenReportFiltersDialog}>
+                  Filters
+                </Button>
+                <Button variant="contained" color="primary" onClick={handleGenerateReport}>
+                  Generate Report
+                </Button>
+              </Box>
+              <Box>
+                <FixedExpensesReport />
+              </Box>
             </Box>
-          </Box>
-        )}
+          )}
+        </Box>
       </Box>
-    </Box>
+    </React.Fragment>
+
   );
 };
 

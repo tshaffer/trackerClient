@@ -93,6 +93,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
                 <MenuList>
                   <MenuItem onClick={() => handleClose('Spending')}>Spending</MenuItem>
                   <MenuItem onClick={() => handleClose('Unidentified Transactions')}>Unidentified Transactions</MenuItem>
+                  <MenuItem onClick={() => handleClose('Fixed Expenses')}>Fixed Expenses</MenuItem>
                 </MenuList>
               </ClickAwayListener>
             </Paper>

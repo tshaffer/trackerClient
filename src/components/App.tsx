@@ -66,7 +66,7 @@ const App = (props: AppProps) => {
       let activeTab = 0;
       if (selectedSubButton === 'Spending') activeTab = 0;
       else if (selectedSubButton === 'Unidentified Transactions') activeTab = 1;
-
+      else if (selectedSubButton === 'Fixed Expenses') activeTab = 2;
       return <ReportsContent activeTab={activeTab} />;
     }
     else if (selectedMainButton === SidebarMenuButton.Statements) {
