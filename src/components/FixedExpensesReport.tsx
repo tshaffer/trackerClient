@@ -10,7 +10,7 @@ import '../styles/Tracker.css';
 import { TrackerDispatch } from '../models';
 import { formatDate, formatCurrency, expensesPerMonth, roundTo, formatPercentage } from '../utilities';
 import { getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getFixedExpensesByCategory, getGeneratedReportEndDate, getGeneratedReportStartDate } from '../selectors';
-import { Category, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
+import { CategorizedTransaction, Category, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
 import { cloneDeep, isEmpty, isNil } from 'lodash';
 
 interface FixedExpensesReportProps {
@@ -73,6 +73,12 @@ const FixedExpensesReport: React.FC<FixedExpensesReportProps> = (props: FixedExp
     const categoryExpensesMap = new Map<string, number>();
     let totalTopLevelExpenses = 0;
 
+    // remove categories that have no transactions
+    categories = categories.filter(category => {
+      const transactions: CategorizedTransaction[] = props.fixedExpensesByCategoryId[category.id] || [];
+      return transactions.length > 0;
+    });
+    
     // First pass to accumulate the total expenses for each category
     const accumulateExpenses = (category: CategoryMenuItem): number => {
       const transactions = props.fixedExpensesByCategoryId[category.id] || [];

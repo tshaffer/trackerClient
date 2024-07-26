@@ -10,7 +10,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 
 import '../styles/Tracker.css';
-import { Category, CategoryAssignmentRule, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
+import { CategorizedTransaction, Category, CategoryAssignmentRule, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
 import { formatCurrency, formatPercentage, formatDate, expensesPerMonth, roundTo } from '../utilities';
 import { TrackerDispatch } from '../models';
 import { getStartDate, getEndDate, getTransactionsByCategory, getGeneratedReportStartDate, getGeneratedReportEndDate, getCategories, getCategoryByCategoryNameLUT, getCategoryByName } from '../selectors';
@@ -122,9 +122,15 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
     const categoryExpensesMap = new Map<string, number>();
     let totalTopLevelExpenses = 0;
 
+    // remove categories that have no transactions
+    categories = categories.filter(category => {
+      const transactions: CategorizedTransaction[] = props.transactionsByCategoryId[category.id] || [];
+      return transactions.length > 0;
+    });
+    
     // First pass to accumulate the total expenses for each category
     const accumulateExpenses = (category: CategoryMenuItem): number => {
-      const transactions = props.transactionsByCategoryId[category.id] || [];
+      const transactions: CategorizedTransaction[] = props.transactionsByCategoryId[category.id] || [];
       const categoryTotalExpenses = -1 * roundTo(transactions.reduce((sum, transaction) => sum + transaction.bankTransaction.amount, 0), 2);
       let totalExpenses = categoryTotalExpenses;
 
