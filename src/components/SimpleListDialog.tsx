@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,
   Button, Checkbox, List, ListItem, ListItemText,
-  ListItemSecondaryAction, Typography, Box
+  Typography, Box
 } from '@mui/material';
 
 interface SimpleListDialogProps {
@@ -15,39 +15,34 @@ interface SimpleListDialogProps {
 
 const SimpleListDialog: React.FC<SimpleListDialogProps> = ({ open, onClose, items, description, spacing = 8 }) => {
   const [checked, setChecked] = useState<{ [key: number]: boolean }>({});
-  const [masterChecked, setMasterChecked] = useState(false);
-  const [indeterminate, setIndeterminate] = useState(false);
 
   const handleToggle = (index: number) => () => {
-    setChecked(prevState => {
-      const newChecked = { ...prevState, [index]: !prevState[index] };
-      updateMasterCheckbox(newChecked);
-      return newChecked;
-    });
+    setChecked(prevState => ({
+      ...prevState,
+      [index]: !prevState[index]
+    }));
   };
 
   const handleMasterToggle = () => {
+    const allChecked = areAllChecked();
     const newChecked = items.reduce((acc, _, index) => {
-      acc[index] = !masterChecked;
+      acc[index] = !allChecked;
       return acc;
     }, {} as { [key: number]: boolean });
 
     setChecked(newChecked);
-    setMasterChecked(!masterChecked);
-    setIndeterminate(false);
   };
 
-  const updateMasterCheckbox = (newChecked: { [key: number]: boolean }) => {
-    const totalItems = items.length;
-    const checkedItems = Object.values(newChecked).filter(Boolean).length;
-
-    setMasterChecked(checkedItems === totalItems);
-    setIndeterminate(checkedItems > 0 && checkedItems < totalItems);
+  const areAllChecked = () => {
+    return items.length > 0 && items.every((_, index) => checked[index]);
   };
 
-  useEffect(() => {
-    updateMasterCheckbox(checked);
-  }, [checked, items]);
+  const areSomeChecked = () => {
+    return items.some((_, index) => checked[index]) && !areAllChecked();
+  };
+
+  const masterChecked = areAllChecked();
+  const indeterminate = areSomeChecked();
 
   const handleSave = () => {
     // Handle the save action, if needed
