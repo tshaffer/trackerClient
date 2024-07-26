@@ -4,12 +4,13 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import {
-  Dialog, DialogTitle, DialogContent, DialogActions, Button, 
+  Dialog, DialogTitle, DialogContent, DialogActions, Button,
   Checkbox,
   List,
   ListItem,
   ListItemSecondaryAction,
-  ListItemText
+  ListItemText,
+  Typography
 } from '@mui/material';
 import { TrackerDispatch } from '../models';
 
@@ -40,20 +41,23 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
     <Dialog open={props.open} onClose={props.onClose}>
       <DialogTitle>Filters</DialogTitle>
       <DialogContent>
-      <List>
-      {props.items.map((item, index) => (
-        <ListItem key={index} button onClick={handleToggle(index)}>
-          <ListItemText primary={item.label} />
-          <ListItemSecondaryAction>
-            <Checkbox
-              edge="end"
-              onChange={handleToggle(index)}
-              checked={checked[index] || false}
-            />
-          </ListItemSecondaryAction>
-        </ListItem>
-      ))}
-    </List>
+        <Typography variant="body1" gutterBottom>
+          Specify the Categories to exclude from the report.
+        </Typography>
+        <List>
+          {props.items.map((item, index) => (
+            <ListItem key={index} button onClick={handleToggle(index)}>
+              <ListItemText primary={item.label} />
+              <ListItemSecondaryAction>
+                <Checkbox
+                  edge="end"
+                  onChange={handleToggle(index)}
+                  checked={checked[index] || false}
+                />
+              </ListItemSecondaryAction>
+            </ListItem>
+          ))}
+        </List>
       </DialogContent>
       <DialogActions>
         <Button onClick={props.onClose} color="primary">

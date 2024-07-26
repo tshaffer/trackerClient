@@ -3,7 +3,6 @@ import React, { useRef, useEffect, useState } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import { v4 as uuidv4 } from 'uuid';
 
 import { isNil } from 'lodash';
 
@@ -13,8 +12,8 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import { Button, DialogActions, DialogContent, DialogContentText, Tooltip } from '@mui/material';
 
-import { getAppInitialized, getCategories, getTransactionById, getUnidentifiedBankTransactionById } from '../selectors';
-import { BankTransaction, Category, DisregardLevel, SidebarMenuButton, Transaction } from '../types';
+import { getAppInitialized, getCategories, getCategoryByTransactionId, getTransactionById } from '../selectors';
+import { Category, SidebarMenuButton, Transaction } from '../types';
 import { addCategoryServerAndRedux } from '../controllers';
 import { TrackerDispatch } from '../models';
 import SelectCategory from './SelectCategory';
@@ -22,7 +21,7 @@ import SelectCategory from './SelectCategory';
 export interface AddCategoryAssignmentRuleDialogPropsFromParent {
   open: boolean;
   transactionId: string;
-  onAddRule: (pattern: string, categoryId: string) => void;
+  onSaveRule: (pattern: string, categoryId: string) => void;
   onClose: () => void;
 }
 
@@ -30,6 +29,7 @@ export interface AddCategoryAssignmentRuleDialogProps extends AddCategoryAssignm
   appInitialized: boolean;
   transaction: Transaction | undefined;
   categories: Category[];
+  initialCategoryId: string | null | undefined;
   onAddCategory: (category: Category) => any;
 }
 
@@ -48,7 +48,7 @@ const AddCategoryAssignmentRuleDialog = (props: AddCategoryAssignmentRuleDialogP
   const { open, onClose } = props;
 
   const [pattern, setPattern] = React.useState(getTransactionDetails(props.transaction));
-  const [selectedCategoryId, setSelectedCategoryId] = React.useState<string>('');
+  const [selectedCategoryId, setSelectedCategoryId] = React.useState<string>(props.initialCategoryId ?? '');
   const textFieldRef = useRef(null);
 
   useEffect(() => {
@@ -60,7 +60,11 @@ const AddCategoryAssignmentRuleDialog = (props: AddCategoryAssignmentRuleDialogP
       setTimeout(() => {
         if (open && textFieldRef.current) {
           (textFieldRef.current as any).focus();
-          setSelectedCategoryId('');
+          if (props.initialCategoryId) {
+            setSelectedCategoryId(props.initialCategoryId);
+          } else {
+            setSelectedCategoryId('');
+          }
         }
       }, 200);
     }
@@ -74,13 +78,13 @@ const AddCategoryAssignmentRuleDialog = (props: AddCategoryAssignmentRuleDialogP
     onClose();
   };
 
-  const handleAddRule = (): void => {
+  const handleSaveRule = (): void => {
     if (selectedCategoryId === '') {
       setAlertDialogOpen(true);
       return;
     }
     if (pattern !== '') {
-      props.onAddRule(pattern, selectedCategoryId);
+      props.onSaveRule(pattern, selectedCategoryId);
       props.onClose();
     }
   };
@@ -88,12 +92,11 @@ const AddCategoryAssignmentRuleDialog = (props: AddCategoryAssignmentRuleDialogP
   const handleKeyDown = (event: { key: string; preventDefault: () => void; }) => {
     if (event.key === 'Enter') {
       event.preventDefault(); // Prevent form submission
-      handleAddRule();
+      handleSaveRule();
     }
   };
 
   function handleCategoryChange(categoryId: string): void {
-    console.log('handleCategoryChange event, categoryId: ', categoryId);
     setSelectedCategoryId(categoryId)
   }
 
@@ -153,8 +156,8 @@ const AddCategoryAssignmentRuleDialog = (props: AddCategoryAssignmentRuleDialogP
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
           <Tooltip title="Press Enter to add the category assignment rule" arrow>
-            <Button onClick={handleAddRule} autoFocus variant="contained" color="primary">
-              Add
+            <Button onClick={handleSaveRule} autoFocus variant="contained" color="primary">
+              Save
             </Button>
           </Tooltip>
         </DialogActions>
@@ -179,10 +182,12 @@ const AddCategoryAssignmentRuleDialog = (props: AddCategoryAssignmentRuleDialogP
 };
 
 function mapStateToProps(state: any, ownProps: AddCategoryAssignmentRuleDialogPropsFromParent) {
+  const foo = getCategoryByTransactionId(state, ownProps.transactionId)?.id;
   return {
     appInitialized: getAppInitialized(state),
     transaction: getTransactionById(state, ownProps.transactionId),
     categories: getCategories(state),
+    initialCategoryId: getCategoryByTransactionId(state, ownProps.transactionId)?.id,
   };
 }
 

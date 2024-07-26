@@ -164,7 +164,7 @@ const UnIdentifiedTransactionTable: React.FC<NotIdentifiedTransactionTableProps>
     <React.Fragment>
       <AddCategoryAssignmentRuleDialog
         open={showAddCategoryAssignmentRuleDialog}
-        onAddRule={handleAddRule}
+        onSaveRule={handleAddRule}
         onClose={handleCloseAddCategoryAssignmentRuleDialog}
         transactionId={unidentifiedBankTransactionId}
       />

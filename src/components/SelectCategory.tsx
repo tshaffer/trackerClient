@@ -31,6 +31,10 @@ const SelectCategory = (props: SelectCategoryProps) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [selectedCategoryId, setSelectedCategoryId] = React.useState<string>(props.selectedCategoryId);
 
+  React.useEffect(() => {
+    setSelectedCategoryId(props.selectedCategoryId);
+  }, [props.selectedCategoryId]);
+
   const sortCategories = (categories: Category[]): Category[] => {
     return categories.sort((a, b) => {
       if (a.name < b.name) {
@@ -74,7 +78,6 @@ const SelectCategory = (props: SelectCategoryProps) => {
   }
 
   function handleCategoryChange(event: SelectChangeEvent<string>): void {
-    console.log('handleCategoryChange event, categoryId: ', event.target.value);
     handleSetSelectedCategoryId(event.target.value)
   }
 
@@ -101,7 +104,6 @@ const SelectCategory = (props: SelectCategoryProps) => {
       disregardLevel: DisregardLevel.None,
     };
     const addedCategory: Category = props.onAddCategory(category);
-    console.log('addedCategory: ', addedCategory);
     handleSetSelectedCategoryId(category.id);
   };
 

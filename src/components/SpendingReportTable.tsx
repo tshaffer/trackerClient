@@ -67,14 +67,14 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
     setShowAddCategoryAssignmentRuleDialog(true);
   };
 
-  const handleAddRule = (pattern: string, categoryId: string): void => {
+  const handleSaveRule = (pattern: string, categoryId: string): void => {
     const id: string = uuidv4();
     const categoryAssignmentRule: CategoryAssignmentRule = {
       id,
       pattern,
       categoryId
     };
-    console.log('handleAddRule: ', categoryAssignmentRule, categoryAssignmentRule);
+    console.log('handleSaveRule: ', categoryAssignmentRule, categoryAssignmentRule);
     props.onAddCategoryAssignmentRule(categoryAssignmentRule);
   }
 
@@ -212,7 +212,7 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
     <React.Fragment>
       <AddCategoryAssignmentRuleDialog
         open={showAddCategoryAssignmentRuleDialog}
-        onAddRule={handleAddRule}
+        onSaveRule={handleSaveRule}
         onClose={handleCloseAddRuleDialog}
         transactionId={transactionId}
       />
