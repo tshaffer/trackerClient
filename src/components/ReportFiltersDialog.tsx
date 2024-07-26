@@ -10,7 +10,8 @@ import {
   ListItem,
   ListItemSecondaryAction,
   ListItemText,
-  Typography
+  Typography,
+  Box
 } from '@mui/material';
 import { TrackerDispatch } from '../models';
 
@@ -47,14 +48,16 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
         <List>
           {props.items.map((item, index) => (
             <ListItem key={index} button onClick={handleToggle(index)}>
-              <ListItemText primary={item.label} />
-              <ListItemSecondaryAction>
+              <Box display="flex" alignItems="center">
                 <Checkbox
-                  edge="end"
+                  edge="start"
                   onChange={handleToggle(index)}
                   checked={checked[index] || false}
                 />
-              </ListItemSecondaryAction>
+                <Box ml={'4px'}>
+                  <ListItemText primary={item.label} />
+                </Box>
+              </Box>
             </ListItem>
           ))}
         </List>
