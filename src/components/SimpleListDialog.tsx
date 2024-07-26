@@ -58,25 +58,24 @@ const SimpleListDialog: React.FC<SimpleListDialogProps> = ({ open, onClose, item
             {description}
           </Typography>
         )}
-        <Box display="flex" alignItems="center" mb={2}>
+        <Box display="flex" alignItems="center" mb={0}>
           <Checkbox
             edge="start"
             indeterminate={indeterminate}
             checked={masterChecked}
             onChange={handleMasterToggle}
           />
-          <Typography variant="body2">Select All</Typography>
         </Box>
-        <List>
+        <List sx={{ paddingTop: '0px'}}>
           {items.map((item, index) => (
-            <ListItem key={index}>
+            <ListItem key={index} sx={{ padding: '0px'}}>
               <Box display="flex" alignItems="center">
                 <Checkbox
                   edge="start"
                   onChange={handleToggle(index)}
                   checked={checked[index] || false}
                 />
-                <Box ml={spacing}>
+                <Box sx={{ marginLeft: '4px'}}>
                   <ListItemText primary={item.label} />
                 </Box>
               </Box>
