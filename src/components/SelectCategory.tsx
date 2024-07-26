@@ -47,21 +47,36 @@ const SelectCategory = (props: SelectCategoryProps) => {
     });
   };
 
-  const buildCategoryMenuItems = () => {
+  const buildCategoryMenuItems = (): CategoryMenuItem[] => {
     const map: StringToCategoryMenuItemLUT = {};
     const roots: CategoryMenuItem[] = [];
+  
+    // First pass: Create the map with children and initialize levels to -1
     alphabetizedCategories.forEach(category => {
-      map[category.id] = { ...category, children: [], level: (category.parentId !== '') ? map[category.parentId]?.level + 1 : 0 };
+      map[category.id] = { ...category, children: [], level: -1 };
     });
+  
+    // Second pass: Populate the children and identify root categories
     alphabetizedCategories.forEach(category => {
       if (category.parentId === '') {
         roots.push(map[category.id]);
       } else {
-        map[category.parentId].children.push(map[category.id]);
+        map[category.parentId]?.children.push(map[category.id]);
       }
     });
-    const flattenTree = (categoryMenuItems: CategoryMenuItem[], result: CategoryMenuItem[] = []) => {
-      categoryMenuItems.forEach((categoryMenuItem: CategoryMenuItem) => {
+  
+    // Function to recursively calculate levels
+    const calculateLevels = (category: CategoryMenuItem, level: number) => {
+      category.level = level;
+      category.children.forEach(child => calculateLevels(child, level + 1));
+    };
+  
+    // Calculate levels starting from the roots
+    roots.forEach(root => calculateLevels(root, 0));
+  
+    // Function to flatten the tree
+    const flattenTree = (categoryMenuItems: CategoryMenuItem[], result: CategoryMenuItem[] = []): CategoryMenuItem[] => {
+      categoryMenuItems.forEach(categoryMenuItem => {
         result.push(categoryMenuItem);
         if (categoryMenuItem.children.length > 0) {
           flattenTree(categoryMenuItem.children, result);
@@ -69,9 +84,10 @@ const SelectCategory = (props: SelectCategoryProps) => {
       });
       return result;
     };
+  
     return flattenTree(roots);
   };
-
+  
   const handleSetSelectedCategoryId = (categoryId: string) => {
     setSelectedCategoryId(categoryId);
     props.onSetCategoryId(categoryId);
