@@ -51,14 +51,13 @@ const SimpleListDialog: React.FC<SimpleListDialogProps> = ({ open, onClose, item
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Simple List</DialogTitle>
-      <DialogContent>
-        {description && (
-          <Typography variant="body1" gutterBottom>
-            {description}
-          </Typography>
-        )}
-        <Box display="flex" alignItems="center" mb={0}>
+      <DialogTitle
+        sx={{ paddingBottom: '0px' }}
+      >
+        Report Filters
+      </DialogTitle>
+      <DialogContent sx={{ paddingBottom: '0px' }}>
+        <Box display="flex" alignItems="center" mb={0} mt={0}>
           <Checkbox
             edge="start"
             indeterminate={indeterminate}
@@ -66,16 +65,19 @@ const SimpleListDialog: React.FC<SimpleListDialogProps> = ({ open, onClose, item
             onChange={handleMasterToggle}
           />
         </Box>
-        <List sx={{ paddingTop: '0px'}}>
+        <Typography variant="body1" gutterBottom>
+          Categories to display
+        </Typography>
+        <List sx={{ paddingTop: '0px', paddingBottom: '0px' }}>
           {items.map((item, index) => (
-            <ListItem key={index} sx={{ padding: '0px'}}>
+            <ListItem key={index} sx={{ padding: '0px' }}>
               <Box display="flex" alignItems="center">
                 <Checkbox
                   edge="start"
                   onChange={handleToggle(index)}
                   checked={checked[index] || false}
                 />
-                <Box sx={{ marginLeft: '4px'}}>
+                <Box sx={{ marginLeft: '4px' }}>
                   <ListItemText primary={item.label} />
                 </Box>
               </Box>
@@ -83,7 +85,7 @@ const SimpleListDialog: React.FC<SimpleListDialogProps> = ({ open, onClose, item
           ))}
         </List>
       </DialogContent>
-      <DialogActions>
+      <DialogActions sx={{ paddingTop: '0px' }}>
         <Button onClick={onClose} color="secondary">Cancel</Button>
         <Button onClick={handleSave} color="primary">Save</Button>
       </DialogActions>
