@@ -193,6 +193,9 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
     return <></>;
   }
 
+  const sortedCategoryAssignmentRules: CategoryAssignmentRule[] = Object.values(categoryAssignmentRuleById);
+  sortedCategoryAssignmentRules.sort((a, b) => a.pattern.localeCompare(b.pattern))
+
   return (
     <Box sx={{ width: '100%' }}>
       <Typography variant="h5" style={{ marginBottom: '8px' }}>{SidebarMenuButton.CategoryAssignmentRules}</Typography>
@@ -205,7 +208,7 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
           </div>
         </div>
         <div className="category-assignment-rules-table-body">
-          {Object.values(categoryAssignmentRuleById).map((categoryAssignmentRule: CategoryAssignmentRule) => (
+          {sortedCategoryAssignmentRules.map((categoryAssignmentRule: CategoryAssignmentRule) => (
             <div className="table-row" key={categoryAssignmentRule.id}>
               <div className="table-cell-category-assignment-rule">
                 <TextField
