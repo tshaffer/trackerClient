@@ -72,7 +72,12 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
     return (
       <Box sx={{ mt: 3 }}>
         {tabIndex !== 2 &&
-          <Button variant="contained" color="secondary" onClick={handleOpenReportFiltersDialog}>
+          <Button
+            sx={{ marginRight: '8px'}}
+            variant="contained"
+            color="secondary"
+            onClick={handleOpenReportFiltersDialog}
+          >
             Filters
           </Button>
         }
