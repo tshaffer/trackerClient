@@ -132,12 +132,18 @@ const SelectCategory = (props: SelectCategoryProps) => {
     handleSelectClose();
   };
 
+  const getCategoryMenuItemPaddingLeft = (categoryMenuItem: CategoryMenuItem): string => {
+    const paddingLeft: number = 8 + (categoryMenuItem.level || 0) * 20
+    return `${paddingLeft}px`;
+  }
+
   const renderCategoryMenuItem = (categoryMenuItem: CategoryMenuItem) => {
+    const paddingLeft = getCategoryMenuItemPaddingLeft(categoryMenuItem);
     return (
       <MenuItem
         key={categoryMenuItem.id}
         onClick={() => handleMenuItemClick(categoryMenuItem.id)}
-        style={{ paddingLeft: `${(categoryMenuItem.level || 0) * 20}px` }}
+        style={{ paddingLeft: `${paddingLeft}px` }}
         value={categoryMenuItem.id}
       >
         <ListItemText primary={categoryMenuItem.name} />
@@ -176,11 +182,13 @@ const SelectCategory = (props: SelectCategoryProps) => {
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}
           onClose={handleSelectClose}
-          PaperProps={{
-            style: {
-              maxHeight: 400,
-              width: '20ch',
-            },
+          slotProps={{
+            paper: {
+              sx: {
+                maxHeight: 400,
+                width: '20ch',
+              },
+            }
           }}
         >
           {categoryMenuItems.map((item) => renderCategoryMenuItem(item))}
