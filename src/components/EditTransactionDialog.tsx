@@ -82,6 +82,7 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
                 readOnly: true,
               }}
               fullWidth
+              sx={{ marginTop: '6px' }}
             />
             <TextField
               label="Amount"
