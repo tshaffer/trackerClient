@@ -15,6 +15,7 @@ import FixedExpensesReport from './FixedExpensesReport';
 import { DateRangeType, ReportTypes, SidebarMenuButton, Statement, StatementType } from '../types';
 import { isNil } from 'lodash';
 import ReportFiltersDialog from './ReportFiltersDialog';
+import SimpleListDialog from './SimpleListDialog';
 
 export interface ReportsContentPropsFromParent {
   activeTab: number;
@@ -73,7 +74,7 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
       <Box sx={{ mt: 3 }}>
         {tabIndex !== 2 &&
           <Button
-            sx={{ marginRight: '8px'}}
+            sx={{ marginRight: '8px' }}
             variant="contained"
             color="secondary"
             onClick={handleOpenReportFiltersDialog}
@@ -102,11 +103,18 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
 
   return (
     <React.Fragment>
-      <ReportFiltersDialog
+      <SimpleListDialog
         open={reportFiltersDialogOpen}
         onClose={handleCloseReportFiltersDialog}
         items={[{ label: 'pizza' }, { label: 'hot dogs' }, { label: 'burritos' }]}
+        description="Select items from the list below:"
+        spacing={16} // Set spacing to 16 pixels
       />
+      {/* <ReportFiltersDialog
+        open={reportFiltersDialogOpen}
+        onClose={handleCloseReportFiltersDialog}
+        items={[{ label: 'pizza' }, { label: 'hot dogs' }, { label: 'burritos' }]}
+      /> */}
       <Box sx={{ width: '100%' }}>
         <Typography variant="h5">{SidebarMenuButton.Reports}</Typography>
         <Tabs value={tabIndex} onChange={handleTabChange}>
