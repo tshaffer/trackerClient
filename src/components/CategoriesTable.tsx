@@ -3,15 +3,17 @@ import { Box, Collapse, IconButton } from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { getAppInitialized, getCategories, getCategoryAssignmentRules } from '../selectors';
+import { getAppInitialized, getCategories, getCategoryAssignmentRules, getCategoryByName } from '../selectors';
 import { Category, CategoryAssignmentRule, CategoryMenuItem, StringToCategoryMenuItemLUT } from '../types';
 import { TrackerDispatch } from '../models';
 import '../styles/Tracker.css';
+import { cloneDeep, isNil } from 'lodash';
 
 interface CategoriesTableProps {
   appInitialized: boolean;
   categories: Category[];
   categoryAssignmentRules: CategoryAssignmentRule[];
+  ignoreCategory: Category | undefined;
 }
 
 const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableProps) => {
@@ -36,7 +38,11 @@ const CategoriesTable: React.FC<CategoriesTableProps> = (props: CategoriesTableP
     }));
   };
 
-  const categories: Category[] = props.categories.sort((a, b) => a.name.localeCompare(b.name));
+  let trimmedCategories = cloneDeep(props.categories);
+  if (!isNil(props.ignoreCategory)) {
+    trimmedCategories = props.categories.filter(category => category.id !== props.ignoreCategory!.id)
+  }
+  const categories: Category[] = trimmedCategories.sort((a, b) => a.name.localeCompare(b.name));
 
   const renderPatternTable = (categoryMenuItem: CategoryMenuItem): JSX.Element | null => {
     const categoryAssignmentRules: CategoryAssignmentRule[] = getRulesByCategory(categoryMenuItem.id);
@@ -132,6 +138,7 @@ function mapStateToProps(state: any) {
     appInitialized: getAppInitialized(state),
     categories: getCategories(state),
     categoryAssignmentRules: getCategoryAssignmentRules(state),
+    ignoreCategory: getCategoryByName(state, 'Ignore'),
   };
 }
 

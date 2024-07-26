@@ -9,9 +9,9 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import '../styles/Tracker.css';
 import { TrackerDispatch } from '../models';
 import { formatDate, formatCurrency, expensesPerMonth, roundTo, formatPercentage } from '../utilities';
-import { getCategories, getCategoryByCategoryNameLUT, getFixedExpensesByCategory, getGeneratedReportEndDate, getGeneratedReportStartDate } from '../selectors';
+import { getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getFixedExpensesByCategory, getGeneratedReportEndDate, getGeneratedReportStartDate } from '../selectors';
 import { Category, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
-import { isEmpty } from 'lodash';
+import { cloneDeep, isEmpty, isNil } from 'lodash';
 
 interface FixedExpensesReportProps {
   categories: Category[];
@@ -19,6 +19,7 @@ interface FixedExpensesReportProps {
   generatedReportStartDate: string;
   generatedReportEndDate: string;
   fixedExpensesByCategoryId: StringToTransactionsLUT;
+  ignoreCategory: Category | undefined;
 }
 
 const FixedExpensesReport: React.FC<FixedExpensesReportProps> = (props: FixedExpensesReportProps) => {
@@ -147,7 +148,12 @@ const FixedExpensesReport: React.FC<FixedExpensesReportProps> = (props: FixedExp
     return flattenRows(sortedRows);
   };
 
-  const categoryMenuItems: CategoryMenuItem[] = buildCategoryMenuItems(props.categories);
+  let trimmedCategories = cloneDeep(props.categories);
+  if (!isNil(props.ignoreCategory)) {
+    trimmedCategories = props.categories.filter(category => category.id !== props.ignoreCategory!.id)
+  }
+
+  const categoryMenuItems: CategoryMenuItem[] = buildCategoryMenuItems(trimmedCategories);
 
   const rows: CategoryExpensesData[] = getRows(categoryMenuItems);
   let totalAmount = 0;
@@ -224,6 +230,7 @@ function mapStateToProps(state: any) {
     generatedReportStartDate: getGeneratedReportStartDate(state),
     generatedReportEndDate: getGeneratedReportEndDate(state),
     fixedExpensesByCategoryId: getFixedExpensesByCategory(state),
+    ignoreCategory: getCategoryByName(state, 'Ignore'),
   };
 }
 

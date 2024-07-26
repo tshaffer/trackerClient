@@ -13,8 +13,8 @@ import '../styles/Tracker.css';
 import { Category, CategoryAssignmentRule, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
 import { formatCurrency, formatPercentage, formatDate, expensesPerMonth, roundTo } from '../utilities';
 import { TrackerDispatch } from '../models';
-import { getStartDate, getEndDate, getTransactionsByCategory, getGeneratedReportStartDate, getGeneratedReportEndDate, getCategories, getCategoryByCategoryNameLUT } from '../selectors';
-import { isEmpty } from 'lodash';
+import { getStartDate, getEndDate, getTransactionsByCategory, getGeneratedReportStartDate, getGeneratedReportEndDate, getCategories, getCategoryByCategoryNameLUT, getCategoryByName } from '../selectors';
+import { cloneDeep, isEmpty, isNil } from 'lodash';
 import { Tooltip } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import EditTransactionDialog from './EditTransactionDialog';
@@ -29,7 +29,8 @@ interface SpendingReportTableProps {
   endDate: string;
   generatedReportStartDate: string;
   generatedReportEndDate: string;
-  transactionsByCategoryId: StringToTransactionsLUT,
+  transactionsByCategoryId: StringToTransactionsLUT;
+  ignoreCategory: Category | undefined;
   onUpdateTransaction: (transaction: Transaction) => any;
   onAddCategoryAssignmentRule: (categoryAssignmentRule: CategoryAssignmentRule) => any;
 }
@@ -196,7 +197,12 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
     return flattenRows(sortedRows);
   };
 
-  const categoryMenuItems: CategoryMenuItem[] = buildCategoryMenuItems(props.categories);
+  let trimmedCategories = cloneDeep(props.categories);
+  if (!isNil(props.ignoreCategory)) {
+    trimmedCategories = props.categories.filter(category => category.id !== props.ignoreCategory!.id)
+  }
+
+  const categoryMenuItems: CategoryMenuItem[] = buildCategoryMenuItems(trimmedCategories);
 
   const rows: CategoryExpensesData[] = getRows(categoryMenuItems);
 
@@ -299,6 +305,7 @@ function mapStateToProps(state: any) {
     generatedReportStartDate: getGeneratedReportStartDate(state),
     generatedReportEndDate: getGeneratedReportEndDate(state),
     transactionsByCategoryId: getTransactionsByCategory(state),
+    ignoreCategory: getCategoryByName(state, 'Ignore'),
   };
 }
 
