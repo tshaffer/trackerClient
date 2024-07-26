@@ -17,36 +17,28 @@ const SimpleListDialog: React.FC<SimpleListDialogProps> = ({ open, onClose, item
   const [checked, setChecked] = useState<{ [key: number]: boolean }>({});
 
   const handleToggle = (index: number) => () => {
-    console.log('Toggling index:', index);
     setChecked(prevState => {
       const newChecked = { ...prevState, [index]: !prevState[index] };
-      console.log('New checked state:', newChecked);
       return newChecked;
     });
   };
 
   const handleMasterToggle = () => {
     const allChecked = areAllChecked();
-    console.log('Toggling master checkbox, allChecked:', allChecked);
     const newChecked = items.reduce((acc, _, index) => {
       acc[index] = !allChecked;
       return acc;
     }, {} as { [key: number]: boolean });
 
-    console.log('New master checked state:', newChecked);
     setChecked(newChecked);
   };
 
   const areAllChecked = () => {
-    const result = items.length > 0 && items.every((_, index) => checked[index]);
-    console.log('Are all checked:', result);
-    return result;
+    return items.length > 0 && items.every((_, index) => checked[index]);
   };
 
   const areSomeChecked = () => {
-    const result = items.some((_, index) => checked[index]) && !areAllChecked();
-    console.log('Are some checked:', result);
-    return result;
+    return items.some((_, index) => checked[index]) && !areAllChecked();
   };
 
   const masterChecked = areAllChecked();
@@ -77,7 +69,7 @@ const SimpleListDialog: React.FC<SimpleListDialogProps> = ({ open, onClose, item
         </Box>
         <List>
           {items.map((item, index) => (
-            <ListItem key={index} button onClick={handleToggle(index)}>
+            <ListItem key={index}>
               <Box display="flex" alignItems="center">
                 <Checkbox
                   edge="start"
