@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Accordion, AccordionSummary, AccordionDetails, Button, Popper, MenuItem, Box, Typography, Paper, ClickAwayListener, MenuList } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { SidebarMenuButton } from '../types';
+import { ReportTypes, SidebarMenuButton } from '../types';
 
 interface SidebarProps {
   onButtonClick: (label: string, subLabel?: string) => void;
@@ -91,9 +91,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onButtonClick }) => {
             <Paper>
               <ClickAwayListener onClickAway={handleClickAway}>
                 <MenuList>
-                  <MenuItem onClick={() => handleClose('Spending')}>Spending</MenuItem>
-                  <MenuItem onClick={() => handleClose('Unidentified Transactions')}>Unidentified Transactions</MenuItem>
-                  <MenuItem onClick={() => handleClose('Fixed Expenses')}>Fixed Expenses</MenuItem>
+                  <MenuItem onClick={() => handleClose(ReportTypes.Spending)}>{ReportTypes.Spending}</MenuItem>
+                  <MenuItem onClick={() => handleClose(ReportTypes.FixedExpenses)}>{ReportTypes.FixedExpenses}</MenuItem>
+                  <MenuItem onClick={() => handleClose(ReportTypes.UnidentifiedTransactions)}>{ReportTypes.UnidentifiedTransactions}</MenuItem>
                 </MenuList>
               </ClickAwayListener>
             </Paper>
