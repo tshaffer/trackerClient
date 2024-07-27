@@ -21,6 +21,10 @@ const CreditCardStatementsTable: React.FC<CreditCardStatementsTableProps> = (pro
     return null;
   }
 
+  const handleStatementClicked = (statement: CreditCardStatement) => {
+    console.log('statement clicked', statement);
+  }
+
   return (
     <React.Fragment>
       <div className="grid-table-container">
@@ -36,7 +40,12 @@ const CreditCardStatementsTable: React.FC<CreditCardStatementsTableProps> = (pro
           {props.statements.map((statement: CreditCardStatement) => (
             <div className="grid-table-row" key={statement.id}>
               <div className="grid-table-cell"></div>
-              <div className="grid-table-cell">{statement.fileName}</div>
+              <div
+                className="grid-table-cell-clickable"
+                onClick={() => handleStatementClicked(statement)}
+              >
+                {statement.fileName}
+              </div>
               <div className="grid-table-cell">{formatDate(statement.startDate)}</div>
               <div className="grid-table-cell">{formatDate(statement.endDate)}</div>
               <div className="grid-table-cell">{statement.transactionCount}</div>
