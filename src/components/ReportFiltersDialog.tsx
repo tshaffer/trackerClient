@@ -42,11 +42,25 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
     }
   };
 
-  const allChecked: boolean = props.categories.length > 0 && props.categories.every(category => props.categoryIdsToExclude.has(category.id));
+  const areAllChecked: boolean = props.categories.length > 0 && props.categories.every(category => props.categoryIdsToExclude.has(category.id));
+  const areSomeButNotAllChecked: boolean = props.categories.some(category => props.categoryIdsToExclude.has(category.id)) && !areAllChecked;
+  const areNoneChecked: boolean = props.categories.length > 0 && props.categories.every(category => !props.categoryIdsToExclude.has(category.id));
 
   const handleMasterToggle = () => {
 
-    const newCheckedState = !allChecked;
+    // areAllChecked => false
+    // areNoneChecked => true
+    // areSomeButNotAllChecked => false
+    // clicking on indeterminate checkbox should set all to false
+
+    let newCheckedState: boolean;
+    if (areAllChecked) {
+      newCheckedState = false;
+    } else if (areNoneChecked) {
+      newCheckedState = true;
+    } else {
+      newCheckedState = false;
+    }
 
     props.categories.forEach(category => {
       if (newCheckedState) {
@@ -57,9 +71,6 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
     });
   };
 
-  const areSomeChecked: boolean = props.categories.some(category => props.categoryIdsToExclude.has(category.id)) && !allChecked;
-
-  const indeterminate = areSomeChecked;
 
   return (
     <Dialog open={props.open} onClose={props.onClose}>
@@ -68,12 +79,12 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
         <Box display="flex" alignItems="center" mb={0} mt={0}>
           <Checkbox
             edge="start"
-            indeterminate={indeterminate}
-            checked={allChecked}
+            indeterminate={areSomeButNotAllChecked}
+            checked={areAllChecked}
             onChange={handleMasterToggle}
           />
           <Box sx={{ marginLeft: '4px' }}>
-            <ListItemText primary={!allChecked ? 'All' : 'None'} />
+            <ListItemText primary={areNoneChecked ? 'All': 'None'} />
           </Box>
         </Box>
         <Typography variant="body1" gutterBottom>
