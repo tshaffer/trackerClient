@@ -30,8 +30,6 @@ interface ReportFiltersDialogProps extends ReportFiltersDialogPropsFromParent {
 
 const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
 
-  const [checked, setChecked] = useState({} as any);
-
   if (!props.open) {
     return null;
   }
@@ -44,8 +42,10 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
     }
   };
 
+  const allChecked: boolean = props.categories.length > 0 && props.categories.every(category => props.categoryIdsToExclude.has(category.id));
+
   const handleMasterToggle = () => {
-    const allChecked = props.categories.length > 0 && props.categories.every(category => props.categoryIdsToExclude.has(category.id));
+
     const newCheckedState = !allChecked;
 
     props.categories.forEach(category => {
@@ -57,10 +57,8 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
     });
   };
 
-  const areAllChecked: boolean = props.categories.length > 0 && props.categories.every(category => props.categoryIdsToExclude.has(category.id));
-  const areSomeChecked: boolean = props.categories.some(category => props.categoryIdsToExclude.has(category.id)) && !areAllChecked;
+  const areSomeChecked: boolean = props.categories.some(category => props.categoryIdsToExclude.has(category.id)) && !allChecked;
 
-  const masterChecked: boolean = areAllChecked;
   const indeterminate = areSomeChecked;
 
   return (
@@ -71,9 +69,12 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
           <Checkbox
             edge="start"
             indeterminate={indeterminate}
-            checked={areAllChecked}
+            checked={allChecked}
             onChange={handleMasterToggle}
           />
+          <Box sx={{ marginLeft: '4px' }}>
+            <ListItemText primary={!allChecked ? 'All': 'None'} />
+          </Box>
         </Box>
         <Typography variant="body1" gutterBottom>
           Categories to exclude
