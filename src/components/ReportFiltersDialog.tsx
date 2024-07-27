@@ -28,33 +28,102 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
 
   const [checked, setChecked] = useState({} as any);
 
-  const handleToggle = (index: number) => () => {
-    setChecked((prevState: any) => ({
-      ...prevState,
-      [index]: !prevState[index]
-    }));
-  };
+  // const handleToggle = (index: number) => () => {
+  //   setChecked((prevState: any) => ({
+  //     ...prevState,
+  //     [index]: !prevState[index]
+  //   }));
+  // };
+
   if (!props.open) {
     return null;
   }
 
+  // return (
+  //   <Dialog open={props.open} onClose={props.onClose}>
+  //     <DialogTitle>Filters</DialogTitle>
+  //     <DialogContent>
+  //       <Typography variant="body1" gutterBottom>
+  //         Specify the Categories to exclude from the report.
+  //       </Typography>
+  //       <List>
+  //         {props.items.map((item, index) => (
+  //           <ListItem key={index} button onClick={handleToggle(index)}>
+  //             <Box display="flex" alignItems="center">
+  //               <Checkbox
+  //                 edge="start"
+  //                 onChange={handleToggle(index)}
+  //                 checked={checked[index] || false}
+  //               />
+  //               <Box ml={'4px'}>
+  //                 <ListItemText primary={item.label} />
+  //               </Box>
+  //             </Box>
+  //           </ListItem>
+  //         ))}
+  //       </List>
+  //     </DialogContent>
+  //     <DialogActions>
+  //       <Button onClick={props.onClose} color="primary">
+  //         Close
+  //       </Button>
+  //     </DialogActions>
+  //   </Dialog>
+  // );
+
+  const handleToggle = (index: number) => () => {
+    setChecked((prevState: any) => {
+      const newChecked = { ...prevState, [index]: !prevState[index] };
+      return newChecked;
+    });
+  };
+
+  const handleMasterToggle = () => {
+    const allChecked = areAllChecked();
+    const newChecked = props.items.reduce((acc, _, index) => {
+      acc[index] = !allChecked;
+      return acc;
+    }, {} as { [key: number]: boolean });
+
+    setChecked(newChecked);
+  };
+
+  const areAllChecked = () => {
+    return props.items.length > 0 && props.items.every((_, index) => checked[index]);
+  };
+
+  const areSomeChecked = () => {
+    return props.items.some((_, index) => checked[index]) && !areAllChecked();
+  };
+
+  const masterChecked = areAllChecked();
+  const indeterminate = areSomeChecked();
+
   return (
     <Dialog open={props.open} onClose={props.onClose}>
-      <DialogTitle>Filters</DialogTitle>
-      <DialogContent>
+      <DialogTitle sx={{ paddingBottom: '0px' }}>Report Filters</DialogTitle>
+      <DialogContent sx={{ paddingBottom: '0px' }}>
+        <Box display="flex" alignItems="center" mb={0} mt={0}>
+          <Checkbox
+            edge="start"
+            indeterminate={indeterminate}
+            checked={masterChecked}
+            onChange={handleMasterToggle}
+          />
+        </Box>
         <Typography variant="body1" gutterBottom>
-          Specify the Categories to exclude from the report.
+          Categories to display
         </Typography>
-        <List>
+        <List sx={{ paddingTop: '0px', paddingBottom: '0px' }}>
           {props.items.map((item, index) => (
-            <ListItem key={index} button onClick={handleToggle(index)}>
+            <ListItem key={index} sx={{ padding: '0px' }}>
               <Box display="flex" alignItems="center">
                 <Checkbox
                   edge="start"
                   onChange={handleToggle(index)}
                   checked={checked[index] || false}
                 />
-                <Box ml={'4px'}>
+                <Box sx={{ marginLeft: '4px' }}>
                   <ListItemText primary={item.label} />
                 </Box>
               </Box>
@@ -62,13 +131,12 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
           ))}
         </List>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={props.onClose} color="primary">
-          Close
-        </Button>
+      <DialogActions sx={{ paddingTop: '0px' }}>
+        <Button onClick={props.onClose} color="secondary">Cancel</Button>
       </DialogActions>
     </Dialog>
   );
+
 };
 
 function mapStateToProps(state: any, ownProps: ReportFiltersDialogPropsFromParent) {

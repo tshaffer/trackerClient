@@ -103,18 +103,18 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
 
   return (
     <React.Fragment>
-      <SimpleListDialog
+      {/* <SimpleListDialog
         open={reportFiltersDialogOpen}
         onClose={handleCloseReportFiltersDialog}
         items={[{ label: 'pizza' }, { label: 'hot dogs' }, { label: 'burritos' }]}
         description="Select items from the list below:"
         spacing={16} // Set spacing to 16 pixels
-      />
-      {/* <ReportFiltersDialog
+      /> */}
+      <ReportFiltersDialog
         open={reportFiltersDialogOpen}
         onClose={handleCloseReportFiltersDialog}
         items={[{ label: 'pizza' }, { label: 'hot dogs' }, { label: 'burritos' }]}
-      /> */}
+      />
       <Box sx={{ width: '100%' }}>
         <Typography variant="h5">{SidebarMenuButton.Reports}</Typography>
         <Tabs value={tabIndex} onChange={handleTabChange}>
