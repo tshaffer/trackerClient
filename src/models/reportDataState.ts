@@ -18,6 +18,8 @@ export const SET_GENERATED_REPORT_END_DATE = 'SET_GENERATED_REPORT_END_DATE';
 export const SET_MIN_MAX_TRANSACTION_DATES = 'SET_MIN_MAX_TRANSACTION_DATES';
 export const SET_REPORT_STATEMENT_ID = 'SET_REPORT_STATEMENT_ID';
 export const UPDATE_CHECK_TRANSACTION = 'UPDATE_CHECK_TRANSACTION';
+export const ADD_CATEGORY_ID_TO_EXCLUDE = 'ADD_CATEGORY_ID_TO_EXCLUDE';
+export const REMOVE_CATEGORY_ID_TO_EXCLUDE = 'REMOVE_CATEGORY_ID_TO_EXCLUDE';
 
 // ------------------------------------
 // Actions
@@ -195,6 +197,37 @@ export const updateCheckTransactionRedux = (
   };
 };
 
+interface AddCategoryIdToExcludePayload {
+  categoryIdToExclude: string;
+}
+
+export const addCategoryIdToExclude = (
+  categoryIdToExclude: string
+): any => {
+  return {
+    type: ADD_CATEGORY_ID_TO_EXCLUDE,
+    payload: {
+      categoryIdToExclude,
+    },
+  };
+};
+
+interface RemoveCategoryIdToExcludePayload {
+  categoryIdToExclude: string;
+}
+
+export const removeCategoryIdToExclude = (
+  categoryIdToExclude: string
+): any => {
+  return {
+    type: REMOVE_CATEGORY_ID_TO_EXCLUDE,
+    payload: {
+      categoryIdToExclude,
+    },
+  };
+};
+
+
 // ------------------------------------
 // Reducer
 // ------------------------------------
@@ -210,11 +243,12 @@ const initialState: ReportDataState = {
   total: 0,
   minMaxTransactionDates: { minDate: '', maxDate: '' },
   reportStatementId: '',
+  categoryIdsToExclude: new Set(),
 };
 
 export const reportDataStateReducer = (
   state: ReportDataState = initialState,
-  action: TrackerModelBaseAction<SetStatementDataPayload & SetTransactionsByCategoryPayload & SetUnidentifiedBankTransactionsPayload & SetDateRangeTypePayload & SetStartDatePayload & SetEndDatePayload & SetGeneratedReportStartDatePayload & SetGeneratedReportEndDatePayload & SetMinMaxTransactionDatesPayload & SetReportStatementIdPayload & UpdateCheckTransactionPayload>
+  action: TrackerModelBaseAction<SetStatementDataPayload & SetTransactionsByCategoryPayload & SetUnidentifiedBankTransactionsPayload & SetDateRangeTypePayload & SetStartDatePayload & SetEndDatePayload & SetGeneratedReportStartDatePayload & SetGeneratedReportEndDatePayload & SetMinMaxTransactionDatesPayload & SetReportStatementIdPayload & UpdateCheckTransactionPayload & AddCategoryIdToExcludePayload & RemoveCategoryIdToExcludePayload>
 ): ReportDataState => {
   switch (action.type) {
     case SET_STATEMENT_DATA: {
@@ -255,6 +289,16 @@ export const reportDataStateReducer = (
         }
         return transaction;
       });
+      return newState;
+    }
+    case ADD_CATEGORY_ID_TO_EXCLUDE: {
+      const newState = cloneDeep(state);
+      newState.categoryIdsToExclude.add(action.payload.categoryIdToExclude);
+      return newState;
+    }
+    case REMOVE_CATEGORY_ID_TO_EXCLUDE: {
+      const newState = cloneDeep(state);
+      newState.categoryIdsToExclude.delete(action.payload.categoryIdToExclude);
       return newState;
     }
     default:

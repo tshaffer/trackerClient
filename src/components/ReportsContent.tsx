@@ -105,7 +105,6 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
       <ReportFiltersDialog
         open={reportFiltersDialogOpen}
         onClose={handleCloseReportFiltersDialog}
-        items={[{ label: 'pizza' }, { label: 'hot dogs' }, { label: 'burritos' }]}
       />
       <Box sx={{ width: '100%' }}>
         <Typography variant="h5">{SidebarMenuButton.Reports}</Typography>

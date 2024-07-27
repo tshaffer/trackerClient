@@ -12,15 +12,20 @@ import {
   Typography,
   Box
 } from '@mui/material';
-import { TrackerDispatch } from '../models';
+import { TrackerDispatch, addCategoryIdToExclude, removeCategoryIdToExclude } from '../models';
+import { getCategories, getCategoryIdsToExclude } from '../selectors';
+import { Category } from '../types';
 
 export interface ReportFiltersDialogPropsFromParent {
-  items: any[];
   open: boolean;
   onClose: () => void;
 }
 
 interface ReportFiltersDialogProps extends ReportFiltersDialogPropsFromParent {
+  categories: Category[];
+  categoryIdsToExclude: Set<string>;
+  onAddCategoryIdToExclude: (categoryId: string) => any;
+  onRemoveCategoryIdToExclude: (categoryId: string) => any;
 }
 
 const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
@@ -31,33 +36,32 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
     return null;
   }
 
-  const handleToggle = (index: number) => () => {
-    setChecked((prevState: any) => {
-      const newChecked = { ...prevState, [index]: !prevState[index] };
-      return newChecked;
-    });
+  const handleToggle = (id: string) => () => {
+    if (props.categoryIdsToExclude.has(id)) {
+      props.onRemoveCategoryIdToExclude(id);
+    } else {
+      props.onAddCategoryIdToExclude(id);
+    }
   };
 
   const handleMasterToggle = () => {
-    const allChecked = areAllChecked();
-    const newChecked = props.items.reduce((acc, _, index) => {
-      acc[index] = !allChecked;
-      return acc;
-    }, {} as { [key: number]: boolean });
+    const allChecked = props.categories.length > 0 && props.categories.every(category => props.categoryIdsToExclude.has(category.id));
+    const newCheckedState = !allChecked;
 
-    setChecked(newChecked);
+    props.categories.forEach(category => {
+      if (newCheckedState) {
+        props.onAddCategoryIdToExclude(category.id);
+      } else {
+        props.onRemoveCategoryIdToExclude(category.id);
+      }
+    });
   };
 
-  const areAllChecked = () => {
-    return props.items.length > 0 && props.items.every((_, index) => checked[index]);
-  };
+  const areAllChecked: boolean = props.categories.length > 0 && props.categories.every(category => props.categoryIdsToExclude.has(category.id));
+  const areSomeChecked: boolean = props.categories.some(category => props.categoryIdsToExclude.has(category.id)) && !areAllChecked;
 
-  const areSomeChecked = () => {
-    return props.items.some((_, index) => checked[index]) && !areAllChecked();
-  };
-
-  const masterChecked = areAllChecked();
-  const indeterminate = areSomeChecked();
+  const masterChecked: boolean = areAllChecked;
+  const indeterminate = areSomeChecked;
 
   return (
     <Dialog open={props.open} onClose={props.onClose}>
@@ -67,24 +71,24 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
           <Checkbox
             edge="start"
             indeterminate={indeterminate}
-            checked={masterChecked}
+            checked={areAllChecked}
             onChange={handleMasterToggle}
           />
         </Box>
         <Typography variant="body1" gutterBottom>
-          Categories to display
+          Categories to exclude
         </Typography>
         <List sx={{ paddingTop: '0px', paddingBottom: '0px' }}>
-          {props.items.map((item, index) => (
-            <ListItem key={index} sx={{ padding: '0px' }}>
+          {props.categories.map((category) => (
+            <ListItem key={category.id} sx={{ padding: '0px' }}>
               <Box display="flex" alignItems="center">
                 <Checkbox
                   edge="start"
-                  onChange={handleToggle(index)}
-                  checked={checked[index] || false}
+                  onChange={handleToggle(category.id)}
+                  checked={props.categoryIdsToExclude.has(category.id)}
                 />
                 <Box sx={{ marginLeft: '4px' }}>
-                  <ListItemText primary={item.label} />
+                  <ListItemText primary={category.name} />
                 </Box>
               </Box>
             </ListItem>
@@ -92,7 +96,7 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
         </List>
       </DialogContent>
       <DialogActions sx={{ paddingTop: '0px' }}>
-        <Button onClick={props.onClose} color="secondary">Cancel</Button>
+        <Button onClick={props.onClose} color="primary" sx={{ mr: 2 }}>Close</Button>
       </DialogActions>
     </Dialog>
   );
@@ -100,11 +104,15 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
 
 function mapStateToProps(state: any, ownProps: ReportFiltersDialogPropsFromParent) {
   return {
+    categories: getCategories(state),
+    categoryIdsToExclude: getCategoryIdsToExclude(state),
   };
 }
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
+    onAddCategoryIdToExclude: addCategoryIdToExclude,
+    onRemoveCategoryIdToExclude: removeCategoryIdToExclude,
   }, dispatch);
 };
 

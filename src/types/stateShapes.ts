@@ -34,6 +34,7 @@ export interface ReportDataState {
   total: number;
   minMaxTransactionDates: MinMaxDates;
   reportStatementId: string;
+  categoryIdsToExclude: Set<string>;
 }
 
 export interface CategoryState {
