@@ -13,7 +13,7 @@ import '../styles/Tracker.css';
 import { CategorizedTransaction, Category, CategoryAssignmentRule, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
 import { formatCurrency, formatPercentage, formatDate, expensesPerMonth, roundTo } from '../utilities';
 import { TrackerDispatch } from '../models';
-import { getStartDate, getEndDate, getTransactionsByCategory, getGeneratedReportStartDate, getGeneratedReportEndDate, getCategories, getCategoryByCategoryNameLUT, getCategoryByName } from '../selectors';
+import { getStartDate, getEndDate, getTransactionsByCategory, getGeneratedReportStartDate, getGeneratedReportEndDate, getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getCategoryIdsToExclude } from '../selectors';
 import { cloneDeep, isEmpty, isNil } from 'lodash';
 import { Tooltip } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
@@ -31,6 +31,7 @@ interface SpendingReportTableProps {
   generatedReportEndDate: string;
   transactionsByCategoryId: StringToTransactionsLUT;
   ignoreCategory: Category | undefined;
+  categoryIdsToExclude: Set<string>;
   onUpdateTransaction: (transaction: Transaction) => any;
   onAddCategoryAssignmentRule: (categoryAssignmentRule: CategoryAssignmentRule) => any;
 }
@@ -204,9 +205,9 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
   };
 
   let trimmedCategories = cloneDeep(props.categories);
-  if (!isNil(props.ignoreCategory)) {
-    trimmedCategories = props.categories.filter(category => category.id !== props.ignoreCategory!.id)
-  }
+  trimmedCategories = props.categories.filter(category => 
+    !props.categoryIdsToExclude.has(category.id) && category.id !== props.ignoreCategory?.id
+  );
 
   const categoryMenuItems: CategoryMenuItem[] = buildCategoryMenuItems(trimmedCategories);
 
@@ -312,6 +313,7 @@ function mapStateToProps(state: any) {
     generatedReportEndDate: getGeneratedReportEndDate(state),
     transactionsByCategoryId: getTransactionsByCategory(state),
     ignoreCategory: getCategoryByName(state, 'Ignore'),
+    categoryIdsToExclude: getCategoryIdsToExclude(state),
   };
 }
 
