@@ -16,6 +16,10 @@ export const getTransactionById = (state: TrackerState, id: string): Transaction
   return state.transactionsState.byId[id];
 };
 
+export const getTransactionsByStatementId = (state: TrackerState, statementId: string): Transaction[] => {
+  return getTransactions(state).filter((transaction) => transaction.statementId === statementId);
+}
+
 export const getTransactionsByCategory = (state: TrackerState): StringToTransactionsLUT => {
 
   const categorizedStatementData: CategorizedStatementData = doGetTransactionsByCategory(state);
