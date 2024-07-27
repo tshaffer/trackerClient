@@ -12,9 +12,12 @@ import { uploadFile } from '../controllers';
 import CheckingAccountStatementsTable from './CheckingAccountStatementsTable';
 import CreditCardStatementsTable from './CreditCardStatementsTable';
 import { SidebarMenuButton } from '../types';
+import { getCreditCardStatementId } from '../selectors';
+import CreditCardStatement from './CreditCardStatement';
 
 export interface StatementsContentPropsFromParent {
   activeTab: number;
+  creditCardStatementId: string;
 }
 
 interface StatementsContentProps extends StatementsContentPropsFromParent {
@@ -38,6 +41,35 @@ const StatementsContent: React.FC<StatementsContentProps> = (props: StatementsCo
     setShowUploadStatementDialog(false);
   };
 
+  const renderCreditStatementsContent = () => {
+    if (props.creditCardStatementId === '') {
+      return (
+        <CreditCardStatementsTable />
+      );
+    } else {
+      return (
+        <CreditCardStatement />
+      );
+    }
+  };
+
+  const renderContent = () => {
+    return (
+      <Box>
+        {tabIndex === 0 && (
+          <Box>
+            {renderCreditStatementsContent()}
+          </Box>
+        )}
+        {tabIndex === 1 && (
+          <Box>
+            <CheckingAccountStatementsTable />
+          </Box>
+        )}
+      </Box>
+    )
+  };
+
   return (
     <div>
       <UploadStatementDialog
@@ -58,18 +90,7 @@ const StatementsContent: React.FC<StatementsContentProps> = (props: StatementsCo
             Upload
           </Button>
         </Box>
-        <Box>
-          {tabIndex === 0 && (
-            <Box>
-              <CreditCardStatementsTable />
-            </Box>
-          )}
-          {tabIndex === 1 && (
-            <Box>
-              <CheckingAccountStatementsTable />
-            </Box>
-          )}
-        </Box>
+        {renderContent()}
       </Box>
     </div>
 
@@ -78,6 +99,7 @@ const StatementsContent: React.FC<StatementsContentProps> = (props: StatementsCo
 
 function mapStateToProps(state: any) {
   return {
+    creditCardStatementId: getCreditCardStatementId(state),
   };
 }
 

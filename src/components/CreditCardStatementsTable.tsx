@@ -7,12 +7,13 @@ import { bindActionCreators } from 'redux';
 import { isEmpty } from 'lodash';
 
 import { CreditCardStatement } from '../types';
-import { TrackerDispatch } from '../models';
+import { TrackerDispatch, setCreditCardStatementId } from '../models';
 import { getCreditCardStatements } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
 
 interface CreditCardStatementsTableProps {
   statements: CreditCardStatement[];
+  onSetCreditCardStatementId: (creditCardStatementId: string) => any;
 }
 
 const CreditCardStatementsTable: React.FC<CreditCardStatementsTableProps> = (props: CreditCardStatementsTableProps) => {
@@ -23,6 +24,7 @@ const CreditCardStatementsTable: React.FC<CreditCardStatementsTableProps> = (pro
 
   const handleStatementClicked = (statement: CreditCardStatement) => {
     console.log('statement clicked', statement);
+    props.onSetCreditCardStatementId(statement.id);
   }
 
   return (
@@ -67,6 +69,7 @@ function mapStateToProps(state: any) {
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
+    onSetCreditCardStatementId: setCreditCardStatementId,
   }, dispatch);
 };
 

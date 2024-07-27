@@ -17,6 +17,7 @@ export interface AppState {
 
 export interface CreditCardStatementState {
   creditCardStatements: CreditCardStatement[];
+  creditCardStatementId: string;
 }
 
 export interface CheckingAccountStatementState {
