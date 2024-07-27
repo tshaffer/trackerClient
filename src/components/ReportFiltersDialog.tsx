@@ -73,7 +73,7 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
             onChange={handleMasterToggle}
           />
           <Box sx={{ marginLeft: '4px' }}>
-            <ListItemText primary={!allChecked ? 'All': 'None'} />
+            <ListItemText primary={!allChecked ? 'All' : 'None'} />
           </Box>
         </Box>
         <Typography variant="body1" gutterBottom>
@@ -105,7 +105,7 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
 
 function mapStateToProps(state: any, ownProps: ReportFiltersDialogPropsFromParent) {
   return {
-    categories: getCategories(state),
+    categories: getCategories(state).slice().sort((a, b) => a.name.localeCompare(b.name)),
     categoryIdsToExclude: getCategoryIdsToExclude(state),
   };
 }
