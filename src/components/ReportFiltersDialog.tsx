@@ -48,19 +48,7 @@ const ReportFiltersDialog = (props: ReportFiltersDialogProps) => {
 
   const handleMasterToggle = () => {
 
-    // areAllChecked => false
-    // areNoneChecked => true
-    // areSomeButNotAllChecked => false
-    // clicking on indeterminate checkbox should set all to false
-
-    let newCheckedState: boolean;
-    if (areAllChecked) {
-      newCheckedState = false;
-    } else if (areNoneChecked) {
-      newCheckedState = true;
-    } else {
-      newCheckedState = false;
-    }
+    const newCheckedState: boolean = areNoneChecked;
 
     props.categories.forEach(category => {
       if (newCheckedState) {
