@@ -2,18 +2,18 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { TrackerDispatch } from '../models';
-import { Statement, Transaction } from '../types';
-import { getCreditCardStatementById, getCreditCardStatementId, getTransactions, getTransactionsByStatementId } from '../selectors';
-import { formatCurrency, formatDate } from '../utilities';
+import { CreditCardTransaction, Statement, Transaction } from '../types';
+import { getCreditCardStatementById, getCreditCardStatementId, getTransactionsByStatementId } from '../selectors';
 
 import '../styles/Grid.css';
 import { loadTransactions } from '../controllers';
 import { isNil } from 'lodash';
+import CreditCardStatementTransactionRow from './CreditCardStatementTransactionRow';
 
 interface CreditCardStatementProps {
   creditCardStatementId: string;
   creditCardStatement: Statement | null;
-  transactions: Transaction[];
+  creditCardTransactions: CreditCardTransaction[];
   onLoadTransactions: (startDate: string, endDate: string, includeCreditCardTransactions: boolean, includeCheckingAccountTransactions: boolean) => any;
 }
 
@@ -42,14 +42,13 @@ const CreditCardStatement: React.FC<CreditCardStatementProps> = (props: CreditCa
           <div className="grid-table-cell">Date</div>
           <div className="grid-table-cell">Amount</div>
           <div className="grid-table-cell">Description</div>
+          <div className="grid-table-cell">Category from statement</div>
+          <div className="grid-table-cell">Category from rule</div>
         </div>
         <div className="grid-table-body">
-          {props.transactions.map((transaction: Transaction) => (
-            <div className="grid-table-row" key={transaction.id}>
-              <div className="grid-table-cell"></div>
-              <div className="grid-table-cell">{formatDate(transaction.transactionDate)}</div>
-              <div className="grid-table-cell">{formatCurrency(transaction.amount)}</div>
-              <div className="grid-table-cell">{transaction.userDescription}</div>
+          {props.creditCardTransactions.map((creditCardTransaction: CreditCardTransaction) => (
+            <div className="grid-table-row" key={creditCardTransaction.id}>
+              <CreditCardStatementTransactionRow creditCardTransactionId={creditCardTransaction.id} />
             </div>
           ))}
         </div>
@@ -62,7 +61,7 @@ function mapStateToProps(state: any) {
   return {
     creditCardStatementId: getCreditCardStatementId(state),
     creditCardStatement: getCreditCardStatementById(state, getCreditCardStatementId(state)),
-    transactions: getTransactionsByStatementId(state, getCreditCardStatementId(state)),
+    creditCardTransactions: getTransactionsByStatementId(state, getCreditCardStatementId(state)) as CreditCardTransaction[],
   };
 }
 

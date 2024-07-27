@@ -44,7 +44,7 @@ export const getUnidentifiedBankTransactions = (state: TrackerState): BankTransa
 }
 
 export const getFixedExpensesByCategory = (state: TrackerState): StringToTransactionsLUT => {
-  
+
   const categorizedStatementData: CategorizedStatementData = doGetTransactionsByCategory(state);
   const { fixedExpenses } = categorizedStatementData;
 
@@ -151,6 +151,30 @@ const categorizeTransactions = (
     fixedExpenses,
   };
 };
+
+export const getTransactionCategoryFromCategoryAssignmentRule = (state: TrackerState, transaction: BankTransaction): Category | null => {
+
+  const categories: Category[] = getCategories(state);
+  const categoryAssignmentRules: CategoryAssignmentRule[] = getCategoryAssignmentRules(state);
+
+  // for (const categoryAssignmentRule of categoryAssignmentRules) {
+  //   if (transaction.userDescription.includes(categoryAssignmentRule.pattern)) {
+  //     const categoryId = categoryAssignmentRule.categoryId;
+  //     for (const category of categories) {
+  //       if (category.id === categoryId) {
+  //         return category;
+  //       }
+  //     }
+  //   }
+  // }
+  // return null;
+
+  const categoryAssignmentRule = categoryAssignmentRules.find(rule => transaction.userDescription.includes(rule.pattern));
+  if (categoryAssignmentRule) {
+    return categories.find(category => category.id === categoryAssignmentRule.categoryId) || null;
+  }
+  return null;
+}
 
 const categorizeTransaction = (
   transaction: BankTransaction,
