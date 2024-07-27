@@ -94,9 +94,9 @@ const ReportsContent: React.FC<ReportsContentProps> = (props: ReportsContentProp
       default:
         return <SpendingReportTable />;
       case 1:
-        return <UnIdentifiedTransactionTable />;
-      case 2:
         return <FixedExpensesReport />;
+      case 2:
+        return <UnIdentifiedTransactionTable />;
     }
   }
 
