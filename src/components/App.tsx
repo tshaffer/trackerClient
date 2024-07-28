@@ -10,7 +10,7 @@ import { TrackerDispatch, setAppInitialized } from '../models';
 import { getAppInitialized } from '../selectors';
 
 import { initializeServer } from '../controllers/app';
-import CreditCardStatement from './CreditCardStatement';
+import { CreditCardStatementTableWrapper } from './CreditCardStatementsTable';
 
 export interface AppProps {
   appInitialized: boolean;
@@ -57,7 +57,12 @@ const App = (props: AppProps) => {
   return (
     <Routes>
       <Route path="/" element={<MainContent />} />
-      <Route path="/creditCardStatement/:id" element={<CreditCardStatement />} />
+      <Route
+        path="/creditCardStatement/:id"
+        element={
+          <CreditCardStatementTableWrapper />
+        }
+      />
     </Routes>
   );
 

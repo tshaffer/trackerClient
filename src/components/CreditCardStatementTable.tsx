@@ -11,30 +11,27 @@ import { loadTransactions } from '../controllers';
 import { isNil } from 'lodash';
 import CreditCardStatementTransactionRow from './CreditCardStatementTransactionRow';
 import { Button } from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
 
-interface CreditCardStatementProps {
-  // creditCardStatementId: string;
-  creditCardStatement: Statement | null;
-  creditCardTransactions: CreditCardTransaction[];
-  onLoadTransactions: (startDate: string, endDate: string, includeCreditCardTransactions: boolean, includeCheckingAccountTransactions: boolean) => any;
-  // onSetCreditCardStatementId: (creditCardStatementId: string) => any;
+interface CreditCardStatementTablePropsFromParent {
+  creditCardStatementId: string;
+  navigate: any;
 }
 
-const CreditCardStatement: React.FC<CreditCardStatementProps> = (props: CreditCardStatementProps) => {
+interface CreditCardStatementTableProps extends CreditCardStatementTablePropsFromParent {
+  creditCardTransactions: CreditCardTransaction[];
+  onLoadTransactions: (startDate: string, endDate: string, includeCreditCardTransactions: boolean, includeCheckingAccountTransactions: boolean) => any;
+}
 
-  const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+const CreditCardStatementTable: React.FC<CreditCardStatementTableProps> = (props: CreditCardStatementTableProps) => {
 
-  if (isNil(id)) {
+  if (isNil(props.creditCardStatementId)) {
     return null;
   }
 
-  console.log('render CreditCardStatement', id);
+  console.log('render CreditCardStatementTable', props.creditCardStatementId);
 
   return (
     <React.Fragment>
-      <Button onClick={() => navigate('/')}>Back to Home</Button>
       <div className="statement-grid-table-container">
         <div className="grid-table-header">
           <div className="grid-table-cell"></div>
@@ -58,19 +55,9 @@ const CreditCardStatement: React.FC<CreditCardStatementProps> = (props: CreditCa
   );
 }
 
-function mapStateToProps(state: any) {
-  // const { id } = useParams<{ id: string }>();
-  const id = 'f2a4eb22-a01e-40c3-9737-62a1d966157f';
-  console.log('mapStateToProps CreditCardStatement', id);
-  if (isNil(id)) {
-    return {
-      creditCardStatement: null,
-      creditCardTransactions: [],
-    };
-  }
+function mapStateToProps(state: any, ownProps: CreditCardStatementTablePropsFromParent) {
   return {
-    creditCardStatement: getCreditCardStatementById(state, id as string),
-    creditCardTransactions: getTransactionsByStatementId(state, id as string) as CreditCardTransaction[],
+    creditCardTransactions: getTransactionsByStatementId(state, ownProps.creditCardStatementId) as CreditCardTransaction[],
   };
 }
 
@@ -80,5 +67,5 @@ const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   }, dispatch);
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(CreditCardStatement);
+export default connect(mapStateToProps, mapDispatchToProps)(CreditCardStatementTable);
 

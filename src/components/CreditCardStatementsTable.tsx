@@ -10,8 +10,9 @@ import { CreditCardStatement } from '../types';
 import { TrackerDispatch, setCreditCardStatementId } from '../models';
 import { getCreditCardStatements } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { loadTransactions } from '../controllers';
+import CreditCardStatementTable from './CreditCardStatementTable';
 
 interface CreditCardStatementsTableProps {
   statements: CreditCardStatement[];
@@ -82,5 +83,12 @@ const mapDispatchToProps = (dispatch: TrackerDispatch) => {
     onSetCreditCardStatementId: setCreditCardStatementId,
   }, dispatch);
 };
+
+export const CreditCardStatementTableWrapper = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  return <CreditCardStatementTable creditCardStatementId={id as string} navigate={navigate} />;
+};
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(CreditCardStatementsTable);

@@ -13,7 +13,7 @@ import CheckingAccountStatementsTable from './CheckingAccountStatementsTable';
 import CreditCardStatementsTable from './CreditCardStatementsTable';
 import { SidebarMenuButton } from '../types';
 import { getCreditCardStatementId } from '../selectors';
-import CreditCardStatement from './CreditCardStatement';
+import CreditCardStatement from './CreditCardStatementTable';
 
 export interface StatementsContentPropsFromParent {
   activeTab: number;
@@ -41,24 +41,12 @@ const StatementsContent: React.FC<StatementsContentProps> = (props: StatementsCo
     setShowUploadStatementDialog(false);
   };
 
-  const renderCreditStatementsContent = () => {
-    if (props.creditCardStatementId === '') {
-      return (
-        <CreditCardStatementsTable />
-      );
-    } else {
-      return (
-        <CreditCardStatement />
-      );
-    }
-  };
-
   const renderContent = () => {
     return (
       <Box>
         {tabIndex === 0 && (
           <Box>
-            {renderCreditStatementsContent()}
+            <CreditCardStatementsTable />
           </Box>
         )}
         {tabIndex === 1 && (
