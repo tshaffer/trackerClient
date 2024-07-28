@@ -44,6 +44,7 @@ const CreditCardStatement: React.FC<CreditCardStatementProps> = (props: CreditCa
           <div className="grid-table-cell">Amount</div>
           <div className="grid-table-cell">Description</div>
           <div className="grid-table-cell">Category from statement</div>
+          <div className="grid-table-cell"></div>
           <div className="grid-table-cell">Category from rule</div>
           <div className="grid-table-cell">Pattern</div>
         </div>
