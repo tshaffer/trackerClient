@@ -1,16 +1,20 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-
-import { TrackerDispatch } from '../models';
-import { CreditCardTransaction, Statement } from '../types';
-import { getCreditCardStatementById, getTransactionsByStatementId } from '../selectors';
+import { useNavigate } from 'react-router-dom';
 
 import '../styles/Grid.css';
-import { loadTransactions } from '../controllers';
-import { isNil } from 'lodash';
-import CreditCardStatementTransactionRow from './CreditCardStatementTransactionRow';
+
 import { Button } from '@mui/material';
+
+import { isNil } from 'lodash';
+
+import { TrackerDispatch } from '../models';
+import { CreditCardTransaction } from '../types';
+import { getTransactionsByStatementId } from '../selectors';
+
+import { loadTransactions } from '../controllers';
+import CreditCardStatementTransactionRow from './CreditCardStatementTransactionRow';
 
 interface CreditCardStatementTablePropsFromParent {
   creditCardStatementId: string;
@@ -28,10 +32,13 @@ const CreditCardStatementTable: React.FC<CreditCardStatementTableProps> = (props
     return null;
   }
 
+  const navigate = useNavigate();
+
   console.log('render CreditCardStatementTable', props.creditCardStatementId);
 
   return (
     <React.Fragment>
+      <Button onClick={() => navigate('/creditCardStatementsTable')}>Back</Button>
       <div className="statement-grid-table-container">
         <div className="grid-table-header">
           <div className="grid-table-cell"></div>

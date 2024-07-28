@@ -13,7 +13,6 @@ import CheckingAccountStatementsTable from './CheckingAccountStatementsTable';
 import CreditCardStatementsTable from './CreditCardStatementsTable';
 import { SidebarMenuButton } from '../types';
 import { getCreditCardStatementId } from '../selectors';
-import CreditCardStatement from './CreditCardStatementTable';
 
 export interface StatementsContentPropsFromParent {
   activeTab: number;
