@@ -1,23 +1,38 @@
 import React from 'react';
 
 import '../styles/Tracker.css';
+
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { isEmpty } from 'lodash';
 
-import { CheckingAccountStatement, StatementType } from '../types';
+import { CheckingAccountStatement } from '../types';
 import { TrackerDispatch } from '../models';
 import { getCheckingAccountStatements } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
+import { useNavigate, useParams } from 'react-router-dom';
+import CheckingAccountStatementTable from './CheckingAccountStatementTable';
+import { loadTransactions } from '../controllers';
 
 interface CheckingAccountStatementsTableProps {
   statements: CheckingAccountStatement[];
+  onLoadTransactions: (startDate: string, endDate: string, includeCreditCardTransactions: boolean, includeCheckingAccountTransactions: boolean) => any;
 }
 
 const CheckingAccountStatementsTable: React.FC<CheckingAccountStatementsTableProps> = (props: CheckingAccountStatementsTableProps) => {
 
   if (isEmpty(props.statements)) {
     return null;
+  }
+
+  const navigate = useNavigate();
+
+  const handleStatementClicked = (checkingAccountStatement: CheckingAccountStatement) => {
+    console.log('navigate to credit card statement', checkingAccountStatement.id);
+    props.onLoadTransactions(checkingAccountStatement.startDate, checkingAccountStatement.endDate, false, true)
+      .then(() => {
+        navigate(`/checkingAccountStatement/${checkingAccountStatement.id}`);
+      });
   }
 
   return (
@@ -40,7 +55,12 @@ const CheckingAccountStatementsTable: React.FC<CheckingAccountStatementsTablePro
             <React.Fragment key={statement.id}>
               <div className="table-row">
                 <div className="table-cell"></div>
-                <div className="table-cell">{statement.fileName}</div>
+                <div
+                  className="grid-table-cell-clickable"
+                  onClick={() => handleStatementClicked(statement)}
+                >
+                  {statement.fileName}
+                </div>
                 <div className="table-cell">{formatDate(statement.startDate)}</div>
                 <div className="table-cell">{formatDate(statement.endDate)}</div>
                 <div className="table-cell">{statement.transactionCount}</div>
@@ -65,7 +85,14 @@ function mapStateToProps(state: any) {
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
+    onLoadTransactions: loadTransactions,
   }, dispatch);
+};
+
+export const CheckingAccountStatementTableWrapper = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  return <CheckingAccountStatementTable checkingAccountStatementId={id as string} navigate={navigate} />;
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(CheckingAccountStatementsTable);

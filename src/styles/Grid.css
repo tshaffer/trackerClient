@@ -61,9 +61,17 @@
   background-color: #e0e0e0; /* Slightly darker gray background on focus */
 }
 
-.statement-grid-table-container {
+.credit-card-statement-grid-table-container {
   display: grid;
   grid-template-columns: 60px 1fr 1fr 1fr 1fr 40px 1fr 1fr;
+  border: 1px solid #ccc;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.checking-account-statement-grid-table-container {
+  display: grid;
+  grid-template-columns: 60px 1fr 1fr 1fr 40px 1fr 1fr;
   border: 1px solid #ccc;
   width: 100%;
   margin: 0 auto;

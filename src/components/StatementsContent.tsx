@@ -12,11 +12,9 @@ import { uploadFile } from '../controllers';
 import CheckingAccountStatementsTable from './CheckingAccountStatementsTable';
 import CreditCardStatementsTable from './CreditCardStatementsTable';
 import { SidebarMenuButton } from '../types';
-import { getCreditCardStatementId } from '../selectors';
 
 export interface StatementsContentPropsFromParent {
   activeTab: number;
-  creditCardStatementId: string;
 }
 
 interface StatementsContentProps extends StatementsContentPropsFromParent {
@@ -86,7 +84,6 @@ const StatementsContent: React.FC<StatementsContentProps> = (props: StatementsCo
 
 function mapStateToProps(state: any) {
   return {
-    creditCardStatementId: getCreditCardStatementId(state),
   };
 }
 

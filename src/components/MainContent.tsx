@@ -39,7 +39,6 @@ const MainContent = (props: MainContentProps) => {
       let activeTab = 0;
       if (selectedSubButton === 'Credit Card') activeTab = 0;
       else if (selectedSubButton === 'Checking Account') activeTab = 1;
-
       return <StatementsContent activeTab={activeTab} />;
     } else if (selectedMainButton === SidebarMenuButton.CategoryAssignmentRules) {
       return <CategoryAssignmentRulesTable />;

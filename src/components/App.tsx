@@ -12,6 +12,8 @@ import { getAppInitialized } from '../selectors';
 import { initializeServer } from '../controllers/app';
 import { CreditCardStatementTableWrapper } from './CreditCardStatementsTable';
 import CreditCardStatementsTable from './CreditCardStatementsTable';
+import { CheckingAccountStatementTableWrapper } from './CheckingAccountStatementsTable';
+import CheckingAccountStatementsTable from './CheckingAccountStatementsTable';
 
 export interface AppProps {
   appInitialized: boolean;
@@ -60,6 +62,8 @@ const App = (props: AppProps) => {
       <Route path="/" element={<MainContent />} />
       <Route path="/creditCardStatementsTable" element={<CreditCardStatementsTable />} />
       <Route path="/creditCardStatement/:id" element={<CreditCardStatementTableWrapper />}/>
+      <Route path="/checkingAccountStatementsTable" element={<CheckingAccountStatementsTable />} />
+      <Route path="/checkingAccountStatement/:id" element={<CheckingAccountStatementTableWrapper />}/>
     </Routes>
   );
 

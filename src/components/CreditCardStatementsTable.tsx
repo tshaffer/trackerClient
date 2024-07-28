@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import { isEmpty } from 'lodash';
 
 import { CreditCardStatement } from '../types';
-import { TrackerDispatch, setCreditCardStatementId } from '../models';
+import { TrackerDispatch } from '../models';
 import { getCreditCardStatements } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -16,7 +16,6 @@ import CreditCardStatementTable from './CreditCardStatementTable';
 
 interface CreditCardStatementsTableProps {
   statements: CreditCardStatement[];
-  onSetCreditCardStatementId: (creditCardStatementId: string) => any;
   onLoadTransactions: (startDate: string, endDate: string, includeCreditCardTransactions: boolean, includeCheckingAccountTransactions: boolean) => any;
 }
 
@@ -30,7 +29,6 @@ const CreditCardStatementsTable: React.FC<CreditCardStatementsTableProps> = (pro
 
   const handleStatementClicked = (creditCardStatement: CreditCardStatement) => {
     console.log('navigate to credit card statement', creditCardStatement.id);
-    props.onSetCreditCardStatementId(creditCardStatement.id);
     props.onLoadTransactions(creditCardStatement.startDate, creditCardStatement.endDate, true, false)
       .then(() => {
         navigate(`/creditCardStatement/${creditCardStatement.id}`);
@@ -80,7 +78,6 @@ function mapStateToProps(state: any) {
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
     onLoadTransactions: loadTransactions,
-    onSetCreditCardStatementId: setCreditCardStatementId,
   }, dispatch);
 };
 

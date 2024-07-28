@@ -13,7 +13,6 @@ import { TrackerDispatch } from '../models';
 import { CreditCardTransaction } from '../types';
 import { getTransactionsByStatementId } from '../selectors';
 
-import { loadTransactions } from '../controllers';
 import CreditCardStatementTransactionRow from './CreditCardStatementTransactionRow';
 
 interface CreditCardStatementTablePropsFromParent {
@@ -23,7 +22,6 @@ interface CreditCardStatementTablePropsFromParent {
 
 interface CreditCardStatementTableProps extends CreditCardStatementTablePropsFromParent {
   creditCardTransactions: CreditCardTransaction[];
-  onLoadTransactions: (startDate: string, endDate: string, includeCreditCardTransactions: boolean, includeCheckingAccountTransactions: boolean) => any;
 }
 
 const CreditCardStatementTable: React.FC<CreditCardStatementTableProps> = (props: CreditCardStatementTableProps) => {
@@ -39,7 +37,7 @@ const CreditCardStatementTable: React.FC<CreditCardStatementTableProps> = (props
   return (
     <React.Fragment>
       <Button onClick={() => navigate('/creditCardStatementsTable')}>Back</Button>
-      <div className="statement-grid-table-container">
+      <div className="credit-card-statement-grid-table-container">
         <div className="grid-table-header">
           <div className="grid-table-cell"></div>
           <div className="grid-table-cell">Date</div>
@@ -70,7 +68,6 @@ function mapStateToProps(state: any, ownProps: CreditCardStatementTablePropsFrom
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
-    onLoadTransactions: loadTransactions,
   }, dispatch);
 };
 
