@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { TrackerDispatch } from '../models';
+import { TrackerDispatch, setCreditCardStatementId } from '../models';
 import { CreditCardTransaction, Statement } from '../types';
 import { getCreditCardStatementById, getCreditCardStatementId, getTransactionsByStatementId } from '../selectors';
 
@@ -10,26 +10,31 @@ import '../styles/Grid.css';
 import { loadTransactions } from '../controllers';
 import { isNil } from 'lodash';
 import CreditCardStatementTransactionRow from './CreditCardStatementTransactionRow';
+import { Button } from '@mui/material';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface CreditCardStatementProps {
   creditCardStatementId: string;
   creditCardStatement: Statement | null;
   creditCardTransactions: CreditCardTransaction[];
   onLoadTransactions: (startDate: string, endDate: string, includeCreditCardTransactions: boolean, includeCheckingAccountTransactions: boolean) => any;
+  onSetCreditCardStatementId: (creditCardStatementId: string) => any;
 }
 
 const CreditCardStatement: React.FC<CreditCardStatementProps> = (props: CreditCardStatementProps) => {
 
   React.useEffect(() => {
     console.log('CreditCardStatement: useEffect');
-    console.log(props.creditCardStatementId)
     const creditCardStatement: Statement | null = props.creditCardStatement
     if (!isNil(creditCardStatement)) {
       props.onLoadTransactions(creditCardStatement.startDate, creditCardStatement.endDate, true, false);
     }
   }, []);
 
-  console.log('render CreditCardStatement', props.creditCardStatementId);
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+
+  console.log('render CreditCardStatement', id);
 
   // columns
   //    date
@@ -37,6 +42,8 @@ const CreditCardStatement: React.FC<CreditCardStatementProps> = (props: CreditCa
   //    user description
   return (
     <React.Fragment>
+      <Button onClick={() => navigate('/')}>Back to Home</Button>
+      <div>{props.creditCardStatementId}</div>
       <div className="statement-grid-table-container">
         <div className="grid-table-header">
           <div className="grid-table-cell"></div>
@@ -61,16 +68,18 @@ const CreditCardStatement: React.FC<CreditCardStatementProps> = (props: CreditCa
 }
 
 function mapStateToProps(state: any) {
+  const { id } = useParams<{ id: string }>();
   return {
     creditCardStatementId: getCreditCardStatementId(state),
-    creditCardStatement: getCreditCardStatementById(state, getCreditCardStatementId(state)),
-    creditCardTransactions: getTransactionsByStatementId(state, getCreditCardStatementId(state)) as CreditCardTransaction[],
+    creditCardStatement: getCreditCardStatementById(state, id as string),
+    creditCardTransactions: getTransactionsByStatementId(state, id as string) as CreditCardTransaction[],
   };
 }
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
     onLoadTransactions: loadTransactions,
+    onSetCreditCardStatementId: setCreditCardStatementId,
   }, dispatch);
 };
 
