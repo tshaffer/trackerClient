@@ -24,10 +24,10 @@ const root = createRoot(container!);
 
 root.render(
   <Provider store={store}>
-    <HashRouter>
+    <BrowserRouter>
       <Routes>
-        <Route path='/' element={<App />} />
+        <Route path='*' element={<App />} />
       </Routes>
-    </HashRouter>
+    </BrowserRouter>
   </Provider>,
 );

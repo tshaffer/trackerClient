@@ -3,6 +3,7 @@ import Sidebar from './Sidebar';
 import { Box, Typography } from '@mui/material';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { useNavigate } from 'react-router-dom';
 
 import { SidebarMenuButton } from '../types';
 import { TrackerDispatch } from '../models';
@@ -21,10 +22,13 @@ const MainContent = (props: MainContentProps) => {
 
   const [selectedMainButton, setSelectedMainButton] = useState<SidebarMenuButton>(SidebarMenuButton.Reports);
   const [selectedSubButton, setSelectedSubButton] = useState<string | null>('Spending');
+  const navigate = useNavigate();
 
   const handleButtonClick = (label: string, subLabel?: string) => {
-    setSelectedMainButton(label as SidebarMenuButton);
-    setSelectedSubButton(subLabel || 'List');
+    // setSelectedMainButton(label as SidebarMenuButton);
+    // setSelectedSubButton(subLabel || 'List');
+    console.log('navigate to credit card statement 69');
+    navigate('/creditCardStatement/69');
   };
 
   const renderContent = () => {

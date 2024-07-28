@@ -57,7 +57,7 @@ const App = (props: AppProps) => {
   return (
     <Routes>
       <Route path="/" element={<MainContent />} />
-      <Route path="creditCardStatement/:id" element={<CreditCardStatement />} />
+      <Route path="/creditCardStatement/:id" element={<CreditCardStatement />} />
     </Routes>
   );
 
