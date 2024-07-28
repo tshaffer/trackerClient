@@ -10,6 +10,7 @@ import { CreditCardStatement } from '../types';
 import { TrackerDispatch, setCreditCardStatementId } from '../models';
 import { getCreditCardStatements } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
+import { useNavigate } from 'react-router-dom';
 
 interface CreditCardStatementsTableProps {
   statements: CreditCardStatement[];
@@ -22,9 +23,12 @@ const CreditCardStatementsTable: React.FC<CreditCardStatementsTableProps> = (pro
     return null;
   }
 
+  const navigate = useNavigate();
+
   const handleStatementClicked = (statement: CreditCardStatement) => {
-    console.log('statement clicked', statement);
+    console.log('navigate to credit card statement', statement.id);
     props.onSetCreditCardStatementId(statement.id);
+    navigate(`/creditCardStatement/${statement.id}`);
   }
 
   return (
