@@ -1,8 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
 import { TrackerDispatch } from '../models';
-import { CreditCardTransaction, Statement, Transaction } from '../types';
+import { CreditCardTransaction, Statement } from '../types';
 import { getCreditCardStatementById, getCreditCardStatementId, getTransactionsByStatementId } from '../selectors';
 
 import '../styles/Grid.css';
