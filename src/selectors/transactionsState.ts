@@ -4,6 +4,10 @@ import { getCategories, getCategoryAssignmentRules, getCategoryById, getCategory
 import { getEndDate, getStartDate } from './reportDataState';
 import { roundTo } from '../utilities';
 
+export interface MatchingRuleAssignment {
+  category: Category;
+  pattern: string;
+}
 export const getTransactionIds = (state: TrackerState): string[] => {
   return state.transactionsState.allIds;
 };
@@ -152,26 +156,20 @@ const categorizeTransactions = (
   };
 };
 
-export const getTransactionCategoryFromCategoryAssignmentRule = (state: TrackerState, transaction: BankTransaction): Category | null => {
+export const findMatchingRule = (state: TrackerState, transaction: BankTransaction): MatchingRuleAssignment | null => {
 
   const categories: Category[] = getCategories(state);
   const categoryAssignmentRules: CategoryAssignmentRule[] = getCategoryAssignmentRules(state);
 
-  // for (const categoryAssignmentRule of categoryAssignmentRules) {
-  //   if (transaction.userDescription.includes(categoryAssignmentRule.pattern)) {
-  //     const categoryId = categoryAssignmentRule.categoryId;
-  //     for (const category of categories) {
-  //       if (category.id === categoryId) {
-  //         return category;
-  //       }
-  //     }
-  //   }
-  // }
-  // return null;
-
   const categoryAssignmentRule = categoryAssignmentRules.find(rule => transaction.userDescription.includes(rule.pattern));
   if (categoryAssignmentRule) {
-    return categories.find(category => category.id === categoryAssignmentRule.categoryId) || null;
+    const category: Category | null = categories.find(category => category.id === categoryAssignmentRule.categoryId) || null;
+    if (!isNil(category)) {
+      return {
+        category,
+        pattern: categoryAssignmentRule.pattern,
+      };
+    }
   }
   return null;
 }

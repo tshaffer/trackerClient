@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { TrackerDispatch } from '../models';
 import { Category, CreditCardTransaction } from '../types';
-import { getTransactionById, getTransactionCategoryFromCategoryAssignmentRule } from '../selectors';
+import { getTransactionById, findMatchingRule, MatchingRuleAssignment } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
 
 import '../styles/Grid.css';
@@ -14,17 +14,11 @@ export interface CreditCardStatementPropsFromParent {
 
 export interface CreditCardStatementProps {
   creditCardTransaction: CreditCardTransaction;
-  categoryFromCategoryAssignmentRule: Category | null;
+  categoryNameFromCategoryAssignmentRule: string;
+  patternFromCategoryAssignmentRule: string | null;
 }
 
 const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (props: CreditCardStatementProps) => {
-
-  const getCategoryLabelFromCategoryAssignmentRule = (): string => {
-    if (props.categoryFromCategoryAssignmentRule) {
-      return props.categoryFromCategoryAssignmentRule.name;
-    }
-    return '';
-  }
 
   return (
     <React.Fragment>
@@ -33,16 +27,19 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
       <div className="grid-table-cell">{formatCurrency(props.creditCardTransaction.amount)}</div>
       <div className="grid-table-cell">{props.creditCardTransaction.description}</div>
       <div className="grid-table-cell">{props.creditCardTransaction.category}</div>
-      <div className="grid-table-cell">{getCategoryLabelFromCategoryAssignmentRule()}</div>
+      <div className="grid-table-cell">{props.categoryNameFromCategoryAssignmentRule}</div>
+      <div className="grid-table-cell">{props.patternFromCategoryAssignmentRule}</div>
     </React.Fragment>
   );
 }
 
 function mapStateToProps(state: any, ownProps: CreditCardStatementPropsFromParent) {
-  const creditCardTransaction:CreditCardTransaction =  getTransactionById(state, ownProps.creditCardTransactionId) as CreditCardTransaction;
+  const creditCardTransaction: CreditCardTransaction = getTransactionById(state, ownProps.creditCardTransactionId) as CreditCardTransaction;
+  const matchingRule: MatchingRuleAssignment | null = findMatchingRule(state, creditCardTransaction);
   return {
     creditCardTransaction,
-    categoryFromCategoryAssignmentRule: getTransactionCategoryFromCategoryAssignmentRule(state, creditCardTransaction),
+    categoryNameFromCategoryAssignmentRule: matchingRule ? matchingRule.category.name : '',
+    patternFromCategoryAssignmentRule: matchingRule ? matchingRule.pattern : '',
   };
 }
 
