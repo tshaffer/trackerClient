@@ -213,6 +213,7 @@ export const transactionsStateReducer = (
           overrideTransactionsRequired: false,
           overriddenTransactionRequired: false,
           isSplit: false,
+          parentTransactionId
         };
         newState.byId[splitTransaction.id] = newTransaction;
         if (!newState.allIds.includes(splitTransaction.id)) {

@@ -26,6 +26,7 @@ export interface Transaction {
   overrideTransactionsRequired: boolean;
   overriddenTransactionRequired: boolean;
   isSplit: boolean;
+  parentTransactionId: string;
 }
 
 export interface SplitTransaction {

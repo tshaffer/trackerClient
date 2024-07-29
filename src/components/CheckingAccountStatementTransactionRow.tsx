@@ -64,7 +64,6 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
     setShowEditTransactionDialog(false);
   }
 
-
   const handleSaveRule = (pattern: string, categoryId: string): void => {
     const id: string = uuidv4();
     const categoryAssignmentRule: CategoryAssignmentRule = {
@@ -114,6 +113,7 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
         onClose={handleCloseEditTransactionDialog}
         onSave={handleSaveTransaction}
       />
+
       <div className="grid-table-cell" style={{ marginLeft: '32px' }}>
         <Tooltip title="Split Transaction" arrow>
           <IconButton onClick={handleSplitTransaction}>
@@ -124,17 +124,21 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
       <div className="grid-table-cell">{formatDate(props.checkingAccountTransaction.transactionDate)}</div>
       <div className="grid-table-cell">{formatCurrency(props.checkingAccountTransaction.amount)}</div>
       <div className="grid-table-cell">{props.checkingAccountTransaction.name}</div>
+      <div className="grid-table-cell">
+        <Tooltip title="Edit transaction">
+          <IconButton onClick={() => handleEditTransaction()}>
+            <EditIcon />
+          </IconButton>
+        </Tooltip>
+      </div>
       <div className="grid-table-cell">{props.checkingAccountTransaction.userDescription}</div>
-      <Tooltip title="Edit transaction">
-        <IconButton onClick={() => handleEditTransaction()}>
-          <EditIcon />
-        </IconButton>
-      </Tooltip>
-      <Tooltip title="Edit rule">
-        <IconButton onClick={() => handleEditRule(props.checkingAccountTransaction)}>
-          <AssignmentIcon />
-        </IconButton>
-      </Tooltip>
+      <div className="grid-table-cell">
+        <Tooltip title="Edit rule">
+          <IconButton onClick={() => handleEditRule(props.checkingAccountTransaction)}>
+            <AssignmentIcon />
+          </IconButton>
+        </Tooltip>
+      </div>
       <div className="grid-table-cell">{props.categoryNameFromCategoryAssignmentRule}</div>
       <div className="grid-table-cell">{props.patternFromCategoryAssignmentRule}</div>
     </React.Fragment>
