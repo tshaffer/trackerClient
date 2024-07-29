@@ -8,7 +8,7 @@ import SafetyDividerIcon from '@mui/icons-material/SafetyDivider';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 
 import { TrackerDispatch } from '../models';
-import { CategoryAssignmentRule, CheckingAccountTransaction, Transaction } from '../types';
+import { CategoryAssignmentRule, CheckingAccountTransaction, SplitTransaction } from '../types';
 import { getTransactionById, findMatchingRule, MatchingRuleAssignment } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
 
@@ -16,6 +16,7 @@ import '../styles/Grid.css';
 import { Tooltip, IconButton } from '@mui/material';
 import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
 import { addCategoryAssignmentRuleServerAndRedux } from '../controllers';
+import SplitTransactionDialog from './SplitTransactionDialog';
 
 export interface CheckingAccountStatementPropsFromParent {
   checkingAccountTransactionId: string;
@@ -31,10 +32,12 @@ export interface CheckingAccountStatementProps {
 const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementProps> = (props: CheckingAccountStatementProps) => {
 
   const [transactionId, setTransactionId] = React.useState('');
+  const [showSplitTransactionDialog, setShowSplitTransactionDialog] = React.useState(false);
   const [showAddCategoryAssignmentRuleDialog, setShowAddCategoryAssignmentRuleDialog] = React.useState(false);
 
   function handleSplitTransaction(): void {
     console.log('Split Transaction', props.checkingAccountTransaction.id);
+    setShowSplitTransactionDialog(true);
   }
 
   const handleEditRule = (transaction: CheckingAccountTransaction) => {
@@ -57,8 +60,22 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
     setShowAddCategoryAssignmentRuleDialog(false);
   }
 
+  const handleSaveSplitTransaction = (splitTransaction: SplitTransaction): void => {
+    console.log('handleSaveSplitTransaction: ', splitTransaction);
+  }
+
+  const handleCloseAddSplitTransactionDialog = () => {
+    setShowSplitTransactionDialog(false);
+  }
+
   return (
     <React.Fragment>
+      <SplitTransactionDialog
+        open={showSplitTransactionDialog}
+        transactionId={transactionId}
+        onClose={handleCloseAddSplitTransactionDialog}
+        onSave={handleSaveSplitTransaction}
+      />
       <AddCategoryAssignmentRuleDialog
         open={showAddCategoryAssignmentRuleDialog}
         transactionId={transactionId}
