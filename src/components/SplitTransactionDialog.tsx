@@ -26,7 +26,7 @@ const SplitTransactionDialog = (props: SplitTransactionDialogProps) => {
     return null;
   }
 
-  const [splits, setSplits] = useState([{ amount: '', description: '' }]);
+  const [splits, setSplits] = useState([{ amount: '', userDescription: '' }]);
 
   const handleSplitChange = (index: number, field: string, value: string | number) => {
     const newSplits: any[] = [...splits];
@@ -35,7 +35,7 @@ const SplitTransactionDialog = (props: SplitTransactionDialogProps) => {
   };
 
   const handleAddSplit = () => {
-    setSplits([...splits, { amount: '',description: '' }]);
+    setSplits([...splits, { amount: '', userDescription: '' }]);
   };
 
   const handleSave = () => {
@@ -56,8 +56,8 @@ const SplitTransactionDialog = (props: SplitTransactionDialogProps) => {
             />
             <TextField
               label="Description"
-              value={split.description}
-              onChange={(e) => handleSplitChange(index, 'description', e.target.value)}
+              value={split.userDescription}
+              onChange={(e) => handleSplitChange(index, 'userDescription', e.target.value)}
               fullWidth
             />
           </Box>

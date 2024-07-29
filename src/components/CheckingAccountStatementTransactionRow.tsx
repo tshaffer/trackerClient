@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import SafetyDividerIcon from '@mui/icons-material/SafetyDivider';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 
-import { TrackerDispatch } from '../models';
+import { TrackerDispatch, setSplitTransaction } from '../models';
 import { CategoryAssignmentRule, CheckingAccountTransaction, SplitTransaction } from '../types';
 import { getTransactionById, findMatchingRule, MatchingRuleAssignment } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
@@ -17,6 +17,7 @@ import { Tooltip, IconButton } from '@mui/material';
 import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
 import { addCategoryAssignmentRuleServerAndRedux } from '../controllers';
 import SplitTransactionDialog from './SplitTransactionDialog';
+import { uuid } from 'uuidv4';
 
 export interface CheckingAccountStatementPropsFromParent {
   checkingAccountTransactionId: string;
@@ -27,6 +28,7 @@ export interface CheckingAccountStatementProps {
   categoryNameFromCategoryAssignmentRule: string;
   patternFromCategoryAssignmentRule: string | null;
   onAddCategoryAssignmentRule: (categoryAssignmentRule: CategoryAssignmentRule) => any;
+  onSetSplitTransaction: (parentTransactionId: string, splitTransactions: SplitTransaction[]) => any;
 }
 
 const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementProps> = (props: CheckingAccountStatementProps) => {
@@ -34,6 +36,8 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
   const [transactionId, setTransactionId] = React.useState('');
   const [showSplitTransactionDialog, setShowSplitTransactionDialog] = React.useState(false);
   const [showAddCategoryAssignmentRuleDialog, setShowAddCategoryAssignmentRuleDialog] = React.useState(false);
+
+  console.log('checkingAccountTransaction: ', props.checkingAccountTransaction.isSplit.toString());
 
   function handleSplitTransaction(): void {
     console.log('Split Transaction', props.checkingAccountTransaction.id);
@@ -60,8 +64,14 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
     setShowAddCategoryAssignmentRuleDialog(false);
   }
 
-  const handleSaveSplitTransaction = (splitTransaction: SplitTransaction): void => {
-    console.log('handleSaveSplitTransaction: ', splitTransaction);
+  const handleSaveSplitTransaction = (splitTransactions: SplitTransaction[]): void => {
+    console.log('handleSaveSplitTransaction: ', splitTransactions);
+    splitTransactions.forEach((splitTransaction, index) => {
+      splitTransaction.parentTransactionId = props.checkingAccountTransaction.id;
+      splitTransaction.id = uuidv4();
+    });
+
+    props.onSetSplitTransaction(props.checkingAccountTransaction.id, splitTransactions);
   }
 
   const handleCloseAddSplitTransactionDialog = () => {
@@ -117,6 +127,7 @@ function mapStateToProps(state: any, ownProps: CheckingAccountStatementPropsFrom
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
     onAddCategoryAssignmentRule: addCategoryAssignmentRuleServerAndRedux,
+    onSetSplitTransaction: setSplitTransaction,
   }, dispatch);
 };
 

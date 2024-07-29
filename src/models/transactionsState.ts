@@ -1,5 +1,5 @@
 import { clone, cloneDeep } from 'lodash';
-import { Transaction, TransactionsState } from '../types';
+import { SplitTransaction, Transaction, TransactionsState } from '../types';
 import { TrackerModelBaseAction } from './baseAction';
 
 // ------------------------------------
@@ -12,6 +12,7 @@ const SET_OVERRIDE_CATEGORY = 'SET_OVERRIDE_CATEGORY';
 const SET_OVERRIDE_CATEGORY_ID = 'SET_OVERRIDE_CATEGORY_ID';
 const SET_OVERRIDE_TRANSACTIONS_REQUIRED = 'SET_OVERRIDE_TRANSACTIONS_REQUIRED';
 const SET_OVERRIDDEN_TRANSACTIONS_REQUIRED = 'SET_OVERRIDDEN_TRANSACTIONS_REQUIRED';
+const SET_SPLIT_TRANSACTION = 'SET_SPLIT_TRANSACTION';
 
 // ------------------------------------
 // Actions
@@ -127,6 +128,23 @@ export const setOverriddenTransactionsRequired = (
   };
 };
 
+interface SetSplitTransactionPayload {
+  parentTransactionId: string;
+  splitTransactions: SplitTransaction[];
+}
+
+export const setSplitTransaction = (
+  parentTransactionId: string,
+  splitTransactions: SplitTransaction[]
+): any => {
+  return {
+    type: SET_SPLIT_TRANSACTION,
+    payload: {
+      parentTransactionId,
+      splitTransactions,
+    },
+  };
+}
 
 // ------------------------------------
 // Reducer
@@ -138,7 +156,7 @@ const initialState: TransactionsState = {
 
 export const transactionsStateReducer = (
   state: TransactionsState = initialState,
-  action: TrackerModelBaseAction<AddTransactionsPayload & UpdateTransactionPayload & SetOverrideCategoryPayload & SetOverrideCategoryIdPayload & setOverrideTransactionsRequiredPayload & setOverriddenTransactionsRequiredPayload>
+  action: TrackerModelBaseAction<AddTransactionsPayload & UpdateTransactionPayload & SetOverrideCategoryPayload & SetOverrideCategoryIdPayload & setOverrideTransactionsRequiredPayload & setOverriddenTransactionsRequiredPayload & SetSplitTransactionPayload>
 ): TransactionsState => {
   switch (action.type) {
     case CLEAR_TRANSACTIONS: {
@@ -177,6 +195,32 @@ export const transactionsStateReducer = (
       if (newState.byId[id]) {
         newState.byId[id].overrideCategoryId = action.payload.overrideCategoryId;
       }
+      return newState;
+    }
+    case SET_SPLIT_TRANSACTION: {
+      const newState = clone(state);
+      const parentTransactionId = action.payload.parentTransactionId;
+      const parentTransaction: Transaction = newState.byId[parentTransactionId];
+      parentTransaction.isSplit = true;
+      action.payload.splitTransactions.forEach(splitTransaction => {
+        const newTransaction: Transaction = {
+          ...splitTransaction,
+          statementId: parentTransaction.statementId,
+          transactionDate: parentTransaction.transactionDate,
+          bankTransactionType: parentTransaction.bankTransactionType,
+          overrideCategory: false,
+          overrideCategoryId: '',
+          overrideTransactionsRequired: false,
+          overriddenTransactionRequired: false,
+          isSplit: false,
+        };
+        newState.byId[splitTransaction.id] = newTransaction;
+        if (!newState.allIds.includes(splitTransaction.id)) {
+          newState.allIds.push(splitTransaction.id);
+        }
+      });
+      console.log('state: ', state);
+      console.log('newState: ', newState);
       return newState;
     }
     default:
