@@ -8,15 +8,15 @@ import SafetyDividerIcon from '@mui/icons-material/SafetyDivider';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import EditIcon from '@mui/icons-material/Edit';
 
-import { TrackerDispatch, setSplitTransaction } from '../models';
-import { CategoryAssignmentRule, CheckTransaction, CheckingAccountTransaction, SplitTransaction, Transaction } from '../types';
+import { TrackerDispatch } from '../models';
+import { CategoryAssignmentRule, CheckingAccountTransaction, SplitTransaction, Transaction } from '../types';
 import { getTransactionById, findMatchingRule, MatchingRuleAssignment } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
 
 import '../styles/Grid.css';
 import { Tooltip, IconButton } from '@mui/material';
 import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
-import { addCategoryAssignmentRuleServerAndRedux, updateTransaction } from '../controllers';
+import { addCategoryAssignmentRuleServerAndRedux, splitTransaction, updateTransaction } from '../controllers';
 import SplitTransactionDialog from './SplitTransactionDialog';
 import EditTransactionDialog from './EditTransactionDialog';
 
@@ -29,7 +29,7 @@ export interface CheckingAccountStatementProps {
   categoryNameFromCategoryAssignmentRule: string;
   patternFromCategoryAssignmentRule: string | null;
   onAddCategoryAssignmentRule: (categoryAssignmentRule: CategoryAssignmentRule) => any;
-  onSetSplitTransaction: (parentTransactionId: string, splitTransactions: SplitTransaction[]) => any;
+  onSplitTransaction: (parentTransactionId: string, splitTransactions: SplitTransaction[]) => any;
   onUpdateTransaction: (transaction: Transaction) => any;
 }
 
@@ -86,7 +86,7 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
       splitTransaction.id = uuidv4();
     });
 
-    props.onSetSplitTransaction(props.checkingAccountTransaction.id, splitTransactions);
+    props.onSplitTransaction(props.checkingAccountTransaction.id, splitTransactions);
   }
 
   const handleCloseAddSplitTransactionDialog = () => {
@@ -158,7 +158,7 @@ function mapStateToProps(state: any, ownProps: CheckingAccountStatementPropsFrom
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
     onAddCategoryAssignmentRule: addCategoryAssignmentRuleServerAndRedux,
-    onSetSplitTransaction: setSplitTransaction,
+    onSplitTransaction: splitTransaction,
     onUpdateTransaction: updateTransaction,
   }, dispatch);
 };

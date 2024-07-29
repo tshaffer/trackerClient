@@ -133,7 +133,7 @@ interface SetSplitTransactionPayload {
   splitTransactions: SplitTransaction[];
 }
 
-export const setSplitTransaction = (
+export const splitTransactionRedux = (
   parentTransactionId: string,
   splitTransactions: SplitTransaction[]
 ): any => {

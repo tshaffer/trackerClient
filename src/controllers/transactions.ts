@@ -1,9 +1,11 @@
 import axios from "axios";
+import { v4 as uuidv4 } from 'uuid';
 import {
   apiUrlFragment,
   CheckTransaction,
   MinMaxDates,
   serverUrl,
+  SplitTransaction,
   Transaction,
   Transactions,
 } from "../types";
@@ -11,6 +13,7 @@ import {
   addTransactions,
   clearTransactions,
   setMinMaxTransactionDates,
+  splitTransactionRedux,
   TrackerAnyPromiseThunkAction,
   TrackerDispatch,
   TrackerVoidPromiseThunkAction,
@@ -18,6 +21,7 @@ import {
   updateTransactionRedux
 } from "../models";
 import { isNil } from "lodash";
+import { getTransactionById } from "../selectors";
 
 const getISODateString = (date: Date): string => {
   return date.toISOString().split('T')[0];
@@ -168,3 +172,92 @@ export const updateTransaction = (transaction: Transaction): TrackerAnyPromiseTh
     });
   };
 }
+
+/*
+    case SET_SPLIT_TRANSACTION: {
+      const newState = clone(state);
+      const parentTransactionId = action.payload.parentTransactionId;
+      const parentTransaction: Transaction = newState.byId[parentTransactionId];
+      parentTransaction.isSplit = true;
+      action.payload.splitTransactions.forEach(splitTransaction => {
+        const newTransaction: Transaction = {
+          ...splitTransaction,
+          statementId: parentTransaction.statementId,
+          transactionDate: parentTransaction.transactionDate,
+          bankTransactionType: parentTransaction.bankTransactionType,
+          overrideCategory: false,
+          overrideCategoryId: '',
+          overrideTransactionsRequired: false,
+          overriddenTransactionRequired: false,
+          isSplit: false,
+          parentTransactionId
+        };
+        newState.byId[splitTransaction.id] = newTransaction;
+        if (!newState.allIds.includes(splitTransaction.id)) {
+          newState.allIds.push(splitTransaction.id);
+        }
+      });
+      console.log('state: ', state);
+      console.log('newState: ', newState);
+      return newState;
+    }
+
+    Summary
+    - update the transaction associated with parentTransactionId
+      - set isSplit to true
+    - for each splitTransaction, add a transaction to the db
+    - single call to the server?
+*/
+export const splitTransaction = (
+  parentTransactionId: string,
+  splitTransactions: SplitTransaction[]
+): TrackerAnyPromiseThunkAction => {
+
+  return (dispatch: TrackerDispatch, getState: any) => {
+
+    const path = serverUrl + apiUrlFragment + 'splitTransaction';
+
+    const parentTransaction: Transaction = getTransactionById(getState(), parentTransactionId) as Transaction;
+
+    const newTransactions: Transaction[] = splitTransactions.map((splitTransaction: SplitTransaction) => {
+      const newTransaction: Transaction = {
+        ...parentTransaction,
+        ...splitTransaction,
+        // statementId: parentTransaction.statementId,
+        // transactionDate: parentTransaction.transactionDate,
+        // bankTransactionType: parentTransaction.bankTransactionType,
+        // overrideCategory: false,
+        // overrideCategoryId: '',
+        // overrideTransactionsRequired: false,
+        // overriddenTransactionRequired: false,
+        isSplit: false,
+        parentTransactionId,
+        id: uuidv4(),
+      };
+      delete (newTransaction as any)._id;
+      return newTransaction
+    });
+
+    const splitTransactionBody = {
+      parentTransactionId,
+      newTransactions,
+    };
+
+    console.log('splitTransaction: ', splitTransactionBody);
+    return axios.post(
+      path,
+      splitTransactionBody
+    ).then((response) => {
+      console.log('splitTransaction');
+      console.log(response);
+      console.log(response.data);
+      dispatch(splitTransactionRedux(parentTransactionId, splitTransactions));
+      return Promise.resolve();
+    }).catch((error) => {
+      console.log('error');
+      console.log(error);
+      return '';
+    });
+  };
+};
+
