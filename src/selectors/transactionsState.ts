@@ -13,15 +13,21 @@ export const getTransactionIds = (state: TrackerState): string[] => {
 };
 
 export const getTransactions = (state: TrackerState): Transaction[] => {
-  return getTransactionIds(state).map((id) => state.transactionsState.byId[id]);
+  const transactions: Transaction[] = getTransactionIds(state).map((id) => state.transactionsState.byId[id]);
+  return transactions.filter((transaction) => !transaction.isSplit);
 }
 
 export const getTransactionById = (state: TrackerState, id: string): Transaction | undefined => {
-  return state.transactionsState.byId[id];
+  const transactionById: Transaction | undefined = state.transactionsState.byId[id];
+  if (!isNil(transactionById) && !transactionById.isSplit) {
+    return transactionById;
+  }
+  return undefined;
 };
 
 export const getTransactionsByStatementId = (state: TrackerState, statementId: string): Transaction[] => {
-  return getTransactions(state).filter((transaction) => transaction.statementId === statementId);
+  const transactions: Transaction[] = getTransactionIds(state).map((id) => state.transactionsState.byId[id]);
+  return transactions.filter((transaction) => !transaction.isSplit);
 }
 
 export const getTransactionsByCategory = (state: TrackerState): StringToTransactionsLUT => {
@@ -210,22 +216,6 @@ const categorizeTransaction = (
 
   return null;
 };
-
-export const my_getCategoryByTransactionId = (state: TrackerState, transactionId: string): Category | null | undefined => {
-
-  const transactionsByCategory: StringToTransactionsLUT = getTransactionsByCategory(state);
-  for (const categoryId in transactionsByCategory) {
-    if (Object.prototype.hasOwnProperty.call(transactionsByCategory, categoryId)) {
-      const categorizedTransactions: CategorizedTransaction[] = transactionsByCategory[categoryId];
-      for (const categorizedTransaction of categorizedTransactions) {
-        if (categorizedTransaction.bankTransaction.id === transactionId) {
-          return getCategoryById(state, categoryId);
-        }
-      }
-    }
-  }
-  return null;
-}
 
 export const getCategoryByTransactionId = (state: TrackerState, transactionId: string): Category | null | undefined => {
 
