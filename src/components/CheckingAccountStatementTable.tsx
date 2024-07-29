@@ -45,6 +45,8 @@ const CheckingAccountStatementTable: React.FC<CheckingAccountStatementTableProps
           <div className="grid-table-cell">Amount</div>
           <div className="grid-table-cell">Description</div>
           <div className="grid-table-cell"></div>
+          <div className="grid-table-cell">User Description</div>
+          <div className="grid-table-cell"></div>
           <div className="grid-table-cell">Category from rule</div>
           <div className="grid-table-cell">Pattern</div>
         </div>
