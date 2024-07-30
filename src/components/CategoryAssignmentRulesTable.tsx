@@ -13,6 +13,7 @@ import { getCategories, getCategoryAssignmentRules } from '../selectors/category
 import { addCategoryAssignmentRuleServerAndRedux, deleteCategoryAssignmentRuleServerAndRedux, updateCategoryAssignmentRuleServerAndRedux } from '../controllers';
 import { cloneDeep, isEmpty } from 'lodash';
 import SelectCategory from './SelectCategory';
+import DownloadCategoryAssignmentRules from './DownloadCategoryAssignmentRules';
 
 interface CategoryAssignmentRulesTableProps {
   categoryAssignmentRules: CategoryAssignmentRule[];
@@ -199,6 +200,7 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
   return (
     <Box sx={{ width: '100%' }}>
       <Typography variant="h5" style={{ marginBottom: '8px' }}>{SidebarMenuButton.CategoryAssignmentRules}</Typography>
+      <DownloadCategoryAssignmentRules/>
       <div className="table-container">
         <div className="table-header">
           <div className="table-row">
