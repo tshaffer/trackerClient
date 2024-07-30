@@ -11,7 +11,7 @@ import { TrackerDispatch } from '../models';
 import { Category, DisregardLevel, SidebarMenuButton } from '../types';
 import AddCategoryDialog from './AddCategoryDialog';
 import CategoriesTable from './CategoriesTable';
-import { addCategoryServerAndRedux } from '../controllers';
+import { addCategory } from '../controllers';
 
 interface CategoriesContentProps {
   onAddCategory: (category: Category) => any;
@@ -75,7 +75,7 @@ function mapStateToProps(state: any) {
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
-    onAddCategory: addCategoryServerAndRedux,
+    onAddCategory: addCategory,
   }, dispatch);
 };
 

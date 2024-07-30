@@ -3,7 +3,7 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import { Category, CategoryAssignmentRule } from '../types';
+import { Category, CategoryAssignmentRule, UploadedCategoryAssignmentRule } from '../types';
 import { TrackerDispatch } from '../models';
 import { getCategories, getCategoryAssignmentRules } from '../selectors';
 
@@ -20,7 +20,7 @@ const DownloadCategoryAssignmentRules: React.FC<any> = (props: any) => {
   const handleDownload = async () => {
 
     // Transform the data
-    const data = categoryAssignmentRules.map(rule => {
+    const data: UploadedCategoryAssignmentRule[] = categoryAssignmentRules.map(rule => {
       const category = categories.find(cat => cat.id === rule.categoryId);
       return {
         categoryName: category ? category.name : 'Unknown',

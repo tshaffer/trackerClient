@@ -12,7 +12,7 @@ import { Category, Transaction } from '../types';
 import { TrackerDispatch } from '../models';
 import { getCategoryByTransactionId, getTransactionById } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
-import { addCategoryServerAndRedux } from '../controllers';
+import { addCategory } from '../controllers';
 import SelectCategory from './SelectCategory';
 
 export interface EditTransactionDialogPropsFromParent {
@@ -150,7 +150,7 @@ function mapStateToProps(state: any, ownProps: EditTransactionDialogPropsFromPar
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
-    onAddCategory: addCategoryServerAndRedux,
+    onAddCategory: addCategory,
   }, dispatch);
 };
 

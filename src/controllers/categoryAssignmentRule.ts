@@ -4,8 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { serverUrl, apiUrlFragment, CategoryAssignmentRule, UploadedCategoryAssignmentRule, TrackerState, Category } from "../types";
 import { TrackerAnyPromiseThunkAction, TrackerDispatch, addCategoryAssignmentRuleRedux, addCategoryAssignmentRules, deleteCategoryAssignmentRuleRedux, replaceCategoryAssignmentRulesRedux, updateCategoryAssignmentRuleRedux } from '../models';
-import { getCategoryByName } from "../selectors";
-import { isNil } from "lodash";
+import { getCategoryByName, getMissingCategories } from "../selectors";
+import { initial, isNil } from "lodash";
 
 export const loadCategoryAssignmentRules = (): TrackerAnyPromiseThunkAction => {
 
@@ -48,7 +48,7 @@ export const addCategoryAssignmentRuleServerAndRedux = (categoryAssignmentRule: 
   };
 }
 
-export const convertUploadedCategoryAssignmentRulesToCategoryAssignmentRules = (state: TrackerState, uploadedCategoryAssignmentRules: UploadedCategoryAssignmentRule[]): CategoryAssignmentRule[] => {
+const convertUploadedCategoryAssignmentRulesToCategoryAssignmentRules = (state: TrackerState, uploadedCategoryAssignmentRules: UploadedCategoryAssignmentRule[]): CategoryAssignmentRule[] => {
   return uploadedCategoryAssignmentRules.map((uploadedCategoryAssignmentRule) => {
     const category: Category | undefined = getCategoryByName(state, uploadedCategoryAssignmentRule.categoryName);
     if (isNil(category)) {
@@ -66,6 +66,10 @@ export const replaceCategoryAssignmentRules = (uploadedCategoryAssignmentRule: U
 
   return (dispatch: TrackerDispatch, getState: any) => {
 
+    const missingCategoryNames: string[] = getMissingCategories(getState(), uploadedCategoryAssignmentRule);
+    console.log('missingCategoryNames', missingCategoryNames);
+    return Promise.resolve();
+    
     const categoryAssignmentRules: CategoryAssignmentRule[] = convertUploadedCategoryAssignmentRulesToCategoryAssignmentRules(getState(), uploadedCategoryAssignmentRule);
 
     const path = serverUrl + apiUrlFragment + 'replaceCategoryAssignmentRules';

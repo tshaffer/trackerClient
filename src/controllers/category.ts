@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Category, serverUrl, apiUrlFragment } from "../types";
-import { TrackerAnyPromiseThunkAction, TrackerDispatch, addCategories, addCategoryRedux } from '../models';
+import { TrackerAnyPromiseThunkAction, TrackerDispatch, replaceCategoriesRedux, addCategoryRedux, addCategoriesRedux } from '../models';
 
 export const loadCategories = (): TrackerAnyPromiseThunkAction => {
 
@@ -11,7 +11,7 @@ export const loadCategories = (): TrackerAnyPromiseThunkAction => {
     return axios.get(path)
       .then((response: any) => {
         const categories: Category[] = response.data;
-        dispatch(addCategories(categories));
+        dispatch(replaceCategoriesRedux(categories));
         return Promise.resolve();
       }).catch((error) => {
         console.log('error');
@@ -21,7 +21,7 @@ export const loadCategories = (): TrackerAnyPromiseThunkAction => {
   };
 };
 
-export const addCategoryServerAndRedux = (category: Category): TrackerAnyPromiseThunkAction => {
+export const addCategory = (category: Category): TrackerAnyPromiseThunkAction => {
 
   return (dispatch: TrackerDispatch, getState: any) => {
 
@@ -33,11 +33,36 @@ export const addCategoryServerAndRedux = (category: Category): TrackerAnyPromise
       path,
       addCategoryBody
     ).then((response) => {
-      console.log('addCategoryServerAndRedux');
+      console.log('addCategory');
       console.log(response);
       console.log(response.data);
       dispatch(addCategoryRedux(category));
       return Promise.resolve(response.data as Category);
+    }).catch((error) => {
+      console.log('error');
+      console.log(error);
+      return '';
+    });
+  };
+};
+
+export const addCategories = (categories: Category[]): TrackerAnyPromiseThunkAction => {
+
+  return (dispatch: TrackerDispatch, getState: any) => {
+
+    const path = serverUrl + apiUrlFragment + 'addCategories';
+
+    const addCategoriesBody = categories;
+
+    return axios.post(
+      path,
+      addCategoriesBody
+    ).then((response) => {
+      console.log('addCategories');
+      console.log(response);
+      console.log(response.data);
+      dispatch(addCategoriesRedux(categories));
+      return Promise.resolve();
     }).catch((error) => {
       console.log('error');
       console.log(error);

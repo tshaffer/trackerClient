@@ -12,7 +12,7 @@ import '../styles/Tracker.css';
 
 import { BankTransaction, BankTransactionType, Category, CategoryAssignmentRule, CheckTransaction, CheckingAccountTransaction, CheckingAccountTransactionType, DateRangeType, Statement, Transaction } from '../types';
 import { formatCurrency, formatDate } from '../utilities';
-import { addCategoryAssignmentRuleServerAndRedux, addCategoryServerAndRedux, updateCheckTransaction, updateTransaction } from '../controllers';
+import { addCategoryAssignmentRuleServerAndRedux, addCategory, updateCheckTransaction, updateTransaction } from '../controllers';
 import { TrackerDispatch } from '../models';
 import { getStartDate, getEndDate, getUnidentifiedBankTransactions, getGeneratedReportEndDate, getGeneratedReportStartDate, getDateRangeType, getReportStatement, getReportStatementId } from '../selectors';
 import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
@@ -226,7 +226,7 @@ function mapStateToProps(state: any) {
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
-    onAddCategory: addCategoryServerAndRedux,
+    onAddCategory: addCategory,
     onAddCategoryAssignmentRule: addCategoryAssignmentRuleServerAndRedux,
     onUpdateCheckTransaction: updateCheckTransaction,
     onUpdateTransaction: updateTransaction,

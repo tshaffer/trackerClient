@@ -13,7 +13,7 @@ import { Button, DialogActions, DialogContent, DialogContentText, Tooltip } from
 
 import { getAppInitialized, getCategories, getCategoryByTransactionId, getTransactionById } from '../selectors';
 import { Category, SidebarMenuButton, Transaction } from '../types';
-import { addCategoryServerAndRedux } from '../controllers';
+import { addCategory } from '../controllers';
 import { TrackerDispatch } from '../models';
 import SelectCategory from './SelectCategory';
 
@@ -192,7 +192,7 @@ function mapStateToProps(state: any, ownProps: AddCategoryAssignmentRuleDialogPr
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
-    onAddCategory: addCategoryServerAndRedux,
+    onAddCategory: addCategory,
   }, dispatch);
 };
 

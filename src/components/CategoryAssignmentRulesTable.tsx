@@ -191,6 +191,7 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
     return (
       <Box sx={{ width: '100%' }}>
         <Typography variant="h5" style={{ marginBottom: '8px' }}>{SidebarMenuButton.CategoryAssignmentRules}</Typography>
+        <DownloadCategoryAssignmentRules />
         <UploadCategoryAssignmentRules />
       </Box>
     );

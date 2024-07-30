@@ -12,7 +12,7 @@ import { Button, FormControl, InputLabel, ListItemText, Menu, MenuItem, Select, 
 import { Category, CategoryMenuItem, DisregardLevel, StringToCategoryMenuItemLUT } from '../types';
 import { TrackerDispatch } from '../models';
 import AddCategoryDialog from './AddCategoryDialog';
-import { addCategoryServerAndRedux } from '../controllers';
+import { addCategory } from '../controllers';
 import { getCategories } from '../selectors';
 
 export interface SelectCategoryPropsFromParent {
@@ -50,12 +50,12 @@ const SelectCategory = (props: SelectCategoryProps) => {
   const buildCategoryMenuItems = (): CategoryMenuItem[] => {
     const map: StringToCategoryMenuItemLUT = {};
     const roots: CategoryMenuItem[] = [];
-  
+
     // First pass: Create the map with children and initialize levels to -1
     alphabetizedCategories.forEach(category => {
       map[category.id] = { ...category, children: [], level: -1 };
     });
-  
+
     // Second pass: Populate the children and identify root categories
     alphabetizedCategories.forEach(category => {
       if (category.parentId === '') {
@@ -64,16 +64,16 @@ const SelectCategory = (props: SelectCategoryProps) => {
         map[category.parentId]?.children.push(map[category.id]);
       }
     });
-  
+
     // Function to recursively calculate levels
     const calculateLevels = (category: CategoryMenuItem, level: number) => {
       category.level = level;
       category.children.forEach(child => calculateLevels(child, level + 1));
     };
-  
+
     // Calculate levels starting from the roots
     roots.forEach(root => calculateLevels(root, 0));
-  
+
     // Function to flatten the tree
     const flattenTree = (categoryMenuItems: CategoryMenuItem[], result: CategoryMenuItem[] = []): CategoryMenuItem[] => {
       categoryMenuItems.forEach(categoryMenuItem => {
@@ -84,10 +84,10 @@ const SelectCategory = (props: SelectCategoryProps) => {
       });
       return result;
     };
-  
+
     return flattenTree(roots);
   };
-  
+
   const handleSetSelectedCategoryId = (categoryId: string) => {
     setSelectedCategoryId(categoryId);
     props.onSetCategoryId(categoryId);
@@ -215,7 +215,7 @@ function mapStateToProps(state: any, ownProps: SelectCategoryPropsFromParent) {
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
-    onAddCategory: addCategoryServerAndRedux,
+    onAddCategory: addCategory,
   }, dispatch);
 };
 

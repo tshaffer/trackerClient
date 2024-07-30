@@ -5,6 +5,7 @@ import { TrackerModelBaseAction } from './baseAction';
 // Constants
 // ------------------------------------
 export const ADD_CATEGORY = 'ADD_CATEGORY';
+export const REPLACE_CATEGORIES = 'REPLACE_CATEGORIES';
 export const ADD_CATEGORIES = 'ADD_CATEGORIES';
 
 // ------------------------------------
@@ -25,14 +26,28 @@ export const addCategoryRedux = (category: Category): any => {
 };
 
 interface AddCategoriesPayload {
+  categories: Category[],
+}
+
+export const addCategoriesRedux = (categories: Category[]): any => {
+  return {
+    type: ADD_CATEGORIES,
+    payload: {
+      categories
+    }
+  };
+};
+
+
+interface ReplaceCategoriesPayload {
   categories: Category[];
 }
 
-export const addCategories = (
+export const replaceCategoriesRedux = (
   categories: Category[],
 ): any => {
   return {
-    type: ADD_CATEGORIES,
+    type: REPLACE_CATEGORIES,
     payload: {
       categories
     }
@@ -49,7 +64,7 @@ const initialState: CategoryState = {
 
 export const categoryStateReducer = (
   state: CategoryState = initialState,
-  action: TrackerModelBaseAction<AddCategoryPayload & AddCategoriesPayload>
+  action: TrackerModelBaseAction<AddCategoryPayload & ReplaceCategoriesPayload & AddCategoriesPayload>
 ): CategoryState => {
   switch (action.type) {
     case ADD_CATEGORY: {
@@ -62,6 +77,15 @@ export const categoryStateReducer = (
       };
     }
     case ADD_CATEGORIES: {
+      return {
+        ...state,
+        categories: [
+          ...state.categories,
+          ...action.payload.categories,
+        ],
+      };
+    }
+    case REPLACE_CATEGORIES: {
       return { ...state, categories: action.payload.categories };
     }
     default:
