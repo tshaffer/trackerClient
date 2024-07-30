@@ -12,12 +12,13 @@ export interface DownloadCategoryAssignmentRulesProps {
   categoryAssignmentRules: CategoryAssignmentRule[];
 }
 
-const DownloadCategories: React.FC<any> = (props: any) => {
+const DownloadCategoryAssignmentRules: React.FC<any> = (props: any) => {
 
   const categoryAssignmentRules: CategoryAssignmentRule[] = props.categoryAssignmentRules;
   const categories: Category[] = props.categories;
 
   const handleDownload = async () => {
+
     // Transform the data
     const data = categoryAssignmentRules.map(rule => {
       const category = categories.find(cat => cat.id === rule.categoryId);
@@ -35,7 +36,7 @@ const DownloadCategories: React.FC<any> = (props: any) => {
       try {
         // Show save file picker
         const fileHandle = await (window as any).showSaveFilePicker({
-          suggestedName: 'categories.json',
+          suggestedName: 'categoryAssignmentRules.json',
           types: [
             {
               description: 'JSON Files',
@@ -79,5 +80,5 @@ const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   }, dispatch);
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(DownloadCategories);
+export default connect(mapStateToProps, mapDispatchToProps)(DownloadCategoryAssignmentRules);
 
