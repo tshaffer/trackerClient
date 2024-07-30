@@ -9,16 +9,17 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import EditIcon from '@mui/icons-material/Edit';
 
 import { TrackerDispatch } from '../models';
-import { CategoryAssignmentRule, CheckingAccountTransaction, SplitTransaction, Transaction } from '../types';
+import { BankTransactionType, CategoryAssignmentRule, CheckTransaction, CheckingAccountTransaction, CheckingAccountTransactionType, SplitTransaction, Transaction } from '../types';
 import { getTransactionById, findMatchingRule, MatchingRuleAssignment } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
 
 import '../styles/Grid.css';
 import { Tooltip, IconButton } from '@mui/material';
 import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
-import { addCategoryAssignmentRuleServerAndRedux, splitTransaction, updateTransaction } from '../controllers';
+import { addCategoryAssignmentRuleServerAndRedux, splitTransaction, updateCheckTransaction, updateTransaction } from '../controllers';
 import SplitTransactionDialog from './SplitTransactionDialog';
 import EditTransactionDialog from './EditTransactionDialog';
+import EditCheckDialog from './EditCheckDialog';
 
 export interface CheckingAccountStatementPropsFromParent {
   checkingAccountTransactionId: string;
@@ -31,6 +32,7 @@ export interface CheckingAccountStatementProps {
   onAddCategoryAssignmentRule: (categoryAssignmentRule: CategoryAssignmentRule) => any;
   onSplitTransaction: (parentTransactionId: string, splitTransactions: SplitTransaction[]) => any;
   onUpdateTransaction: (transaction: Transaction) => any;
+  onUpdateCheckTransaction: (check: CheckTransaction) => any;
 }
 
 const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementProps> = (props: CheckingAccountStatementProps) => {
@@ -39,6 +41,7 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
   const [showSplitTransactionDialog, setShowSplitTransactionDialog] = React.useState(false);
   const [showAddCategoryAssignmentRuleDialog, setShowAddCategoryAssignmentRuleDialog] = React.useState(false);
   const [showEditTransactionDialog, setShowEditTransactionDialog] = React.useState(false);
+  const [showEditCheckDialog, setShowEditCheckDialog] = React.useState(false);
 
   console.log('checkingAccountTransaction: ', props.checkingAccountTransaction.isSplit.toString());
 
@@ -51,6 +54,18 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
     setTransactionId(transaction.id);
     setShowAddCategoryAssignmentRuleDialog(true);
   };
+
+  const handleEditCheck = () => {
+    setShowEditCheckDialog(true);
+  };
+
+  const handleSaveCheck = (check: CheckTransaction) => {
+    props.onUpdateCheckTransaction(check);
+  };
+
+  const handleCloseEditCheckDialog = () => {
+    setShowEditCheckDialog(false);
+  }
 
   const handleEditTransaction = () => {
     setShowEditTransactionDialog(true);
@@ -93,6 +108,46 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
     setShowSplitTransactionDialog(false);
   }
 
+  const renderEditIcon = (): JSX.Element => {
+    if (props.checkingAccountTransaction.bankTransactionType === BankTransactionType.Checking) {
+      if ((props.checkingAccountTransaction as CheckingAccountTransaction).checkingAccountTransactionType === CheckingAccountTransactionType.Check) {
+        return (
+          <div className="grid-table-cell">
+            <Tooltip title="Set check number and payee">
+              <IconButton onClick={() => handleEditCheck()}>
+                <EditIcon />
+              </IconButton>
+            </Tooltip>
+          </div>
+        );
+      }
+    }
+    return (
+      <div className="grid-table-cell">
+        <Tooltip title="Edit transaction">
+          <IconButton onClick={() => handleEditTransaction()}>
+            <EditIcon />
+          </IconButton>
+        </Tooltip>
+      </div>
+    );
+  }
+
+  const renderEditCheckDialog = (): JSX.Element | null => {
+    if (showEditCheckDialog) {
+      return (
+        <EditCheckDialog
+          open={showEditCheckDialog}
+          unidentifiedBankTransactionId={props.checkingAccountTransaction.id}
+          onClose={handleCloseEditCheckDialog}
+          onSave={handleSaveCheck}
+        />
+      );
+    }
+    return null;
+  }
+
+
   return (
     <React.Fragment>
       <SplitTransactionDialog
@@ -107,6 +162,7 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
         onClose={handleCloseAddRuleDialog}
         onSaveRule={handleSaveRule}
       />
+      {renderEditCheckDialog()}
       <EditTransactionDialog
         open={showEditTransactionDialog}
         transactionId={props.checkingAccountTransaction.id}
@@ -124,13 +180,7 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
       <div className="grid-table-cell">{formatDate(props.checkingAccountTransaction.transactionDate)}</div>
       <div className="grid-table-cell">{formatCurrency(props.checkingAccountTransaction.amount)}</div>
       <div className="grid-table-cell">{props.checkingAccountTransaction.name}</div>
-      <div className="grid-table-cell">
-        <Tooltip title="Edit transaction">
-          <IconButton onClick={() => handleEditTransaction()}>
-            <EditIcon />
-          </IconButton>
-        </Tooltip>
-      </div>
+      {renderEditIcon()}
       <div className="grid-table-cell">{props.checkingAccountTransaction.userDescription}</div>
       <div className="grid-table-cell">
         <Tooltip title="Edit rule">
@@ -160,6 +210,7 @@ const mapDispatchToProps = (dispatch: TrackerDispatch) => {
     onAddCategoryAssignmentRule: addCategoryAssignmentRuleServerAndRedux,
     onSplitTransaction: splitTransaction,
     onUpdateTransaction: updateTransaction,
+    onUpdateCheckTransaction: updateCheckTransaction,
   }, dispatch);
 };
 
