@@ -1,8 +1,9 @@
 import { isNil } from 'lodash';
 import { BankTransaction, BankTransactionType, CategorizedStatementData, CategorizedTransaction, Category, CategoryAssignmentRule, CheckingAccountTransaction, CreditCardTransaction, DisregardLevel, ReviewedTransactions, StringToTransactionsLUT, TrackerState, Transaction } from '../types';
-import { getCategories, getCategoryAssignmentRules, getCategoryById, getCategoryByName } from './categoryState';
+import { getCategories, getCategoryById, getCategoryByName } from './categoryState';
 import { getEndDate, getStartDate } from './reportDataState';
 import { roundTo } from '../utilities';
+import { getCategoryAssignmentRules } from './categoryAssignmentRulesState';
 
 export interface MatchingRuleAssignment {
   category: Category;

@@ -9,11 +9,12 @@ import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import { TrackerAnyPromiseThunkAction, TrackerDispatch } from '../models';
-import { getCategories, getCategoryAssignmentRules } from '../selectors/categoryState';
+import { getCategories, getCategoryAssignmentRules } from '../selectors';
 import { addCategoryAssignmentRuleServerAndRedux, deleteCategoryAssignmentRuleServerAndRedux, updateCategoryAssignmentRuleServerAndRedux } from '../controllers';
 import { cloneDeep, isEmpty } from 'lodash';
 import SelectCategory from './SelectCategory';
 import DownloadCategoryAssignmentRules from './DownloadCategoryAssignmentRules';
+import UploadCategoryAssignmentRules from './UploadCategoryAssignmentRules';
 
 interface CategoryAssignmentRulesTableProps {
   categoryAssignmentRules: CategoryAssignmentRule[];
@@ -201,6 +202,7 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
     <Box sx={{ width: '100%' }}>
       <Typography variant="h5" style={{ marginBottom: '8px' }}>{SidebarMenuButton.CategoryAssignmentRules}</Typography>
       <DownloadCategoryAssignmentRules/>
+      <UploadCategoryAssignmentRules/>
       <div className="table-container">
         <div className="table-header">
           <div className="table-row">

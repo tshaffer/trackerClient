@@ -5,6 +5,7 @@ import { DateRangeType } from "./enums";
 export interface TrackerState {
   appState: AppState;
   categoryState: CategoryState;
+  categoryAssignmentRulesState: CategoryAssignmentRulesState;
   reportDataState: ReportDataState;
   checkingAccountStatementState: CheckingAccountStatementState;
   creditCardStatementState: CreditCardStatementState;
@@ -39,6 +40,9 @@ export interface ReportDataState {
 
 export interface CategoryState {
   categories: Category[];
+}
+
+export interface CategoryAssignmentRulesState {
   categoryAssignmentRules: CategoryAssignmentRule[];
 }
 
