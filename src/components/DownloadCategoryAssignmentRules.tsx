@@ -17,7 +17,7 @@ const DownloadCategories: React.FC<any> = (props: any) => {
   const categoryAssignmentRules: CategoryAssignmentRule[] = props.categoryAssignmentRules;
   const categories: Category[] = props.categories;
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     // Transform the data
     const data = categoryAssignmentRules.map(rule => {
       const category = categories.find(cat => cat.id === rule.categoryId);
@@ -30,30 +30,40 @@ const DownloadCategories: React.FC<any> = (props: any) => {
     // Convert to JSON
     const jsonString = JSON.stringify(data, null, 2);
 
-    // Create a blob from the JSON string
-    const blob = new Blob([jsonString], { type: 'application/json' });
+    // Check if the browser supports the File System Access API
+    if ('showSaveFilePicker' in window) {
+      try {
+        // Show save file picker
+        const fileHandle = await (window as any).showSaveFilePicker({
+          suggestedName: 'categories.json',
+          types: [
+            {
+              description: 'JSON Files',
+              accept: { 'application/json': ['.json'] },
+            },
+          ],
+        });
 
-    // Create a link element
-    const link = document.createElement('a');
+        // Create a writable stream
+        const writableStream = await fileHandle.createWritable();
 
-    // Set the download attribute with a filename
-    link.download = 'categories.json';
+        // Write the JSON data to the file
+        await writableStream.write(jsonString);
 
-    // Create a URL for the blob and set it as the href attribute
-    link.href = window.URL.createObjectURL(blob);
+        // Close the file
+        await writableStream.close();
 
-    // Append the link to the document body
-    document.body.appendChild(link);
-
-    // Programmatically click the link to trigger the download
-    link.click();
-
-    // Remove the link from the document
-    document.body.removeChild(link);
+        console.log('File saved successfully');
+      } catch (error) {
+        console.error('Error saving file:', error);
+      }
+    } else {
+      console.error('File System Access API is not supported in this browser.');
+    }
   };
 
   return (
-    <button onClick={handleDownload}>Download Categories</button>
+    <button onClick={handleDownload}>Download Category Assignment Rules</button>
   );
 };
 
