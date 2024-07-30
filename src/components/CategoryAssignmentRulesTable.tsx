@@ -188,7 +188,12 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
   }
 
   if (props.categoryAssignmentRules.length === 0) {
-    return <></>;
+    return (
+      <Box sx={{ width: '100%' }}>
+        <Typography variant="h5" style={{ marginBottom: '8px' }}>{SidebarMenuButton.CategoryAssignmentRules}</Typography>
+        <UploadCategoryAssignmentRules />
+      </Box>
+    );
   }
 
   if (isEmpty(categoryAssignmentRuleById)) {
@@ -201,8 +206,8 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
   return (
     <Box sx={{ width: '100%' }}>
       <Typography variant="h5" style={{ marginBottom: '8px' }}>{SidebarMenuButton.CategoryAssignmentRules}</Typography>
-      <DownloadCategoryAssignmentRules/>
-      <UploadCategoryAssignmentRules/>
+      <DownloadCategoryAssignmentRules />
+      <UploadCategoryAssignmentRules />
       <div className="table-container">
         <div className="table-header">
           <div className="table-row">

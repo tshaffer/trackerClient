@@ -91,6 +91,11 @@ export interface CategoryAssignmentRule {
   categoryId: string;
 }
 
+export interface UploadedCategoryAssignmentRule {
+  categoryName: string;
+  pattern: string;
+}
+
 export interface ReviewedTransactions {
   categorizedTransactions: CategorizedTransaction[];
   ignoredTransactions: BankTransaction[];

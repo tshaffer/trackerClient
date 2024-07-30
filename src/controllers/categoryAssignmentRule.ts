@@ -1,6 +1,11 @@
 import axios from "axios";
-import { serverUrl, apiUrlFragment, CategoryAssignmentRule } from "../types";
-import { TrackerAnyPromiseThunkAction, TrackerDispatch, addCategoryAssignmentRuleRedux, addCategoryAssignmentRules, deleteCategoryAssignmentRuleRedux, updateCategoryAssignmentRuleRedux } from '../models';
+
+import { v4 as uuidv4 } from 'uuid';
+
+import { serverUrl, apiUrlFragment, CategoryAssignmentRule, UploadedCategoryAssignmentRule, TrackerState, Category } from "../types";
+import { TrackerAnyPromiseThunkAction, TrackerDispatch, addCategoryAssignmentRuleRedux, addCategoryAssignmentRules, deleteCategoryAssignmentRuleRedux, replaceCategoryAssignmentRulesRedux, updateCategoryAssignmentRuleRedux } from '../models';
+import { getCategoryByName } from "../selectors";
+import { isNil } from "lodash";
 
 export const loadCategoryAssignmentRules = (): TrackerAnyPromiseThunkAction => {
 
@@ -34,6 +39,44 @@ export const addCategoryAssignmentRuleServerAndRedux = (categoryAssignmentRule: 
       addCategoryAssignmentRuleBody
     ).then((response) => {
       dispatch(addCategoryAssignmentRuleRedux(categoryAssignmentRule));
+      return Promise.resolve();
+    }).catch((error) => {
+      console.log('error');
+      console.log(error);
+      return '';
+    });
+  };
+}
+
+export const convertUploadedCategoryAssignmentRulesToCategoryAssignmentRules = (state: TrackerState, uploadedCategoryAssignmentRules: UploadedCategoryAssignmentRule[]): CategoryAssignmentRule[] => {
+  return uploadedCategoryAssignmentRules.map((uploadedCategoryAssignmentRule) => {
+    const category: Category | undefined = getCategoryByName(state, uploadedCategoryAssignmentRule.categoryName);
+    if (isNil(category)) {
+      debugger;
+    }
+    return {
+      id: uuidv4(),
+      pattern: uploadedCategoryAssignmentRule.pattern,
+      categoryId: category!.id,
+    };
+  });
+}
+
+export const replaceCategoryAssignmentRules = (uploadedCategoryAssignmentRule: UploadedCategoryAssignmentRule[]): TrackerAnyPromiseThunkAction => {
+
+  return (dispatch: TrackerDispatch, getState: any) => {
+
+    const categoryAssignmentRules: CategoryAssignmentRule[] = convertUploadedCategoryAssignmentRulesToCategoryAssignmentRules(getState(), uploadedCategoryAssignmentRule);
+
+    const path = serverUrl + apiUrlFragment + 'replaceCategoryAssignmentRules';
+
+    const replaceCategoryAssignmentRulesBody = categoryAssignmentRules;
+
+    return axios.post(
+      path,
+      replaceCategoryAssignmentRulesBody
+    ).then((response) => {
+      dispatch(replaceCategoryAssignmentRulesRedux(categoryAssignmentRules));
       return Promise.resolve();
     }).catch((error) => {
       console.log('error');
@@ -86,3 +129,4 @@ export const deleteCategoryAssignmentRuleServerAndRedux = (categoryAssignmentRul
     });
   };
 };
+

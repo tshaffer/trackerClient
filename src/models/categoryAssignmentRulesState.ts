@@ -9,6 +9,7 @@ export const ADD_CATEGORY_ASSIGNMENT_RULE = 'ADD_CATEGORY_ASSIGNMENT_RULE';
 export const ADD_CATEGORY_ASSIGNMENT_RULES = 'ADD_CATEGORY_ASSIGNMENT_RULES';
 export const UPDATE_CATEGORY_ASSIGNMENT_RULE = 'UPDATE_CATEGORY_ASSIGNMENT_RULE';
 export const DELETE_CATEGORY_ASSIGNMENT_RULE = 'DELETE_CATEGORY_ASSIGNMENT_RULE';
+export const REPLACE_CATEGORY_ASSIGNMENT_RULES = 'REPLACE_CATEGORY_ASSIGNMENT_RULES';
 
 // ------------------------------------
 // Actions
@@ -60,6 +61,21 @@ export const addCategoryAssignmentRules = (
   };
 };
 
+interface ReplaceCategoryAssignmentRulesPayload {
+  categoryAssignmentRules: CategoryAssignmentRule[];
+}
+
+export const replaceCategoryAssignmentRulesRedux = (
+  categoryAssignmentRules: CategoryAssignmentRule[],
+): any => {
+  return {
+    type: REPLACE_CATEGORY_ASSIGNMENT_RULES,
+    payload: {
+      categoryAssignmentRules
+    }
+  };
+};
+
 // ------------------------------------
 // Reducer
 // ------------------------------------
@@ -70,7 +86,7 @@ const initialState: CategoryAssignmentRulesState = {
 
 export const categoryAssignmentRulesStateReducer = (
   state: CategoryAssignmentRulesState = initialState,
-  action: TrackerModelBaseAction< AddCategoryAssignmentRulePayload & AddCategoryAssignmentRulesPayload>
+  action: TrackerModelBaseAction< AddCategoryAssignmentRulePayload & AddCategoryAssignmentRulesPayload & ReplaceCategoryAssignmentRulesPayload>
 ): CategoryAssignmentRulesState => {
   switch (action.type) {
     case ADD_CATEGORY_ASSIGNMENT_RULE: {
@@ -104,6 +120,12 @@ export const categoryAssignmentRulesStateReducer = (
       const newState = cloneDeep(state) as CategoryAssignmentRulesState;
       newState.categoryAssignmentRules = newState.categoryAssignmentRules.concat(action.payload.categoryAssignmentRules);
       return newState;
+    }
+    case REPLACE_CATEGORY_ASSIGNMENT_RULES: {
+      return {
+        ...state,
+        categoryAssignmentRules: action.payload.categoryAssignmentRules,
+      };
     }
     default:
       return state;

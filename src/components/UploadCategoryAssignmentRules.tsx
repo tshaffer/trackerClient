@@ -3,26 +3,16 @@ import React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import { Category, CategoryAssignmentRule } from '../types';
+import { Category, CategoryAssignmentRule, UploadedCategoryAssignmentRule } from '../types';
 import { TrackerDispatch } from '../models';
 import { getCategories, getCategoryAssignmentRules } from '../selectors';
-
-interface UploadedCategoryData {
-  categoryName: string;
-  pattern: string;
-}
+import { replaceCategoryAssignmentRules } from '../controllers';
 
 export interface DownloadCategoryAssignmentRulesProps {
-  categories: Category[];
-  categoryAssignmentRules: CategoryAssignmentRule[];
+  onReplaceCategoryAssignmentRules: (categoryAssignmentRules: CategoryAssignmentRule[]) => any;
 }
 
 const UploadCategoryAssignmentRules: React.FC<any> = (props: any) => {
-
-  const [uploadedData, setUploadedData] = React.useState<UploadedCategoryData[]>([]);
-
-  const categoryAssignmentRules: CategoryAssignmentRule[] = props.categoryAssignmentRules;
-  const categories: Category[] = props.categories;
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -31,9 +21,9 @@ const UploadCategoryAssignmentRules: React.FC<any> = (props: any) => {
       reader.onload = (e) => {
         try {
           const jsonString = e.target?.result as string;
-          const data: UploadedCategoryData[] = JSON.parse(jsonString);
-          setUploadedData(data);
+          const data: UploadedCategoryAssignmentRule[] = JSON.parse(jsonString);
           console.log('Uploaded data:', data);
+          props.onReplaceCategoryAssignmentRules(data);
         } catch (error) {
           console.error('Error parsing JSON:', error);
         }
@@ -49,32 +39,18 @@ const UploadCategoryAssignmentRules: React.FC<any> = (props: any) => {
         accept="application/json"
         onChange={handleFileUpload}
       />
-      {uploadedData.length > 0 && (
-        <div>
-          <h3>Uploaded Categories</h3>
-          <ul>
-            {uploadedData.map((item, index) => (
-              <li key={index}>
-                <strong>Category Name:</strong> {item.categoryName} <br />
-                <strong>Pattern:</strong> {item.pattern}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
     </div>
   );
 };
 
 function mapStateToProps(state: any, ownProps: any) {
   return {
-    categories: getCategories(state),
-    categoryAssignmentRules: getCategoryAssignmentRules(state),
   };
 }
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
+    onReplaceCategoryAssignmentRules: replaceCategoryAssignmentRules,
   }, dispatch);
 };
 
