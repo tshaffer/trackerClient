@@ -2,10 +2,11 @@ import axios from "axios";
 
 import { v4 as uuidv4 } from 'uuid';
 
-import { serverUrl, apiUrlFragment, CategoryAssignmentRule, UploadedCategoryAssignmentRule, TrackerState, Category } from "../types";
+import { serverUrl, apiUrlFragment, CategoryAssignmentRule, UploadedCategoryAssignmentRule, TrackerState, Category, DisregardLevel } from "../types";
 import { TrackerAnyPromiseThunkAction, TrackerDispatch, addCategoryAssignmentRuleRedux, addCategoryAssignmentRules, deleteCategoryAssignmentRuleRedux, replaceCategoryAssignmentRulesRedux, updateCategoryAssignmentRuleRedux } from '../models';
 import { getCategoryByName, getMissingCategories } from "../selectors";
 import { initial, isNil } from "lodash";
+import { addCategories } from "./category";
 
 export const loadCategoryAssignmentRules = (): TrackerAnyPromiseThunkAction => {
 
@@ -62,35 +63,63 @@ const convertUploadedCategoryAssignmentRulesToCategoryAssignmentRules = (state: 
   });
 }
 
-export const replaceCategoryAssignmentRules = (uploadedCategoryAssignmentRule: UploadedCategoryAssignmentRule[]): TrackerAnyPromiseThunkAction => {
+const addMissingCategories = (state: TrackerState, uploadedCategoryAssignmentRules: UploadedCategoryAssignmentRule[]): TrackerAnyPromiseThunkAction => {
 
   return (dispatch: TrackerDispatch, getState: any) => {
 
-    const missingCategoryNames: string[] = getMissingCategories(getState(), uploadedCategoryAssignmentRule);
+    const missingCategoryNames: string[] = getMissingCategories(getState(), uploadedCategoryAssignmentRules);
     console.log('missingCategoryNames', missingCategoryNames);
+
+    if (missingCategoryNames.length > 0) {
+      const categoriesToAdd: Category[] = missingCategoryNames.map((categoryName) => {
+        const category: Category = {
+          id: uuidv4(),
+          name: categoryName,
+          parentId: '',
+          transactionsRequired: false,
+          disregardLevel: DisregardLevel.None,
+        };
+        return category;
+      });
+      return dispatch(addCategories(categoriesToAdd))
+        .then(() => {
+          return Promise.resolve();
+        });
+    }
     return Promise.resolve();
-    
-    const categoryAssignmentRules: CategoryAssignmentRule[] = convertUploadedCategoryAssignmentRulesToCategoryAssignmentRules(getState(), uploadedCategoryAssignmentRule);
-
-    const path = serverUrl + apiUrlFragment + 'replaceCategoryAssignmentRules';
-
-    const replaceCategoryAssignmentRulesBody = categoryAssignmentRules;
-
-    return axios.post(
-      path,
-      replaceCategoryAssignmentRulesBody
-    ).then((response) => {
-      dispatch(replaceCategoryAssignmentRulesRedux(categoryAssignmentRules));
-      return Promise.resolve();
-    }).catch((error) => {
-      console.log('error');
-      console.log(error);
-      return '';
-    });
   };
 }
 
-export const updateCategoryAssignmentRuleServerAndRedux = (categoryAssignmentRule: CategoryAssignmentRule): TrackerAnyPromiseThunkAction => {
+export const replaceCategoryAssignmentRules = (uploadedCategoryAssignmentRules: UploadedCategoryAssignmentRule[]): TrackerAnyPromiseThunkAction => {
+
+  return (dispatch: TrackerDispatch, getState: any) => {
+
+    return dispatch(addMissingCategories(getState(), uploadedCategoryAssignmentRules))
+      .then(() => {
+        
+        const categoryAssignmentRules: CategoryAssignmentRule[] = convertUploadedCategoryAssignmentRulesToCategoryAssignmentRules(getState(), uploadedCategoryAssignmentRules);
+
+        const path = serverUrl + apiUrlFragment + 'replaceCategoryAssignmentRules';
+
+        const replaceCategoryAssignmentRulesBody = categoryAssignmentRules;
+
+        return axios.post(
+          path,
+          replaceCategoryAssignmentRulesBody
+        ).then((response) => {
+          dispatch(replaceCategoryAssignmentRulesRedux(categoryAssignmentRules));
+          return Promise.resolve();
+        }).catch((error) => {
+          console.log('error');
+          console.log(error);
+          return '';
+        });
+      });
+
+  };
+}
+
+export const updateCategoryAssignmentRule = (categoryAssignmentRule: CategoryAssignmentRule): TrackerAnyPromiseThunkAction => {
 
   return (dispatch: TrackerDispatch, getState: any) => {
 
@@ -112,7 +141,7 @@ export const updateCategoryAssignmentRuleServerAndRedux = (categoryAssignmentRul
   };
 };
 
-export const deleteCategoryAssignmentRuleServerAndRedux = (categoryAssignmentRule: CategoryAssignmentRule): TrackerAnyPromiseThunkAction => {
+export const deleteCategoryAssignmentRule = (categoryAssignmentRule: CategoryAssignmentRule): TrackerAnyPromiseThunkAction => {
 
   return (dispatch: TrackerDispatch, getState: any) => {
 

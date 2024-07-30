@@ -10,7 +10,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { TrackerAnyPromiseThunkAction, TrackerDispatch } from '../models';
 import { getCategories, getCategoryAssignmentRules } from '../selectors';
-import { addCategoryAssignmentRuleServerAndRedux, deleteCategoryAssignmentRuleServerAndRedux, updateCategoryAssignmentRuleServerAndRedux } from '../controllers';
+import { addCategoryAssignmentRuleServerAndRedux, deleteCategoryAssignmentRule, updateCategoryAssignmentRule } from '../controllers';
 import { cloneDeep, isEmpty } from 'lodash';
 import SelectCategory from './SelectCategory';
 import DownloadCategoryAssignmentRules from './DownloadCategoryAssignmentRules';
@@ -262,8 +262,8 @@ function mapStateToProps(state: any) {
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
     onAddCategoryAssignmentRule: addCategoryAssignmentRuleServerAndRedux,
-    onUpdateCategoryAssignmentRule: updateCategoryAssignmentRuleServerAndRedux,
-    onDeleteCategoryAssignmentRule: deleteCategoryAssignmentRuleServerAndRedux,
+    onUpdateCategoryAssignmentRule: updateCategoryAssignmentRule,
+    onDeleteCategoryAssignmentRule: deleteCategoryAssignmentRule,
   }, dispatch);
 };
 

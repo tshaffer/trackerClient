@@ -79,12 +79,6 @@ export interface CheckingAccountStatement extends Statement {
   atmWithdrawalCount: number;
 }
 
-export interface Category {
-  id: string
-  name: string;
-  disregardLevel: DisregardLevel;
-}
-
 export interface CategoryAssignmentRule {
   id: string;
   pattern: string;
