@@ -34,9 +34,12 @@ const CheckingAccountStatementTable: React.FC<CheckingAccountStatementTableProps
 
   console.log('render CheckingAccountStatementTable', props.checkingAccountStatementId);
 
+  /*
+      <Button onClick={() => navigate('/checkingAccountStatementsTable')}>Back</Button>
+  */
   return (
     <React.Fragment>
-      <Button onClick={() => navigate('/checkingAccountStatementsTable')}>Back</Button>
+      <Button onClick={() => navigate(-1)}>Back</Button>
       <div className="checking-account-statement-grid-table-container">
         <div className="grid-table-header">
           <div className="grid-table-cell"></div>

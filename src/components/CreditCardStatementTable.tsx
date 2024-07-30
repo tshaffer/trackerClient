@@ -36,7 +36,7 @@ const CreditCardStatementTable: React.FC<CreditCardStatementTableProps> = (props
 
   return (
     <React.Fragment>
-      <Button onClick={() => navigate('/creditCardStatementsTable')}>Back</Button>
+      <Button onClick={() => navigate(-1)}>Back</Button>
       <div className="credit-card-statement-grid-table-container">
         <div className="grid-table-header">
           <div className="grid-table-cell"></div>
