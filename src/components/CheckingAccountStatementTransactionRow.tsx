@@ -22,11 +22,12 @@ import EditTransactionDialog from './EditTransactionDialog';
 import EditCheckDialog from './EditCheckDialog';
 
 export interface CheckingAccountStatementPropsFromParent {
-  checkingAccountTransactionId: string;
+  // checkingAccountTransactionId: string;
+  checkingAccountTransaction: CheckingAccountTransaction;
 }
 
-export interface CheckingAccountStatementProps {
-  checkingAccountTransaction: CheckingAccountTransaction;
+export interface CheckingAccountStatementProps extends CheckingAccountStatementPropsFromParent {
+  // checkingAccountTransaction: CheckingAccountTransaction;
   categoryNameFromCategoryAssignmentRule: string;
   patternFromCategoryAssignmentRule: string | null;
   onAddCategoryAssignmentRule: (categoryAssignmentRule: CategoryAssignmentRule) => any;
@@ -147,6 +148,7 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
     return null;
   }
 
+  console.log('render CheckingAccountStatementTransactionRow', props.checkingAccountTransaction);
 
   return (
     <React.Fragment>
@@ -196,10 +198,10 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
 }
 
 function mapStateToProps(state: any, ownProps: CheckingAccountStatementPropsFromParent) {
-  const checkingAccountTransaction: CheckingAccountTransaction = getTransactionById(state, ownProps.checkingAccountTransactionId) as CheckingAccountTransaction;
-  const matchingRule: MatchingRuleAssignment | null = findMatchingRule(state, checkingAccountTransaction);
+  // const checkingAccountTransaction: CheckingAccountTransaction = getTransactionById(state, ownProps.checkingAccountTransactionId) as CheckingAccountTransaction;
+  const matchingRule: MatchingRuleAssignment | null = findMatchingRule(state, ownProps.checkingAccountTransaction);
   return {
-    checkingAccountTransaction,
+    // checkingAccountTransaction: ownProps.checkingAccountTransaction,
     categoryNameFromCategoryAssignmentRule: matchingRule ? matchingRule.category.name : '',
     patternFromCategoryAssignmentRule: matchingRule ? matchingRule.pattern : '',
   };

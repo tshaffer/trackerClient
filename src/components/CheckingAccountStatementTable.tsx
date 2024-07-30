@@ -34,7 +34,6 @@ const CheckingAccountStatementTable: React.FC<CheckingAccountStatementTableProps
 
   console.log('render CheckingAccountStatementTable', props.checkingAccountStatementId);
 
-
   return (
     <React.Fragment>
       <Button onClick={() => navigate('/checkingAccountStatementsTable')}>Back</Button>
@@ -53,7 +52,7 @@ const CheckingAccountStatementTable: React.FC<CheckingAccountStatementTableProps
         <div className="grid-table-body">
           {props.checkingAccountTransactions.map((checkingAccountTransaction: CheckingAccountTransaction) => (
             <div className="grid-table-row" key={checkingAccountTransaction.id}>
-              <CheckingAccountStatementTransactionRow checkingAccountTransactionId={checkingAccountTransaction.id} />
+              <CheckingAccountStatementTransactionRow checkingAccountTransaction={checkingAccountTransaction} />
             </div>
           ))}
         </div>

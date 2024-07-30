@@ -8,10 +8,11 @@ import {
   FormControlLabel,
   Checkbox
 } from '@mui/material';
-import { Category, CheckTransaction } from '../types';
+import { BankTransaction, Category, CheckTransaction, CheckingAccountTransaction, Transaction } from '../types';
 import { TrackerDispatch } from '../models';
-import { getUnidentifiedBankTransactionById, getCategories } from '../selectors';
+import { getUnidentifiedBankTransactionById, getCategories, getTransactionById } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
+import { isNil } from 'lodash';
 
 export interface EditCheckDialogPropsFromParent {
   open: boolean;
@@ -135,8 +136,10 @@ const EditCheckDialog = (props: EditCheckDialogProps) => {
 };
 
 function mapStateToProps(state: any, ownProps: EditCheckDialogPropsFromParent) {
+  const checkingAccountTransaction: Transaction | undefined = getTransactionById(state, ownProps.unidentifiedBankTransactionId);
+  const check: BankTransaction | null = getUnidentifiedBankTransactionById(state, ownProps.unidentifiedBankTransactionId);
   return {
-    check: getUnidentifiedBankTransactionById(state, ownProps.unidentifiedBankTransactionId) as CheckTransaction,
+    check: !isNil(checkingAccountTransaction) ? checkingAccountTransaction as CheckTransaction : check as CheckTransaction,
     categories: getCategories(state),
   };
 }
