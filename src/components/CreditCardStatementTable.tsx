@@ -34,9 +34,6 @@ const CreditCardStatementTable: React.FC<CreditCardStatementTableProps> = (props
     return null;
   }
 
-  console.log('props.creditCardTransactionRows');
-  console.log(props.creditCardTransactionRows);
-
   const handleSort = (column: string) => {
     if (sortColumn === column) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');

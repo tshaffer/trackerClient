@@ -1,5 +1,5 @@
 import { isNil } from 'lodash';
-import { BankTransaction, BankTransactionType, CategorizedStatementData, CategorizedTransaction, Category, CategoryAssignmentRule, CheckingAccountTransaction, CreditCardTransaction, CreditCardTransactionRowInStatementTableProperties, DisregardLevel, ReviewedTransactions, StringToTransactionsLUT, TrackerState, Transaction } from '../types';
+import { BankTransaction, BankTransactionType, CategorizedStatementData, CategorizedTransaction, Category, CategoryAssignmentRule, CheckingAccountTransaction, CheckingAccountTransactionRowInStatementTableProperties, CreditCardTransaction, CreditCardTransactionRowInStatementTableProperties, DisregardLevel, ReviewedTransactions, StringToTransactionsLUT, TrackerState, Transaction } from '../types';
 import { getCategories, getCategoryById, getCategoryByName } from './categoryState';
 import { getEndDate, getStartDate } from './reportDataState';
 import { roundTo } from '../utilities';
@@ -52,6 +52,28 @@ export const getCreditCardTransactionRowInStatementTableProperties = (state: Tra
     };
   });
 }
+
+export const getCheckingAccountTransactionRowInStatementTableProperties = (state: TrackerState, statementId: string): CheckingAccountTransactionRowInStatementTableProperties[] => {
+  const checkingAccountTransactions: CheckingAccountTransaction[] = getTransactionsByStatementId(state, statementId) as CheckingAccountTransaction[];
+  return checkingAccountTransactions.map((checkingAccountTransaction: CheckingAccountTransaction) => {
+    const matchingRule: MatchingRuleAssignment | null = findMatchingRule(state, checkingAccountTransaction);
+    return {
+      id: checkingAccountTransaction.id,
+      transactionDate: checkingAccountTransaction.transactionDate,
+      amount: checkingAccountTransaction.amount,
+      name: checkingAccountTransaction.name,
+      userDescription: checkingAccountTransaction.userDescription,
+      categoryNameFromCategoryAssignmentRule: matchingRule ? matchingRule.category.name : '',
+      patternFromCategoryAssignmentRule: matchingRule ? matchingRule.pattern : '',
+      categoryNameFromCategoryOverride: getOverrideCategory(state, checkingAccountTransaction.id)
+      ? getCategoryById(state, getOverrideCategoryId(state, checkingAccountTransaction.id))!.name
+      : '',
+      categorizedTransactionName: categorizeTransaction(checkingAccountTransaction, getCategories(state), getCategoryAssignmentRules(state))?.name || '',
+      checkingAccountTransaction,
+    };
+  });
+}
+
 
 export const getTransactionsByCategory = (state: TrackerState): StringToTransactionsLUT => {
 
