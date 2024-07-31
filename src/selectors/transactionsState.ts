@@ -181,7 +181,7 @@ export const findMatchingRule = (state: TrackerState, transaction: BankTransacti
   return null;
 }
 
-const categorizeTransaction = (
+export const categorizeTransaction = (
   transaction: BankTransaction,
   categories: Category[],
   categoryAssignmentRules: CategoryAssignmentRule[]): Category | null => {

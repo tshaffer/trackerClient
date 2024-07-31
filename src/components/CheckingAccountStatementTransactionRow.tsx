@@ -10,7 +10,7 @@ import EditIcon from '@mui/icons-material/Edit';
 
 import { TrackerDispatch } from '../models';
 import { BankTransactionType, CategoryAssignmentRule, CheckTransaction, CheckingAccountTransaction, CheckingAccountTransactionType, SplitTransaction, Transaction } from '../types';
-import { findMatchingRule, getCategoryById, getOverrideCategory, getOverrideCategoryId, MatchingRuleAssignment } from '../selectors';
+import { categorizeTransaction, findMatchingRule, getCategories, getCategoryAssignmentRules, getCategoryById, getOverrideCategory, getOverrideCategoryId, MatchingRuleAssignment } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
 
 import '../styles/Grid.css';
@@ -31,6 +31,7 @@ export interface CheckingAccountStatementProps extends CheckingAccountStatementP
   categoryNameFromCategoryAssignmentRule: string;
   patternFromCategoryAssignmentRule: string | null;
   categoryNameFromCategoryOverride: string;
+  categorizedTransactionName: string;
   onAddCategoryAssignmentRule: (categoryAssignmentRule: CategoryAssignmentRule) => any;
   onSplitTransaction: (parentTransactionId: string, splitTransactions: SplitTransaction[]) => any;
   onUpdateTransaction: (transaction: Transaction) => any;
@@ -195,6 +196,7 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
       <div className="grid-table-cell">{props.categoryNameFromCategoryAssignmentRule}</div>
       <div className="grid-table-cell">{props.patternFromCategoryAssignmentRule}</div>
       <div className="grid-table-cell">{props.categoryNameFromCategoryOverride}</div>
+      <div className="grid-table-cell">{props.categorizedTransactionName}</div>
     </React.Fragment>
   );
 }
@@ -209,6 +211,7 @@ function mapStateToProps(state: any, ownProps: CheckingAccountStatementPropsFrom
     categoryNameFromCategoryOverride: getOverrideCategory(state, ownProps.checkingAccountTransaction.id)
       ? getCategoryById(state, getOverrideCategoryId(state, ownProps.checkingAccountTransaction.id))!.name
       : '',
+    categorizedTransactionName: categorizeTransaction(ownProps.checkingAccountTransaction, getCategories(state), getCategoryAssignmentRules(state))?.name || '',
   };
 }
 
