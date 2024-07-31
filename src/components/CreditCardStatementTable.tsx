@@ -43,10 +43,14 @@ const CreditCardStatementTable: React.FC<CreditCardStatementTableProps> = (props
           <div className="grid-table-cell">Date</div>
           <div className="grid-table-cell">Amount</div>
           <div className="grid-table-cell">Description</div>
+          <div className="grid-table-cell"></div>
+          <div className="grid-table-cell">User Description</div>
           <div className="grid-table-cell">Category from statement</div>
           <div className="grid-table-cell"></div>
-          <div className="grid-table-cell">Category from rule</div>
+          <div className="grid-table-cell">Category (rule)</div>
           <div className="grid-table-cell">Pattern</div>
+          <div className="grid-table-cell">Category (override)</div>
+          <div className="grid-table-cell">Category</div>
         </div>
         <div className="grid-table-body">
           {props.creditCardTransactions.map((creditCardTransaction: CreditCardTransaction) => (
