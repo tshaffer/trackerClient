@@ -10,16 +10,16 @@ import EditIcon from '@mui/icons-material/Edit';
 
 import { TrackerDispatch } from '../models';
 import { BankTransactionType, CategoryAssignmentRule, CheckTransaction, CheckingAccountTransaction, CheckingAccountTransactionType, SplitTransaction, Transaction } from '../types';
-import { getTransactionById, findMatchingRule, MatchingRuleAssignment } from '../selectors';
+import { findMatchingRule, MatchingRuleAssignment } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
 
 import '../styles/Grid.css';
 import { Tooltip, IconButton } from '@mui/material';
 import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
-import { addCategoryAssignmentRuleServerAndRedux, splitTransaction, updateCheckTransaction, updateTransaction } from '../controllers';
+import { addCategoryAssignmentRuleServerAndRedux, splitTransaction, updateTransaction } from '../controllers';
 import SplitTransactionDialog from './SplitTransactionDialog';
 import EditTransactionDialog from './EditTransactionDialog';
-import EditCheckDialog from './EditCheckDialog';
+import EditCheckFromStatementDialog from './EditCheckFromStatementDialog';
 
 export interface CheckingAccountStatementPropsFromParent {
   // checkingAccountTransactionId: string;
@@ -137,9 +137,9 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
   const renderEditCheckDialog = (): JSX.Element | null => {
     if (showEditCheckDialog) {
       return (
-        <EditCheckDialog
+        <EditCheckFromStatementDialog
           open={showEditCheckDialog}
-          unidentifiedBankTransactionId={props.checkingAccountTransaction.id}
+          transactionId={props.checkingAccountTransaction.id}
           onClose={handleCloseEditCheckDialog}
           onSave={handleSaveCheck}
         />
@@ -212,7 +212,7 @@ const mapDispatchToProps = (dispatch: TrackerDispatch) => {
     onAddCategoryAssignmentRule: addCategoryAssignmentRuleServerAndRedux,
     onSplitTransaction: splitTransaction,
     onUpdateTransaction: updateTransaction,
-    onUpdateCheckTransaction: updateCheckTransaction,
+    onUpdateCheckTransaction: updateTransaction,
   }, dispatch);
 };
 

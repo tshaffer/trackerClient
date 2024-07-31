@@ -177,7 +177,7 @@ export const transactionsStateReducer = (
       const newState = clone(state);
       const id = action.payload.transaction.id;
       if (newState.byId[id]) {
-        newState.byId[id].userDescription = action.payload.transaction.userDescription;
+        newState.byId[id] = action.payload.transaction;
       }
       return newState;
     }
