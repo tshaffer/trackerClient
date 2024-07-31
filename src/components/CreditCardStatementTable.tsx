@@ -10,8 +10,8 @@ import { Button } from '@mui/material';
 import { isNil } from 'lodash';
 
 import { TrackerDispatch } from '../models';
-import { CreditCardTransaction } from '../types';
-import { getTransactionsByStatementId } from '../selectors';
+import { CreditCardTransaction, CreditCardTransactionRowInStatementTableProperties } from '../types';
+import { getCreditCardTransactionRowInStatementTableProperties, getTransactionsByStatementId } from '../selectors';
 
 import CreditCardStatementTransactionRow from './CreditCardStatementTransactionRow';
 
@@ -22,6 +22,7 @@ interface CreditCardStatementTablePropsFromParent {
 
 interface CreditCardStatementTableProps extends CreditCardStatementTablePropsFromParent {
   creditCardTransactions: CreditCardTransaction[];
+  creditCardTransactionRows: CreditCardTransactionRowInStatementTableProperties[];
 }
 
 const CreditCardStatementTable: React.FC<CreditCardStatementTableProps> = (props: CreditCardStatementTableProps) => {
@@ -32,6 +33,9 @@ const CreditCardStatementTable: React.FC<CreditCardStatementTableProps> = (props
   if (isNil(props.creditCardStatementId)) {
     return null;
   }
+
+  console.log('props.creditCardTransactionRows');
+  console.log(props.creditCardTransactionRows);
 
   const handleSort = (column: string) => {
     if (sortColumn === column) {
@@ -59,7 +63,6 @@ const CreditCardStatementTable: React.FC<CreditCardStatementTableProps> = (props
     if (sortColumn !== column) return null;
     return sortOrder === 'asc' ? ' ▲' : ' ▼';
   };
-
 
   const navigate = useNavigate();
 
@@ -98,6 +101,7 @@ const CreditCardStatementTable: React.FC<CreditCardStatementTableProps> = (props
 function mapStateToProps(state: any, ownProps: CreditCardStatementTablePropsFromParent) {
   return {
     creditCardTransactions: getTransactionsByStatementId(state, ownProps.creditCardStatementId) as CreditCardTransaction[],
+    creditCardTransactionRows: getCreditCardTransactionRowInStatementTableProperties(state, ownProps.creditCardStatementId),
   };
 }
 

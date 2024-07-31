@@ -43,6 +43,19 @@ export interface CreditCardTransaction extends Transaction {
   type: string;
 }
 
+export interface CreditCardTransactionRowInStatementTableProperties {
+  transactionDate: string;
+  amount: number;
+  description: string;
+  userDescription: string;
+  category: string;
+
+  categoryNameFromCategoryAssignmentRule: string;
+  patternFromCategoryAssignmentRule: string;
+  categoryNameFromCategoryOverride: string;
+  categorizedTransactionName: string;
+}
+
 export interface CheckingAccountTransaction extends Transaction {
   transactionType: string;
   name: string;
