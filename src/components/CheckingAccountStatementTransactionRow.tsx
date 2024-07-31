@@ -22,12 +22,10 @@ import EditTransactionDialog from './EditTransactionDialog';
 import EditCheckFromStatementDialog from './EditCheckFromStatementDialog';
 
 export interface CheckingAccountStatementPropsFromParent {
-  // checkingAccountTransactionId: string;
   checkingAccountTransaction: CheckingAccountTransaction;
 }
 
 export interface CheckingAccountStatementProps extends CheckingAccountStatementPropsFromParent {
-  // checkingAccountTransaction: CheckingAccountTransaction;
   categoryNameFromCategoryAssignmentRule: string;
   patternFromCategoryAssignmentRule: string | null;
   categoryNameFromCategoryOverride: string;
@@ -176,7 +174,7 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
 
       <div className="grid-table-cell" style={{ marginLeft: '32px' }}>
         <Tooltip title="Split Transaction" arrow>
-          <IconButton onClick={handleSplitTransaction}>
+          <IconButton onClick={handleSplitTransaction} disabled={props.checkingAccountTransaction.parentTransactionId !== ''}>
             <SafetyDividerIcon />
           </IconButton>
         </Tooltip>
