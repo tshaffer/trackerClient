@@ -49,8 +49,9 @@ const CheckingAccountStatementTable: React.FC<CheckingAccountStatementTableProps
           <div className="grid-table-cell"></div>
           <div className="grid-table-cell">User Description</div>
           <div className="grid-table-cell"></div>
-          <div className="grid-table-cell">Category from rule</div>
+          <div className="grid-table-cell">Category (rule)</div>
           <div className="grid-table-cell">Pattern</div>
+          <div className="grid-table-cell">Category (override)</div>
         </div>
         <div className="grid-table-body">
           {props.checkingAccountTransactions.map((checkingAccountTransaction: CheckingAccountTransaction) => (

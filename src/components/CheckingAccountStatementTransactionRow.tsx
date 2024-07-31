@@ -10,7 +10,7 @@ import EditIcon from '@mui/icons-material/Edit';
 
 import { TrackerDispatch } from '../models';
 import { BankTransactionType, CategoryAssignmentRule, CheckTransaction, CheckingAccountTransaction, CheckingAccountTransactionType, SplitTransaction, Transaction } from '../types';
-import { findMatchingRule, MatchingRuleAssignment } from '../selectors';
+import { findMatchingRule, getCategoryById, getOverrideCategory, getOverrideCategoryId, MatchingRuleAssignment } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
 
 import '../styles/Grid.css';
@@ -30,6 +30,7 @@ export interface CheckingAccountStatementProps extends CheckingAccountStatementP
   // checkingAccountTransaction: CheckingAccountTransaction;
   categoryNameFromCategoryAssignmentRule: string;
   patternFromCategoryAssignmentRule: string | null;
+  categoryNameFromCategoryOverride: string;
   onAddCategoryAssignmentRule: (categoryAssignmentRule: CategoryAssignmentRule) => any;
   onSplitTransaction: (parentTransactionId: string, splitTransactions: SplitTransaction[]) => any;
   onUpdateTransaction: (transaction: Transaction) => any;
@@ -193,6 +194,7 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
       </div>
       <div className="grid-table-cell">{props.categoryNameFromCategoryAssignmentRule}</div>
       <div className="grid-table-cell">{props.patternFromCategoryAssignmentRule}</div>
+      <div className="grid-table-cell">{props.categoryNameFromCategoryOverride}</div>
     </React.Fragment>
   );
 }
@@ -204,6 +206,9 @@ function mapStateToProps(state: any, ownProps: CheckingAccountStatementPropsFrom
     // checkingAccountTransaction: ownProps.checkingAccountTransaction,
     categoryNameFromCategoryAssignmentRule: matchingRule ? matchingRule.category.name : '',
     patternFromCategoryAssignmentRule: matchingRule ? matchingRule.pattern : '',
+    categoryNameFromCategoryOverride: getOverrideCategory(state, ownProps.checkingAccountTransaction.id)
+      ? getCategoryById(state, getOverrideCategoryId(state, ownProps.checkingAccountTransaction.id))!.name
+      : '',
   };
 }
 
