@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -13,6 +13,7 @@ import { TrackerDispatch } from '../models';
 import { getUnidentifiedBankTransactionById, getCategories, getTransactionById } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
 import { isNil } from 'lodash';
+import SelectCategory from './SelectCategory';
 
 export interface EditCheckDialogPropsFromParent {
   open: boolean;
@@ -33,6 +34,8 @@ const EditCheckDialog = (props: EditCheckDialogProps) => {
   const [checkNumberError, setCheckNumberError] = useState<string | null>(null);
   const [userDescription, setUserDescription] = useState(props.check.userDescription);
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
+  const [overrideCategory, setOverrideCategory] = React.useState(props.check.overrideCategory);
+  const [overrideCategoryId, setOverrideCategoryId] = React.useState(props.check.overrideCategoryId);
 
   React.useEffect(() => {
     if (isCheckboxChecked) {
@@ -49,7 +52,14 @@ const EditCheckDialog = (props: EditCheckDialogProps) => {
       setCheckNumberError('Check number must be a valid number');
       return;
     }
-    const updatedCheck: CheckTransaction = { ...props.check, payee, checkNumber, userDescription };
+    const updatedCheck: CheckTransaction = {
+      ...props.check,
+      payee,
+      checkNumber,
+      userDescription,
+      overrideCategory,
+      overrideCategoryId,
+    };
     props.onSave(updatedCheck);
     props.onClose();
   };
@@ -73,6 +83,14 @@ const EditCheckDialog = (props: EditCheckDialogProps) => {
       setUserDescription(`Check number: ${checkNumber}, ${payee}`);
     }
   };
+
+  function handleSetOverrideCategory(event: ChangeEvent<HTMLInputElement>, checked: boolean): void {
+    setOverrideCategory(event.target.checked);
+  }
+
+  function handleSetOverrideCategoryId(categoryId: string): void {
+    setOverrideCategoryId(categoryId);
+  }
 
   return (
     <Dialog open={props.open} onClose={props.onClose}>
@@ -121,6 +139,16 @@ const EditCheckDialog = (props: EditCheckDialogProps) => {
             disabled={isCheckboxChecked}
             fullWidth
           />
+          <FormControlLabel
+            control={<Checkbox checked={overrideCategory} onChange={handleSetOverrideCategory} />}
+            label="Override category?"
+          />
+          {overrideCategory && (
+            <SelectCategory
+              selectedCategoryId={overrideCategoryId}
+              onSetCategoryId={handleSetOverrideCategoryId}
+            />
+          )}
         </Box>
       </DialogContent>
       <DialogActions>
