@@ -36,6 +36,7 @@ export const getCreditCardTransactionRowInStatementTableProperties = (state: Tra
   return creditCardTransactions.map((creditCardTransaction: CreditCardTransaction) => {
     const matchingRule: MatchingRuleAssignment | null = findMatchingRule(state, creditCardTransaction);
     return {
+      id: creditCardTransaction.id,
       transactionDate: creditCardTransaction.transactionDate,
       amount: creditCardTransaction.amount,
       description: creditCardTransaction.description,

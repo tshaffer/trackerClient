@@ -44,6 +44,7 @@ export interface CreditCardTransaction extends Transaction {
 }
 
 export interface CreditCardTransactionRowInStatementTableProperties {
+  id: string;
   transactionDate: string;
   amount: number;
   description: string;
