@@ -36,12 +36,10 @@ const SplitTransactionDialog: React.FC = (props: any) => {
     { amount: transaction.amount.toString(), description: 'Remainder' },
   ]);
   const amountRefs = useRef<(HTMLInputElement | null)[]>([]);
-  const [remainderSplit, setRemainderSplit] = useState<SplitTransaction>({ amount: transaction.amount.toString(), description: 'Remainder' });
 
   useEffect(() => {
-    setRemainderSplit({ amount: transaction.amount.toString(), description: 'Remainder' });
     if (transaction.amount.toString() !== splits[0].amount) {
-      setSplits([{ amount: '0', description: '' }]);
+      setSplits([{ amount: transaction.amount.toString(), description: 'Remainder' }]);
     }
   }, [transaction.amount]);
 
@@ -71,12 +69,13 @@ const SplitTransactionDialog: React.FC = (props: any) => {
 
   const handleAddSplit = () => {
     setSplits([
-      ...splits,
+      ...splits.slice(0, -1),
       { amount: '0', description: '' },
+      splits[splits.length - 1],
     ]);
     setTimeout(() => {
-      if (amountRefs.current[splits.length]) {
-        amountRefs.current[splits.length]!.focus();
+      if (amountRefs.current[splits.length - 1]) {
+        amountRefs.current[splits.length - 1]!.focus();
       }
     }, 0);
   };
@@ -95,25 +94,25 @@ const SplitTransactionDialog: React.FC = (props: any) => {
   };
 
   const adjustRemainderAmount = (newSplits: SplitTransaction[]) => {
-    const totalSplitAmount = newSplits.reduce((sum, split) => sum + parseFloat(split.amount || '0'), 0);
+    const totalSplitAmount = newSplits.slice(0, -1).reduce((sum, split) => sum + parseFloat(split.amount || '0'), 0);
     const remainderAmount = transaction.amount - totalSplitAmount;
 
     if (remainderAmount === 0) {
-      setRemainderSplit({ amount: '0', description: '' });
+      newSplits = newSplits.slice(0, -1); // Remove the "Remainder" split
     } else {
-      setRemainderSplit({ amount: remainderAmount.toString(), description: 'Remainder' });
+      newSplits[newSplits.length - 1].amount = remainderAmount.toString();
     }
 
     setSplits(newSplits);
   };
 
   const handleSave = () => {
-    const totalAmount = splits.reduce((sum, split) => sum + parseFloat(split.amount || '0'), 0) + parseFloat(remainderSplit.amount);
+    const totalAmount = splits.reduce((sum, split) => sum + parseFloat(split.amount || '0'), 0);
     if (totalAmount !== transaction.amount) {
       alert('The total amount of splits must equal the transaction amount.');
       return;
     }
-    onSave([...splits, remainderSplit]);
+    onSave(splits);
     onClose();
   };
 
@@ -144,31 +143,14 @@ const SplitTransactionDialog: React.FC = (props: any) => {
                 InputLabelProps={{ shrink: true }}
                 style={{ marginRight: '8px' }}
               />
-              <IconButton onClick={() => handleDeleteSplit(index)}>
-                <DeleteIcon />
-              </IconButton>
+              {split.description !== 'Remainder' && (
+                <IconButton onClick={() => handleDeleteSplit(index)}>
+                  <DeleteIcon />
+                </IconButton>
+              )}
             </Box>
           ))}
           <Button onClick={handleAddSplit}>Add Split</Button>
-          <Box mb={2} display="flex" alignItems="center">
-            <TextField
-              label="Amount"
-              type="text"
-              value={remainderSplit.amount}
-              fullWidth
-              InputLabelProps={{ shrink: true }}
-              style={{ marginRight: '8px' }}
-              disabled
-            />
-            <TextField
-              label="Description"
-              value={remainderSplit.description}
-              fullWidth
-              InputLabelProps={{ shrink: true }}
-              style={{ marginRight: '8px' }}
-              disabled
-            />
-          </Box>
         </Box>
       </DialogContent>
       <DialogActions>
