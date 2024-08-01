@@ -95,12 +95,7 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
 
   const handleSaveSplitTransaction = (splitTransactions: any[]): void => {
     console.log('handleSaveSplitTransaction: ', splitTransactions);
-    // splitTransactions.forEach((splitTransaction, index) => {
-    //   splitTransaction.parentTransactionId = props.checkingAccountTransaction.id;
-    //   splitTransaction.id = uuidv4();
-    // });
-
-    // props.onSplitTransaction(props.checkingAccountTransaction.id, splitTransactions);
+    props.onSplitTransaction(props.checkingAccountTransaction.id, splitTransactions);
   }
 
   const handleCloseAddSplitTransactionDialog = () => {
