@@ -26,14 +26,12 @@ export interface SplitTransactionDialogProps extends SplitTransactionDialogProps
 
 const SplitTransactionDialog: React.FC = (props: any) => {
 
-  console.log('SplitTransactionDialog props: ', props);
-
   if (!props.open) {
     return null;
   }
 
   const { open, onClose, transaction, onSave } = props;
-  
+
   const [splits, setSplits] = useState<SplitTransaction[]>([
     { amount: transaction.amount.toString(), description: 'Remainder' },
   ]);
@@ -84,7 +82,13 @@ const SplitTransactionDialog: React.FC = (props: any) => {
 
   const adjustRemainderAmount = (newSplits: SplitTransaction[]) => {
     const totalSplitAmount = newSplits.slice(1).reduce((sum, split) => sum + parseFloat(split.amount || '0'), 0);
-    newSplits[0].amount = (transaction.amount - totalSplitAmount).toString();
+    const remainderAmount = transaction.amount - totalSplitAmount;
+
+    if (remainderAmount === 0) {
+      newSplits = newSplits.slice(1); // Remove the "Remainder" split
+    } else {
+      newSplits[0].amount = remainderAmount.toString();
+    }
     setSplits(newSplits);
   };
 
@@ -131,7 +135,7 @@ const SplitTransactionDialog: React.FC = (props: any) => {
               )}
             </Box>
           ))}
-          <Button onClick={handleAddSplit}>Add Another Split</Button>
+          <Button onClick={handleAddSplit}>Add Split</Button>
         </Box>
       </DialogContent>
       <DialogActions>
