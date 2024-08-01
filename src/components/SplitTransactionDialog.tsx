@@ -10,7 +10,7 @@ import { getTransactionById } from '../selectors';
 
 interface SplitTransaction {
   amount: string;
-  description: string;
+  userDescription: string;
 }
 
 interface SplitTransactionDialogPropsFromParent {
@@ -29,13 +29,13 @@ const SplitTransactionDialog: React.FC = (props: any) => {
   const { open, onClose, transaction, onSave } = props;
 
   const [splits, setSplits] = React.useState<SplitTransaction[]>([
-    { amount: Math.abs(transaction.amount).toString(), description: 'Remainder' },
+    { amount: Math.abs(transaction.amount).toString(), userDescription: 'Remainder' },
   ]);
   const amountRefs = React.useRef<(HTMLInputElement | null)[]>([]);
 
   React.useEffect(() => {
     if (transaction.amount.toString() !== splits[0].amount) {
-      setSplits([{ amount: Math.abs(transaction.amount).toString(), description: 'Remainder' }]);
+      setSplits([{ amount: Math.abs(transaction.amount).toString(), userDescription: 'Remainder' }]);
     }
   }, [transaction.amount]);
 
@@ -76,7 +76,7 @@ const SplitTransactionDialog: React.FC = (props: any) => {
   const handleAddSplit = () => {
     setSplits([
       ...splits.slice(0, -1),
-      { amount: '0', description: '' },
+      { amount: '0', userDescription: '' },
       splits[splits.length - 1],
     ]);
     setTimeout(() => {
@@ -147,15 +147,15 @@ const SplitTransactionDialog: React.FC = (props: any) => {
               />
               <TextField
                 label="Description"
-                value={split.description}
-                onChange={(e) => handleSplitChange(index, 'description', e.target.value)}
+                value={split.userDescription}
+                onChange={(e) => handleSplitChange(index, 'userDescription', e.target.value)}
                 onKeyDown={(e) => handleDescriptionKeyDown(index, e)}
                 onFocus={(e) => e.target.select()}
                 fullWidth
                 InputLabelProps={{ shrink: true }}
                 style={{ marginRight: '8px' }}
               />
-              {split.description !== 'Remainder' && (
+              {split.userDescription !== 'Remainder' && (
                 <IconButton onClick={() => handleDeleteSplit(index)}>
                   <DeleteIcon />
                 </IconButton>
