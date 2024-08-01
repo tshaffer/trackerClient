@@ -120,7 +120,7 @@ const SplitTransactionDialog: React.FC = (props: any) => {
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Split Transaction</DialogTitle>
       <DialogContent>
-        <Box component="form" noValidate autoComplete="off">
+        <Box component="form" noValidate autoComplete="off" mt={2}>
           {splits.map((split, index) => (
             <Box key={index} mb={2} display="flex" alignItems="center">
               <TextField
