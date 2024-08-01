@@ -29,14 +29,12 @@ const SplitTransactionDialog: React.FC = (props: any) => {
   const { open, onClose, transaction, onSave } = props;
 
   const [splits, setSplits] = React.useState<SplitTransaction[]>([
-    { amount: transaction.amount.toString(), description: 'Remainder' },
+    { amount: Math.abs(transaction.amount).toString(), description: 'Remainder' },
   ]);
   const amountRefs = React.useRef<(HTMLInputElement | null)[]>([]);
 
   React.useEffect(() => {
-    if (transaction.amount.toString() !== splits[0].amount) {
-      setSplits([{ amount: transaction.amount.toString(), description: 'Remainder' }]);
-    }
+    setSplits([{ amount: Math.abs(transaction.amount).toString(), description: 'Remainder' }]);
   }, [transaction.amount]);
 
   if (!props.open) {
@@ -95,7 +93,7 @@ const SplitTransactionDialog: React.FC = (props: any) => {
 
   const adjustRemainderAmount = (newSplits: SplitTransaction[]) => {
     const totalSplitAmount = newSplits.slice(0, -1).reduce((sum, split) => sum + parseFloat(split.amount || '0'), 0);
-    const remainderAmount = transaction.amount - totalSplitAmount;
+    const remainderAmount = Math.abs(transaction.amount) - totalSplitAmount;
 
     if (remainderAmount === 0) {
       newSplits = newSplits.slice(0, -1); // Remove the "Remainder" split
@@ -108,11 +106,15 @@ const SplitTransactionDialog: React.FC = (props: any) => {
 
   const handleSave = () => {
     const totalAmount = splits.reduce((sum, split) => sum + parseFloat(split.amount || '0'), 0);
-    if (totalAmount !== transaction.amount) {
+    if (totalAmount !== Math.abs(transaction.amount)) {
       alert('The total amount of splits must equal the transaction amount.');
       return;
     }
-    onSave(splits);
+    const negativeSplits = splits.map(split => ({
+      ...split,
+      amount: (-Math.abs(parseFloat(split.amount || '0'))).toString()
+    }));
+    onSave(negativeSplits);
     onClose();
   };
 
