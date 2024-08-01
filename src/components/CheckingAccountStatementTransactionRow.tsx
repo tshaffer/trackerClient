@@ -44,8 +44,6 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
   const [showEditTransactionDialog, setShowEditTransactionDialog] = React.useState(false);
   const [showEditCheckDialog, setShowEditCheckDialog] = React.useState(false);
 
-  console.log('checkingAccountTransaction: ', props.checkingAccountTransaction.isSplit.toString());
-
   function handleSplitTransaction(): void {
     console.log('Split Transaction', props.checkingAccountTransaction.id);
     setShowSplitTransactionDialog(true);
@@ -95,14 +93,14 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
     setShowAddCategoryAssignmentRuleDialog(false);
   }
 
-  const handleSaveSplitTransaction = (splitTransactions: SplitTransaction[]): void => {
+  const handleSaveSplitTransaction = (splitTransactions: any[]): void => {
     console.log('handleSaveSplitTransaction: ', splitTransactions);
-    splitTransactions.forEach((splitTransaction, index) => {
-      splitTransaction.parentTransactionId = props.checkingAccountTransaction.id;
-      splitTransaction.id = uuidv4();
-    });
+    // splitTransactions.forEach((splitTransaction, index) => {
+    //   splitTransaction.parentTransactionId = props.checkingAccountTransaction.id;
+    //   splitTransaction.id = uuidv4();
+    // });
 
-    props.onSplitTransaction(props.checkingAccountTransaction.id, splitTransactions);
+    // props.onSplitTransaction(props.checkingAccountTransaction.id, splitTransactions);
   }
 
   const handleCloseAddSplitTransactionDialog = () => {
@@ -148,13 +146,11 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
     return null;
   }
 
-  console.log('render CheckingAccountStatementTransactionRow', props.checkingAccountTransaction);
-
   return (
     <React.Fragment>
       <SplitTransactionDialog
         open={showSplitTransactionDialog}
-        transactionId={transactionId}
+        transactionId={props.checkingAccountTransaction.id}
         onClose={handleCloseAddSplitTransactionDialog}
         onSave={handleSaveSplitTransaction}
       />
@@ -174,9 +170,11 @@ const CheckingAccountStatementTransactionRow: React.FC<CheckingAccountStatementP
 
       <div className="grid-table-cell" style={{ marginLeft: '32px' }}>
         <Tooltip title="Split Transaction" arrow>
-          <IconButton onClick={handleSplitTransaction} disabled={props.checkingAccountTransaction.parentTransactionId !== ''}>
-            <SafetyDividerIcon />
-          </IconButton>
+          <span>
+            <IconButton onClick={handleSplitTransaction} disabled={props.checkingAccountTransaction.parentTransactionId !== ''}>
+              <SafetyDividerIcon />
+            </IconButton>
+          </span>
         </Tooltip>
       </div>
       <div className="grid-table-cell">{formatDate(props.checkingAccountTransaction.transactionDate)}</div>
