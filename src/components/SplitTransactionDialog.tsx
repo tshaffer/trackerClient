@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,
   Button, TextField, Box, IconButton
@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { getTransactionById } from '../selectors';
 
 interface SplitTransaction {
-  amount: number;
+  amount: string;
   description: string;
 }
 
@@ -27,7 +27,7 @@ export interface SplitTransactionDialogProps extends SplitTransactionDialogProps
 const SplitTransactionDialog: React.FC = (props: any) => {
 
   console.log('SplitTransactionDialog props: ', props);
-  
+
   if (!props.open) {
     return null;
   }
@@ -35,29 +35,44 @@ const SplitTransactionDialog: React.FC = (props: any) => {
   const { open, onClose, transaction, onSave } = props;
   
   const [splits, setSplits] = useState<SplitTransaction[]>([
-    { amount: transaction.amount, description: 'Remainder' },
+    { amount: transaction.amount.toString(), description: 'Remainder' },
   ]);
+  const amountRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
-    if (transaction.amount !== splits[0].amount) {
-      setSplits([{ amount: transaction.amount, description: 'Remainder' }]);
+    if (transaction.amount.toString() !== splits[0].amount) {
+      setSplits([{ amount: transaction.amount.toString(), description: 'Remainder' }]);
     }
   }, [transaction.amount]);
 
-  const handleSplitChange = (index: number, field: string, value: string | number) => {
+  const handleSplitChange = (index: number, field: string, value: string) => {
     const newSplits = [...splits];
-    if (field === 'amount') {
-      value = parseFloat(value.toString().replace(/^\$/, ''));
-    }
     newSplits[index] = { ...newSplits[index], [field]: value };
     setSplits(newSplits);
-    adjustRemainderAmount(newSplits);
+  };
+
+  const handleAmountBlur = (index: number) => {
+    const newSplits = [...splits];
+    const value = newSplits[index].amount.replace(/^\$/, '');
+    const amount = parseFloat(value);
+
+    if (isNaN(amount)) {
+      newSplits[index].amount = '';
+      setSplits(newSplits);
+      if (amountRefs.current[index]) {
+        amountRefs.current[index]!.focus();
+      }
+    } else {
+      newSplits[index].amount = amount.toString();
+      setSplits(newSplits);
+      adjustRemainderAmount(newSplits);
+    }
   };
 
   const handleAddSplit = () => {
     setSplits([
       ...splits,
-      { amount: 0, description: '' },
+      { amount: '0', description: '' },
     ]);
   };
 
@@ -68,13 +83,13 @@ const SplitTransactionDialog: React.FC = (props: any) => {
   };
 
   const adjustRemainderAmount = (newSplits: SplitTransaction[]) => {
-    const totalSplitAmount = newSplits.slice(1).reduce((sum, split) => sum + split.amount, 0);
-    newSplits[0].amount = transaction.amount - totalSplitAmount;
+    const totalSplitAmount = newSplits.slice(1).reduce((sum, split) => sum + parseFloat(split.amount || '0'), 0);
+    newSplits[0].amount = (transaction.amount - totalSplitAmount).toString();
     setSplits(newSplits);
   };
 
   const handleSave = () => {
-    const totalAmount = splits.reduce((sum, split) => sum + split.amount, 0);
+    const totalAmount = splits.reduce((sum, split) => sum + parseFloat(split.amount || '0'), 0);
     if (totalAmount !== transaction.amount) {
       alert('The total amount of splits must equal the transaction amount.');
       return;
@@ -93,9 +108,11 @@ const SplitTransactionDialog: React.FC = (props: any) => {
               <TextField
                 label="Amount"
                 type="text"
-                value={`$${split.amount}`}
+                value={split.amount}
                 onChange={(e) => handleSplitChange(index, 'amount', e.target.value)}
+                onBlur={() => handleAmountBlur(index)}
                 fullWidth
+                inputRef={(el) => (amountRefs.current[index] = el)}
                 InputLabelProps={{ shrink: true }}
                 style={{ marginRight: '8px' }}
               />
