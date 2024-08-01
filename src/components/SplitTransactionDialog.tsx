@@ -36,10 +36,12 @@ const SplitTransactionDialog: React.FC = (props: any) => {
     { amount: transaction.amount.toString(), description: 'Remainder' },
   ]);
   const amountRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [remainderSplit, setRemainderSplit] = useState<SplitTransaction>({ amount: transaction.amount.toString(), description: 'Remainder' });
 
   useEffect(() => {
+    setRemainderSplit({ amount: transaction.amount.toString(), description: 'Remainder' });
     if (transaction.amount.toString() !== splits[0].amount) {
-      setSplits([{ amount: transaction.amount.toString(), description: 'Remainder' }]);
+      setSplits([{ amount: '0', description: '' }]);
     }
   }, [transaction.amount]);
 
@@ -72,6 +74,11 @@ const SplitTransactionDialog: React.FC = (props: any) => {
       ...splits,
       { amount: '0', description: '' },
     ]);
+    setTimeout(() => {
+      if (amountRefs.current[splits.length]) {
+        amountRefs.current[splits.length]!.focus();
+      }
+    }, 0);
   };
 
   const handleDeleteSplit = (index: number) => {
@@ -80,25 +87,33 @@ const SplitTransactionDialog: React.FC = (props: any) => {
     adjustRemainderAmount(newSplits);
   };
 
+  const handleDescriptionKeyDown = (index: number, event: React.KeyboardEvent) => {
+    if (event.key === 'Tab') {
+      event.preventDefault();
+      handleAddSplit();
+    }
+  };
+
   const adjustRemainderAmount = (newSplits: SplitTransaction[]) => {
-    const totalSplitAmount = newSplits.slice(1).reduce((sum, split) => sum + parseFloat(split.amount || '0'), 0);
+    const totalSplitAmount = newSplits.reduce((sum, split) => sum + parseFloat(split.amount || '0'), 0);
     const remainderAmount = transaction.amount - totalSplitAmount;
 
     if (remainderAmount === 0) {
-      newSplits = newSplits.slice(1); // Remove the "Remainder" split
+      setRemainderSplit({ amount: '0', description: '' });
     } else {
-      newSplits[0].amount = remainderAmount.toString();
+      setRemainderSplit({ amount: remainderAmount.toString(), description: 'Remainder' });
     }
+
     setSplits(newSplits);
   };
 
   const handleSave = () => {
-    const totalAmount = splits.reduce((sum, split) => sum + parseFloat(split.amount || '0'), 0);
+    const totalAmount = splits.reduce((sum, split) => sum + parseFloat(split.amount || '0'), 0) + parseFloat(remainderSplit.amount);
     if (totalAmount !== transaction.amount) {
       alert('The total amount of splits must equal the transaction amount.');
       return;
     }
-    onSave(splits);
+    onSave([...splits, remainderSplit]);
     onClose();
   };
 
@@ -124,18 +139,36 @@ const SplitTransactionDialog: React.FC = (props: any) => {
                 label="Description"
                 value={split.description}
                 onChange={(e) => handleSplitChange(index, 'description', e.target.value)}
+                onKeyDown={(e) => handleDescriptionKeyDown(index, e)}
                 fullWidth
                 InputLabelProps={{ shrink: true }}
                 style={{ marginRight: '8px' }}
               />
-              {index !== 0 && (
-                <IconButton onClick={() => handleDeleteSplit(index)}>
-                  <DeleteIcon />
-                </IconButton>
-              )}
+              <IconButton onClick={() => handleDeleteSplit(index)}>
+                <DeleteIcon />
+              </IconButton>
             </Box>
           ))}
           <Button onClick={handleAddSplit}>Add Split</Button>
+          <Box mb={2} display="flex" alignItems="center">
+            <TextField
+              label="Amount"
+              type="text"
+              value={remainderSplit.amount}
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+              style={{ marginRight: '8px' }}
+              disabled
+            />
+            <TextField
+              label="Description"
+              value={remainderSplit.description}
+              fullWidth
+              InputLabelProps={{ shrink: true }}
+              style={{ marginRight: '8px' }}
+              disabled
+            />
+          </Box>
         </Box>
       </DialogContent>
       <DialogActions>
