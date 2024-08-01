@@ -34,8 +34,16 @@ const SplitTransactionDialog: React.FC = (props: any) => {
   const amountRefs = React.useRef<(HTMLInputElement | null)[]>([]);
 
   React.useEffect(() => {
-    setSplits([{ amount: Math.abs(transaction.amount).toString(), description: 'Remainder' }]);
+    if (transaction.amount.toString() !== splits[0].amount) {
+      setSplits([{ amount: Math.abs(transaction.amount).toString(), description: 'Remainder' }]);
+    }
   }, [transaction.amount]);
+
+  React.useEffect(() => {
+    if (open) {
+      handleAddSplit();
+    }
+  }, [open]);
 
   if (!props.open) {
     return null;
@@ -131,6 +139,7 @@ const SplitTransactionDialog: React.FC = (props: any) => {
                 value={split.amount}
                 onChange={(e) => handleSplitChange(index, 'amount', e.target.value)}
                 onBlur={() => handleAmountBlur(index)}
+                onFocus={(e) => e.target.select()}
                 fullWidth
                 inputRef={(el) => (amountRefs.current[index] = el)}
                 InputLabelProps={{ shrink: true }}
@@ -141,6 +150,7 @@ const SplitTransactionDialog: React.FC = (props: any) => {
                 value={split.description}
                 onChange={(e) => handleSplitChange(index, 'description', e.target.value)}
                 onKeyDown={(e) => handleDescriptionKeyDown(index, e)}
+                onFocus={(e) => e.target.select()}
                 fullWidth
                 InputLabelProps={{ shrink: true }}
                 style={{ marginRight: '8px' }}
