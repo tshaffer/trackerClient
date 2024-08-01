@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions,
   Button, TextField, Box, IconButton
@@ -26,22 +26,22 @@ export interface SplitTransactionDialogProps extends SplitTransactionDialogProps
 
 const SplitTransactionDialog: React.FC = (props: any) => {
 
-  if (!props.open) {
-    return null;
-  }
-
   const { open, onClose, transaction, onSave } = props;
 
-  const [splits, setSplits] = useState<SplitTransaction[]>([
+  const [splits, setSplits] = React.useState<SplitTransaction[]>([
     { amount: transaction.amount.toString(), description: 'Remainder' },
   ]);
-  const amountRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const amountRefs = React.useRef<(HTMLInputElement | null)[]>([]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (transaction.amount.toString() !== splits[0].amount) {
       setSplits([{ amount: transaction.amount.toString(), description: 'Remainder' }]);
     }
   }, [transaction.amount]);
+
+  if (!props.open) {
+    return null;
+  }
 
   const handleSplitChange = (index: number, field: string, value: string) => {
     const newSplits = [...splits];
