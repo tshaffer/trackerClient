@@ -1,5 +1,5 @@
 import { clone, cloneDeep } from 'lodash';
-import { SplitTransaction, Transaction, TransactionsState } from '../types';
+import { CheckingAccountTransaction, SplitTransaction, Transaction, TransactionsState } from '../types';
 import { TrackerModelBaseAction } from './baseAction';
 
 // ------------------------------------
@@ -200,28 +200,16 @@ export const transactionsStateReducer = (
     case SET_SPLIT_TRANSACTION: {
       const newState = clone(state);
       const parentTransactionId = action.payload.parentTransactionId;
-      const parentTransaction: Transaction = newState.byId[parentTransactionId];
+      const parentTransaction: CheckingAccountTransaction = newState.byId[parentTransactionId] as CheckingAccountTransaction;
       parentTransaction.isSplit = true;
       action.payload.splitTransactions.forEach(splitTransaction => {
-        const newTransaction: Transaction = {
+        const newTransaction: CheckingAccountTransaction = {
+          ...parentTransaction,
           ...splitTransaction,
-          statementId: parentTransaction.statementId,
-          transactionDate: parentTransaction.transactionDate,
-          bankTransactionType: parentTransaction.bankTransactionType,
-          overrideCategory: false,
-          overrideCategoryId: '',
-          overrideTransactionsRequired: false,
-          overriddenTransactionRequired: false,
-          isSplit: false,
           parentTransactionId
         };
         newState.byId[splitTransaction.id] = newTransaction;
-        if (!newState.allIds.includes(splitTransaction.id)) {
-          newState.allIds.push(splitTransaction.id);
-        }
       });
-      console.log('state: ', state);
-      console.log('newState: ', newState);
       return newState;
     }
     default:

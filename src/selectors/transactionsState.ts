@@ -15,12 +15,12 @@ export const getTransactionIds = (state: TrackerState): string[] => {
 
 export const getTransactions = (state: TrackerState): Transaction[] => {
   const transactions: Transaction[] = getTransactionIds(state).map((id) => state.transactionsState.byId[id]);
-  return transactions.filter((transaction) => !transaction.isSplit);
+  return transactions.filter((transaction) => (transaction.bankTransactionType === BankTransactionType.CreditCard || !(transaction as CheckingAccountTransaction).isSplit))
 }
 
 export const getTransactionById = (state: TrackerState, id: string): Transaction | undefined => {
   const transactionById: Transaction | undefined = state.transactionsState.byId[id];
-  if (!isNil(transactionById) && !transactionById.isSplit) {
+  if (!isNil(transactionById) && (transactionById.bankTransactionType === BankTransactionType.CreditCard || !(transactionById as CheckingAccountTransaction).isSplit)) {
     return transactionById;
   }
   return undefined;
@@ -28,7 +28,7 @@ export const getTransactionById = (state: TrackerState, id: string): Transaction
 
 export const getTransactionsByStatementId = (state: TrackerState, statementId: string): Transaction[] => {
   const transactions: Transaction[] = getTransactionIds(state).map((id) => state.transactionsState.byId[id]);
-  return transactions.filter((transaction) => !transaction.isSplit);
+  return transactions.filter((transaction) => (transaction.bankTransactionType === BankTransactionType.CreditCard || !(transaction as CheckingAccountTransaction).isSplit))
 }
 
 export const getCreditCardTransactionRowInStatementTableProperties = (state: TrackerState, statementId: string): CreditCardTransactionRowInStatementTableProperties[] => {

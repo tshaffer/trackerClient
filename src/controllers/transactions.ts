@@ -2,6 +2,7 @@ import axios from "axios";
 import { v4 as uuidv4 } from 'uuid';
 import {
   apiUrlFragment,
+  CheckingAccountTransaction,
   CheckTransaction,
   MinMaxDates,
   serverUrl,
@@ -182,10 +183,10 @@ export const splitTransaction = (
 
     const path = serverUrl + apiUrlFragment + 'splitTransaction';
 
-    const parentTransaction: Transaction = getTransactionById(getState(), parentTransactionId) as Transaction;
+    const parentTransaction: CheckingAccountTransaction = getTransactionById(getState(), parentTransactionId) as CheckingAccountTransaction;
 
-    const newTransactions: Transaction[] = splitTransactions.map((splitTransaction: SplitTransaction) => {
-      const newTransaction: Transaction = {
+    const newTransactions: CheckingAccountTransaction[] = splitTransactions.map((splitTransaction: SplitTransaction) => {
+      const newTransaction: CheckingAccountTransaction = {
         ...parentTransaction,
         ...splitTransaction,
         isSplit: false,
