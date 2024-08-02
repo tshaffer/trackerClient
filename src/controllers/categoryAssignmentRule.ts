@@ -4,8 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { serverUrl, apiUrlFragment, CategoryAssignmentRule, UploadedCategoryAssignmentRule, TrackerState, Category, DisregardLevel } from "../types";
 import { TrackerAnyPromiseThunkAction, TrackerDispatch, addCategoryAssignmentRuleRedux, addCategoryAssignmentRules, deleteCategoryAssignmentRuleRedux, replaceCategoryAssignmentRulesRedux, updateCategoryAssignmentRuleRedux } from '../models';
-import { getCategoryByName, getMissingCategories } from "../selectors";
-import { initial, isNil } from "lodash";
+import { getCategoryAssignmentRules, getCategoryByName, getMissingCategories } from "../selectors";
+import { isNil } from "lodash";
 import { addCategories } from "./category";
 
 export const loadCategoryAssignmentRules = (): TrackerAnyPromiseThunkAction => {
@@ -24,6 +24,16 @@ export const loadCategoryAssignmentRules = (): TrackerAnyPromiseThunkAction => {
         console.log(error);
         return '';
       });
+  };
+};
+
+export const canAddCategoryAssignmentRule = (pattern: string): TrackerAnyPromiseThunkAction => {
+  return (dispatch: TrackerDispatch, getState: any) => {
+    const categoryAssignmentRules: CategoryAssignmentRule[] = getCategoryAssignmentRules(getState());
+    const categoryAssignmentRuleExists: boolean = categoryAssignmentRules.some((existingCategoryAssignmentRule) => {
+      return existingCategoryAssignmentRule.pattern === pattern;
+    });
+    return Promise.resolve(!categoryAssignmentRuleExists);
   };
 };
 
@@ -96,7 +106,7 @@ export const replaceCategoryAssignmentRules = (uploadedCategoryAssignmentRules: 
 
     return dispatch(addMissingCategories(getState(), uploadedCategoryAssignmentRules))
       .then(() => {
-        
+
         const categoryAssignmentRules: CategoryAssignmentRule[] = convertUploadedCategoryAssignmentRulesToCategoryAssignmentRules(getState(), uploadedCategoryAssignmentRules);
 
         const path = serverUrl + apiUrlFragment + 'replaceCategoryAssignmentRules';

@@ -13,7 +13,7 @@ import { Button, DialogActions, DialogContent, DialogContentText, Tooltip } from
 
 import { getAppInitialized, getCategories, getCategoryByTransactionId, getTransactionById } from '../selectors';
 import { Category, SidebarMenuButton, Transaction } from '../types';
-import { addCategory } from '../controllers';
+import { addCategory, canAddCategoryAssignmentRule } from '../controllers';
 import { TrackerDispatch } from '../models';
 import SelectCategory from './SelectCategory';
 
@@ -30,6 +30,7 @@ export interface AddCategoryAssignmentRuleDialogProps extends AddCategoryAssignm
   categories: Category[];
   initialCategoryId: string | null | undefined;
   onAddCategory: (category: Category) => any;
+  onCanAddCategoryAssignmentRule: (pattern: string) => any;
 }
 
 const AddCategoryAssignmentRuleDialog = (props: AddCategoryAssignmentRuleDialogProps) => {
@@ -83,8 +84,19 @@ const AddCategoryAssignmentRuleDialog = (props: AddCategoryAssignmentRuleDialogP
       return;
     }
     if (pattern !== '') {
-      props.onSaveRule(pattern, selectedCategoryId);
-      props.onClose();
+      props.onCanAddCategoryAssignmentRule(pattern)
+        .then((canAddCategoryRule: boolean) => {
+          if (!canAddCategoryRule) {
+            alert('Pattern already exists');
+            return;
+          }
+          props.onSaveRule(pattern, selectedCategoryId);
+          props.onClose();
+          console.log('Category Assignment Rule added');
+        })
+        .catch((error: any) => {
+          throw(error);
+        });
     }
   };
 
@@ -162,8 +174,7 @@ const AddCategoryAssignmentRuleDialog = (props: AddCategoryAssignmentRuleDialogP
         </DialogActions>
       </Dialog>
 
-      <Dialog onClose={handleCloseAlertDialog} open={alertDialogOpen}
-      >
+      <Dialog onClose={handleCloseAlertDialog} open={alertDialogOpen}>
         <DialogTitle id="alert-dialog-title">
           {'Category Required'}
         </DialogTitle>
@@ -181,7 +192,6 @@ const AddCategoryAssignmentRuleDialog = (props: AddCategoryAssignmentRuleDialogP
 };
 
 function mapStateToProps(state: any, ownProps: AddCategoryAssignmentRuleDialogPropsFromParent) {
-  const foo = getCategoryByTransactionId(state, ownProps.transactionId)?.id;
   return {
     appInitialized: getAppInitialized(state),
     transaction: getTransactionById(state, ownProps.transactionId),
@@ -193,6 +203,7 @@ function mapStateToProps(state: any, ownProps: AddCategoryAssignmentRuleDialogPr
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
     onAddCategory: addCategory,
+    onCanAddCategoryAssignmentRule: canAddCategoryAssignmentRule,
   }, dispatch);
 };
 
