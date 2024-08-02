@@ -259,23 +259,6 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
     return <></>;
   }
 
-
-/*
-export interface CategoryAssignmentRule {
-  id: string;
-  pattern: string;
-  categoryId: string;
-}
-*/
-// need categoryAssignmentRule.id
-  // const sortedCategoryAssignmentRules: CategoryAssignmentRule[] = sortedCategoryAssignmentRuleTableRows.map((categoryAssignmentRuleTableRow: CategoryAssignmentRuleTableRow) => {
-  //   return {
-  //     id: categoryAssignmentRuleById[''].id,
-  //     pattern: categoryAssignmentRuleTableRow.pattern,
-  //     categoryId: categoryAssignmentRuleTableRow.categoryId,
-  //   };
-  // });
-
   const sortedCategoryAssignmentRules: CategoryAssignmentRule[] = sortedCategoryAssignmentRuleTableRows.map((categoryAssignmentRuleTableRow: CategoryAssignmentRuleTableRow) => {
     return {
       id: categoryAssignmentRuleTableRow.ruleId,
@@ -283,21 +266,6 @@ export interface CategoryAssignmentRule {
       categoryId: categoryAssignmentRuleTableRow.categoryId,
     };
   });
-
-  console.log('sortedCategoryAssignmentRuleTableRows');
-  console.log(sortedCategoryAssignmentRuleTableRows);
-
-  console.log('sortedCategoryAssignmentRules');
-  console.log(sortedCategoryAssignmentRules);
-
-  const ysortedCategoryAssignmentRules: CategoryAssignmentRule[] = Object.values(categoryAssignmentRuleById);
-  ysortedCategoryAssignmentRules.sort((a, b) => a.pattern.localeCompare(b.pattern))
-
-  console.log('sortedCategoryAssignmentRules');
-  console.log(ysortedCategoryAssignmentRules);
-
-  console.log('categoryAssignmentRuleById');
-  console.log(categoryAssignmentRuleById);
 
   return (
     <Box sx={{ width: '100%' }}>
