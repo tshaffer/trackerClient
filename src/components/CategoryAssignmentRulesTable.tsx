@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -35,6 +35,9 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
   const [categoryAssignmentRuleById, setCategoryAssignmentRuleById] = React.useState<{ [categoryAssignmentRuleId: string]: CategoryAssignmentRule }>({}); // key is categoryAssignmentRuleId, value is CategoryAssignmentRule
   const [selectCategoryAssignmentRuleById, setSelectCategoryAssignmentRuleById] = React.useState<{ [categoryAssignmentRuleId: string]: string }>({}); // key is categoryAssignmentRuleId, value is pattern
   const [categoryIdByCategoryAssignmentRuleId, setCategoryIdByCategoryAssignmentRuleId] = React.useState<{ [categoryAssignmentRuleId: string]: string }>({}); // key is categoryAssignmentRuleId, value is categoryId
+  
+  const [sortColumn, setSortColumn] = useState<string>('pattern');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [categoryAssignmentRuleTableRows, setCategoryAssignmentRuleTableRows] = React.useState<CategoryAssignmentRuleTableRow[]>([]);
 
   const updateCategoryAssignmentRuleTableRows = (): void => {
@@ -213,6 +216,34 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
     setCategoryIdByCategoryAssignmentRuleId(currentCategoryIdByCategoryAssignmentRuleId);
   }
 
+  const handleSort = (column: string) => {
+    if (sortColumn === column) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(column);
+      setSortOrder('asc');
+    }
+  };
+
+  const sortedCategoryAssignmentRuleTableRows = [...(categoryAssignmentRuleTableRows)].sort((a: any, b: any) => {
+    const aValue = a[sortColumn];
+    const bValue = b[sortColumn];
+
+    if (aValue < bValue) {
+      return sortOrder === 'asc' ? -1 : 1;
+    }
+    if (aValue > bValue) {
+      return sortOrder === 'asc' ? 1 : -1;
+    }
+    return 0;
+  });
+
+  const renderSortIndicator = (column: string) => {
+    if (sortColumn !== column) return null;
+    return sortOrder === 'asc' ? ' ▲' : ' ▼';
+  };
+
+
   if (props.categoryAssignmentRules.length === 0) {
     return (
       <Box sx={{ width: '100%' }}>
@@ -229,7 +260,10 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
 
   console.log('render: categoryAssignmentRuleTableRows');
   console.log(categoryAssignmentRuleTableRows);
-  
+
+  console.log('sorted categoryAssignmentRuleTableRows');
+  console.log(sortedCategoryAssignmentRuleTableRows);
+
   const sortedCategoryAssignmentRules: CategoryAssignmentRule[] = Object.values(categoryAssignmentRuleById);
   sortedCategoryAssignmentRules.sort((a, b) => a.pattern.localeCompare(b.pattern))
 
@@ -241,8 +275,8 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
       <div className="table-container">
         <div className="table-header">
           <div className="table-row">
-            <div className="table-cell-category-assignment-rule">Pattern</div>
-            <div className="table-cell-category-assignment-rule">Category</div>
+            <div className="table-cell-category-assignment-rule" onClick={() => handleSort('pattern')}>Pattern{renderSortIndicator('pattern')}</div>
+            <div className="table-cell-category-assignment-rule" onClick={() => handleSort('categoryName')}>Category{renderSortIndicator('categoryName')}</div>
             <div className="table-cell"></div>
           </div>
         </div>
