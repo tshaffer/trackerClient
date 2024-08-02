@@ -2,24 +2,30 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import '../styles/Tracker.css';
-import { Category, CategoryAssignmentRule, CategoryMenuItem, SidebarMenuButton, StringToCategoryMenuItemLUT } from '../types';
+import { cloneDeep, isEmpty } from 'lodash';
+
 import { Box, IconButton, TextField, Tooltip, Typography } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteIcon from '@mui/icons-material/Delete';
 
+import '../styles/Tracker.css';
+
+import { Category, CategoryAssignmentRule, SidebarMenuButton } from '../types';
 import { TrackerAnyPromiseThunkAction, TrackerDispatch } from '../models';
 import { getCategories, getCategoryAssignmentRules } from '../selectors';
-import { addCategoryAssignmentRuleServerAndRedux, deleteCategoryAssignmentRule, updateCategoryAssignmentRule } from '../controllers';
-import { cloneDeep, isEmpty } from 'lodash';
+import { deleteCategoryAssignmentRule, updateCategoryAssignmentRule } from '../controllers';
 import SelectCategory from './SelectCategory';
 import DownloadCategoryAssignmentRules from './DownloadCategoryAssignmentRules';
 import UploadCategoryAssignmentRules from './UploadCategoryAssignmentRules';
 
+interface CategoryAssignmentRuleTableRow {
+  pattern: string;
+  categoryName: string;
+}
+
 interface CategoryAssignmentRulesTableProps {
   categoryAssignmentRules: CategoryAssignmentRule[];
   categories: Category[];
-  onAddCategoryAssignmentRule: (categoryAssignmentRule: CategoryAssignmentRule) => TrackerAnyPromiseThunkAction;
   onUpdateCategoryAssignmentRule: (categoryAssignmentRule: CategoryAssignmentRule) => TrackerAnyPromiseThunkAction;
   onDeleteCategoryAssignmentRule: (categoryAssignmentRule: CategoryAssignmentRule) => TrackerAnyPromiseThunkAction;
 }
@@ -29,6 +35,22 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
   const [categoryAssignmentRuleById, setCategoryAssignmentRuleById] = React.useState<{ [categoryAssignmentRuleId: string]: CategoryAssignmentRule }>({}); // key is categoryAssignmentRuleId, value is CategoryAssignmentRule
   const [selectCategoryAssignmentRuleById, setSelectCategoryAssignmentRuleById] = React.useState<{ [categoryAssignmentRuleId: string]: string }>({}); // key is categoryAssignmentRuleId, value is pattern
   const [categoryIdByCategoryAssignmentRuleId, setCategoryIdByCategoryAssignmentRuleId] = React.useState<{ [categoryAssignmentRuleId: string]: string }>({}); // key is categoryAssignmentRuleId, value is categoryId
+  const [categoryAssignmentRuleTableRows, setCategoryAssignmentRuleTableRows] = React.useState<CategoryAssignmentRuleTableRow[]>([]);
+
+  const updateCategoryAssignmentRuleTableRows = (): void => {
+    const localCategoryAssignmentRuleTableRows: CategoryAssignmentRuleTableRow[] = [];
+    for (const categoryAssignmentRule of props.categoryAssignmentRules) {
+      const category: Category = getCategory(categoryAssignmentRule.categoryId);
+      localCategoryAssignmentRuleTableRows.push({
+        pattern: categoryAssignmentRule.pattern,
+        categoryName: category.name,
+      });
+    }
+    console.log('localCategoryAssignmentRuleTableRows');
+    console.log(localCategoryAssignmentRuleTableRows);
+    
+    setCategoryAssignmentRuleTableRows(localCategoryAssignmentRuleTableRows);
+  }
 
   const generateReactState = (): void => {
     const localCategoryAssignmentRuleById: { [categoryAssignmentRuleId: string]: CategoryAssignmentRule } = {};
@@ -43,6 +65,7 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
     setCategoryAssignmentRuleById(localCategoryAssignmentRuleById);
     setSelectCategoryAssignmentRuleById(localSelectedCategoryAssignmentRuleById);
     setCategoryIdByCategoryAssignmentRuleId(localCategoryIdByCategoryAssignmentRuleId);
+    updateCategoryAssignmentRuleTableRows();
   }
 
   React.useEffect(() => {
@@ -62,6 +85,7 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
     setCategoryAssignmentRuleById(localCategoryAssignmentRuleById);
     setSelectCategoryAssignmentRuleById(localSelectedCategoryAssignmentRuleById);
     setCategoryIdByCategoryAssignmentRuleId(localCategoryIdByCategoryAssignmentRuleId);
+    updateCategoryAssignmentRuleTableRows();
   }
 
   const deleteCategoryAssignmentRuleInReactState = (categoryAssignmentRuleId: string): void => {
@@ -76,6 +100,7 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
     setCategoryAssignmentRuleById(localCategoryAssignmentRuleById);
     setSelectCategoryAssignmentRuleById(localSelectedCategoryAssignmentRuleById);
     setCategoryIdByCategoryAssignmentRuleId(localCategoryIdByCategoryAssignmentRuleId);
+    updateCategoryAssignmentRuleTableRows();
   }
 
   const updatedCategoryAssignmentRuleCombinationExistsInProps = (pattern: string, categoryId: string): boolean => {
@@ -179,6 +204,7 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
     const currentCategoryByPattern: CategoryAssignmentRule = currentCategoryAssignmentRuleById[categoryAssignmentRule.id];
     currentCategoryByPattern.pattern = pattern;
     setCategoryAssignmentRuleById(currentCategoryAssignmentRuleById);
+    updateCategoryAssignmentRuleTableRows();
   };
 
   const handleCategoryChange = (categoryAssignmentRuleId: string, categoryId: string) => {
@@ -201,6 +227,9 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
     return <></>;
   }
 
+  console.log('render: categoryAssignmentRuleTableRows');
+  console.log(categoryAssignmentRuleTableRows);
+  
   const sortedCategoryAssignmentRules: CategoryAssignmentRule[] = Object.values(categoryAssignmentRuleById);
   sortedCategoryAssignmentRules.sort((a, b) => a.pattern.localeCompare(b.pattern))
 
@@ -261,7 +290,6 @@ function mapStateToProps(state: any) {
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
-    onAddCategoryAssignmentRule: addCategoryAssignmentRuleServerAndRedux,
     onUpdateCategoryAssignmentRule: updateCategoryAssignmentRule,
     onDeleteCategoryAssignmentRule: deleteCategoryAssignmentRule,
   }, dispatch);
