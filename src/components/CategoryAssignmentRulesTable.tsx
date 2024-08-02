@@ -21,6 +21,8 @@ import UploadCategoryAssignmentRules from './UploadCategoryAssignmentRules';
 interface CategoryAssignmentRuleTableRow {
   pattern: string;
   categoryName: string;
+  categoryId: string;
+  ruleId: string;
 }
 
 interface CategoryAssignmentRulesTableProps {
@@ -47,11 +49,10 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
       localCategoryAssignmentRuleTableRows.push({
         pattern: categoryAssignmentRule.pattern,
         categoryName: category.name,
+        categoryId: category.id,
+        ruleId: categoryAssignmentRule.id,
       });
     }
-    console.log('localCategoryAssignmentRuleTableRows');
-    console.log(localCategoryAssignmentRuleTableRows);
-    
     setCategoryAssignmentRuleTableRows(localCategoryAssignmentRuleTableRows);
   }
 
@@ -258,14 +259,45 @@ const CategoryAssignmentRulesTable: React.FC<CategoryAssignmentRulesTableProps> 
     return <></>;
   }
 
-  console.log('render: categoryAssignmentRuleTableRows');
-  console.log(categoryAssignmentRuleTableRows);
 
-  console.log('sorted categoryAssignmentRuleTableRows');
+/*
+export interface CategoryAssignmentRule {
+  id: string;
+  pattern: string;
+  categoryId: string;
+}
+*/
+// need categoryAssignmentRule.id
+  // const sortedCategoryAssignmentRules: CategoryAssignmentRule[] = sortedCategoryAssignmentRuleTableRows.map((categoryAssignmentRuleTableRow: CategoryAssignmentRuleTableRow) => {
+  //   return {
+  //     id: categoryAssignmentRuleById[''].id,
+  //     pattern: categoryAssignmentRuleTableRow.pattern,
+  //     categoryId: categoryAssignmentRuleTableRow.categoryId,
+  //   };
+  // });
+
+  const sortedCategoryAssignmentRules: CategoryAssignmentRule[] = sortedCategoryAssignmentRuleTableRows.map((categoryAssignmentRuleTableRow: CategoryAssignmentRuleTableRow) => {
+    return {
+      id: categoryAssignmentRuleTableRow.ruleId,
+      pattern: categoryAssignmentRuleTableRow.pattern,
+      categoryId: categoryAssignmentRuleTableRow.categoryId,
+    };
+  });
+
+  console.log('sortedCategoryAssignmentRuleTableRows');
   console.log(sortedCategoryAssignmentRuleTableRows);
 
-  const sortedCategoryAssignmentRules: CategoryAssignmentRule[] = Object.values(categoryAssignmentRuleById);
-  sortedCategoryAssignmentRules.sort((a, b) => a.pattern.localeCompare(b.pattern))
+  console.log('sortedCategoryAssignmentRules');
+  console.log(sortedCategoryAssignmentRules);
+
+  const ysortedCategoryAssignmentRules: CategoryAssignmentRule[] = Object.values(categoryAssignmentRuleById);
+  ysortedCategoryAssignmentRules.sort((a, b) => a.pattern.localeCompare(b.pattern))
+
+  console.log('sortedCategoryAssignmentRules');
+  console.log(ysortedCategoryAssignmentRules);
+
+  console.log('categoryAssignmentRuleById');
+  console.log(categoryAssignmentRuleById);
 
   return (
     <Box sx={{ width: '100%' }}>
