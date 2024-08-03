@@ -73,7 +73,39 @@ const SplitTransactionDialog: React.FC = (props: any) => {
     }
   };
 
+  const twoHundredSplit: any =
+    [
+      { amount: '53.12', userDescription: 'Housecleaners' },
+      { amount: '39.84', userDescription: 'Yoder' },
+      { amount: '88.60', userDescription: 'Johan' },
+      { amount: '18.44', userDescription: 'Benito' },
+    ];
+
+    const threeHundredSplit: any =
+    [
+      { amount: '200', userDescription: 'Housecleaners' },
+      { amount: '50', userDescription: 'Yoder' },
+      { amount: '50', userDescription: 'Johan' },
+    ];
+
+    const fourHundredSplit: any =
+    [
+      { amount: '106.24', userDescription: 'Housecleaners' },
+      { amount: '79.68', userDescription: 'Yoder' },
+      { amount: '177.20', userDescription: 'Johan' },
+      { amount: '36.88', userDescription: 'Benito' },
+    ];
+
+    const fiveHundredSplit: any =
+    [
+      { amount: '132.80', userDescription: 'Housecleaners' },
+      { amount: '99.60', userDescription: 'Yoder' },
+      { amount: '221.50', userDescription: 'Johan' },
+      { amount: '46.10', userDescription: 'Benito' },
+    ];
+
   const handleAddSplit = () => {
+    // setSplits(threeHundredSplit);
     setSplits([
       ...splits.slice(0, -1),
       { amount: '0', userDescription: '' },
