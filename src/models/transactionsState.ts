@@ -152,7 +152,7 @@ interface UpdateCategoryTransactionsPayload {
   transactionIds: string[];
 }
 
-export const updateCategoryTransactionsRedux = (
+export const updateCategoryInTransactionsRedux = (
   categoryId: string,
   transactionIds: string[],
 ): any => {

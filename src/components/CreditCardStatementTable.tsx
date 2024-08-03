@@ -9,7 +9,7 @@ import { Button } from '@mui/material';
 
 import { isNil } from 'lodash';
 
-import { TrackerDispatch, updateCategoryTransactionsRedux } from '../models';
+import { TrackerDispatch, updateCategoryInTransactionsRedux } from '../models';
 import { CreditCardTransaction, CreditCardTransactionRowInStatementTableProperties } from '../types';
 import { getCreditCardTransactionRowInStatementTableProperties, getTransactionsByStatementId } from '../selectors';
 
@@ -52,9 +52,6 @@ const CreditCardStatementTable: React.FC<CreditCardStatementTableProps> = (props
   };
 
   const handleSaveOverrideTransactionCategories = (categoryId: string) => {
-    console.log('handleSaveOverrideTransactionCategories');
-    console.log('categoryId', categoryId);
-    console.log('selectedTransactionIds', selectedTransactionIds);
     props.onUpdateCategoryTransactions(categoryId, Array.from(selectedTransactionIds));
   };
 
@@ -148,7 +145,7 @@ function mapStateToProps(state: any, ownProps: CreditCardStatementTablePropsFrom
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
-    onUpdateCategoryTransactions: updateCategoryTransactionsRedux,
+    onUpdateCategoryTransactions: updateCategoryInTransactionsRedux,
   }, dispatch);
 };
 

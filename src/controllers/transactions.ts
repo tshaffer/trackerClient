@@ -18,6 +18,7 @@ import {
   TrackerAnyPromiseThunkAction,
   TrackerDispatch,
   TrackerVoidPromiseThunkAction,
+  updateCategoryInTransactionsRedux,
   updateCheckTransactionRedux,
   updateTransactionRedux
 } from "../models";
@@ -165,6 +166,35 @@ export const updateTransaction = (transaction: Transaction): TrackerAnyPromiseTh
       console.log(response);
       console.log(response.data);
       dispatch(updateTransactionRedux(transaction));
+      return Promise.resolve(response.data as CheckTransaction);
+    }).catch((error) => {
+      console.log('error');
+      console.log(error);
+      return '';
+    });
+  };
+}
+
+export const updateCategoryInTransactions = (
+  categoryId: string,
+  transactionIds: string[],
+): TrackerAnyPromiseThunkAction => {
+
+  return (dispatch: TrackerDispatch, getState: any) => {
+
+    const path = serverUrl + apiUrlFragment + 'updateCategoryInTransactions';
+
+    const updateCategoryInTransactionsBody = { categoryId, transactionIds };
+
+    console.log('updateCategoryInTransactions: ', updateCategoryInTransactionsBody);
+    return axios.post(
+      path,
+      updateCategoryInTransactionsBody
+    ).then((response) => {
+      console.log('updateCategoryInTransactions');
+      console.log(response);
+      console.log(response.data);
+      dispatch(updateCategoryInTransactionsRedux(categoryId, transactionIds));
       return Promise.resolve(response.data as CheckTransaction);
     }).catch((error) => {
       console.log('error');
