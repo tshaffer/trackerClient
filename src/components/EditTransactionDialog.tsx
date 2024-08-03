@@ -14,6 +14,7 @@ import { getCategoryByTransactionId, getTransactionById } from '../selectors';
 import { formatCurrency, formatDate } from '../utilities';
 import { addCategory } from '../controllers';
 import SelectCategory from './SelectCategory';
+import EditTransactionMoreOptionsDialog from './EditTransactionMoreOptionsDialog';
 
 export interface EditTransactionDialogPropsFromParent {
   open: boolean;
@@ -37,8 +38,23 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
   const [userDescription, setUserDescription] = useState(props.transaction.userDescription);
   const [overrideCategory, setOverrideCategory] = React.useState(props.transaction.overrideCategory);
   const [overrideCategoryId, setOverrideCategoryId] = React.useState(props.transaction.overrideCategoryId);
-  const [overrideTransactionsRequired, setOverrideTransactionsRequired] = React.useState(props.transaction.overrideTransactionsRequired);
-  const [overriddenTransactionRequired, setOverriddenTransactionRequired] = React.useState(props.transaction.overriddenTransactionRequired);
+  // const [overrideTransactionsRequired, setOverrideTransactionsRequired] = React.useState(props.transaction.overrideTransactionsRequired);
+  // const [overriddenTransactionRequired, setOverriddenTransactionRequired] = React.useState(props.transaction.overriddenTransactionRequired);
+  const [showEditTransactionMoreOptionsDialog, setShowEditTransactionMoreOptionsDialog] = React.useState(false);
+
+  const handleEditTransactionMoreOptions = () => {
+    setShowEditTransactionMoreOptionsDialog(true);
+  };
+
+  const handleSaveTransactionMoreOptions = (transaction: Transaction) => {
+    console.log('handleSaveTransactionMoreOptions');
+    console.log(transaction);
+    // props.onUpdateTransaction(transaction);
+  };
+
+  const handleCloseEditTransactionMoreOptionsDialog = () => {
+    setShowEditTransactionMoreOptionsDialog(false);
+  }
 
   const handleSave = () => {
     const updatedTransaction: Transaction = {
@@ -46,8 +62,8 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
       userDescription,
       overrideCategory,
       overrideCategoryId,
-      overrideTransactionsRequired,
-      overriddenTransactionRequired,
+      // overrideTransactionsRequired,
+      // overriddenTransactionRequired,
     };
     props.onSave(updatedTransaction);
     props.onClose();
@@ -61,16 +77,22 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
     setOverrideCategoryId(categoryId);
   }
 
-  function handleSetOverrideTransactionsRequired(event: ChangeEvent<HTMLInputElement>, checked: boolean): void {
-    setOverrideTransactionsRequired(event.target.checked);
-  }
+  // function handleSetOverrideTransactionsRequired(event: ChangeEvent<HTMLInputElement>, checked: boolean): void {
+  //   setOverrideTransactionsRequired(event.target.checked);
+  // }
 
-  function handleSetOverriddenTransactionRequired(event: ChangeEvent<HTMLInputElement>, checked: boolean): void {
-    setOverriddenTransactionRequired(event.target.checked);
-  }
+  // function handleSetOverriddenTransactionRequired(event: ChangeEvent<HTMLInputElement>, checked: boolean): void {
+  //   setOverriddenTransactionRequired(event.target.checked);
+  // }
 
   return (
     <React.Fragment>
+      <EditTransactionMoreOptionsDialog
+        open={showEditTransactionMoreOptionsDialog}
+        transactionId={props.transactionId}
+        onClose={handleCloseEditTransactionMoreOptionsDialog}
+        onSave={handleSaveTransactionMoreOptions}
+      />
       <Dialog open={props.open} onClose={props.onClose}>
         <DialogTitle>Edit Transaction</DialogTitle>
         <DialogContent>
@@ -116,7 +138,9 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
                 onSetCategoryId={handleSetOverrideCategoryId}
               />
             )}
-            <FormControlLabel
+            <Button onClick={handleEditTransactionMoreOptions}>More options</Button>
+
+            {/* <FormControlLabel
               control={<Checkbox checked={overrideTransactionsRequired} onChange={handleSetOverrideTransactionsRequired} />}
               label="Override transactions required?"
             />
@@ -125,7 +149,7 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
                 control={<Checkbox checked={overriddenTransactionRequired} onChange={handleSetOverriddenTransactionRequired} />}
                 label="Transaction required?"
               />
-            )}
+            )} */}
           </Box>
         </DialogContent>
         <DialogActions>
@@ -143,6 +167,7 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
 
 function mapStateToProps(state: any, ownProps: EditTransactionDialogPropsFromParent) {
   return {
+    transactionId: ownProps.transactionId,
     transaction: getTransactionById(state, ownProps.transactionId) as Transaction,
     inferredCategory: getCategoryByTransactionId(state, ownProps.transactionId),
   };
