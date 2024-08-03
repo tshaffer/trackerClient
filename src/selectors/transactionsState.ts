@@ -177,6 +177,12 @@ const categorizeTransactions = (
   let sum: number = 0;
 
   for (const transaction of transactions) {
+
+    if ((transaction as CheckingAccountTransaction).excludeFromReportCalculations) {
+      console.log('Excluding from report calculations');
+      console.log(transaction)
+      continue;
+    }
     const category: Category | null = categorizeTransaction(transaction, categories, categoryAssignmentRules);
     if (!isNil(category)) {
       if (category.id === ignoreCategory.id) {
