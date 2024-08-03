@@ -104,6 +104,7 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
       <div className="grid-table-cell">{props.creditCardTransaction.description}</div>
       {renderEditIcon()}
       <div className="grid-table-cell">{props.creditCardTransaction.userDescription}</div>
+      <div className="grid-table-cell">{props.categorizedTransactionName}</div>
       <div className="grid-table-cell">{props.creditCardTransaction.category}</div>
       <Tooltip title="Edit rule">
         <IconButton onClick={() => handleEditRule(props.creditCardTransaction)}>
@@ -113,7 +114,6 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
       <div className="grid-table-cell">{props.categoryNameFromCategoryAssignmentRule}</div>
       <div className="grid-table-cell">{props.patternFromCategoryAssignmentRule}</div>
       <div className="grid-table-cell">{props.categoryNameFromCategoryOverride}</div>
-      <div className="grid-table-cell">{props.categorizedTransactionName}</div>
     </React.Fragment>
   );
 }
