@@ -46,8 +46,8 @@ export const getCreditCardTransactionRowInStatementTableProperties = (state: Tra
       categoryNameFromCategoryAssignmentRule: matchingRule ? matchingRule.category.name : '',
       patternFromCategoryAssignmentRule: matchingRule ? matchingRule.pattern : '',
       categoryNameFromCategoryOverride: getOverrideCategory(state, creditCardTransaction.id)
-      ? getCategoryById(state, getOverrideCategoryId(state, creditCardTransaction.id))!.name
-      : '',
+        ? getCategoryById(state, getOverrideCategoryId(state, creditCardTransaction.id))!.name
+        : '',
       categorizedTransactionName: categorizeTransaction(creditCardTransaction, getCategories(state), getCategoryAssignmentRules(state))?.name || '',
     };
   });
@@ -66,8 +66,8 @@ export const getCheckingAccountTransactionRowInStatementTableProperties = (state
       categoryNameFromCategoryAssignmentRule: matchingRule ? matchingRule.category.name : '',
       patternFromCategoryAssignmentRule: matchingRule ? matchingRule.pattern : '',
       categoryNameFromCategoryOverride: getOverrideCategory(state, checkingAccountTransaction.id)
-      ? getCategoryById(state, getOverrideCategoryId(state, checkingAccountTransaction.id))!.name
-      : '',
+        ? getCategoryById(state, getOverrideCategoryId(state, checkingAccountTransaction.id))!.name
+        : '',
       categorizedTransactionName: categorizeTransaction(checkingAccountTransaction, getCategories(state), getCategoryAssignmentRules(state))?.name || '',
       checkingAccountTransaction,
     };
@@ -292,13 +292,13 @@ export const getOverrideCategoryId = (state: TrackerState, transactionId: string
   return '';
 }
 
-export const getOverrideTransactionsRequired = (state: TrackerState, transactionId: string): boolean => {
+export const getOverrideFixedExpense = (state: TrackerState, transactionId: string): boolean => {
   const transaction = getTransactionById(state, transactionId);
-  return transaction?.overrideTransactionsRequired ?? false;
+  return transaction?.overrideFixedExpense ?? false;
 }
 
-export const getOverriddenTransactionsRequired = (state: TrackerState, transactionId: string): boolean => {
+export const getOverriddenFixedExpense = (state: TrackerState, transactionId: string): boolean => {
   const transaction = getTransactionById(state, transactionId);
-  return transaction?.overriddenTransactionRequired ?? false;
+  return transaction?.overriddenFixedExpense ?? false;
 }
 

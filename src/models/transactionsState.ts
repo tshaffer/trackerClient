@@ -10,8 +10,8 @@ const ADD_TRANSACTIONS = 'ADD_TRANSACTIONS';
 const UPDATE_TRANSACTION = 'UPDATE_TRANSACTION';
 const SET_OVERRIDE_CATEGORY = 'SET_OVERRIDE_CATEGORY';
 const SET_OVERRIDE_CATEGORY_ID = 'SET_OVERRIDE_CATEGORY_ID';
-const SET_OVERRIDE_TRANSACTIONS_REQUIRED = 'SET_OVERRIDE_TRANSACTIONS_REQUIRED';
-const SET_OVERRIDDEN_TRANSACTIONS_REQUIRED = 'SET_OVERRIDDEN_TRANSACTIONS_REQUIRED';
+const SET_OVERRIDE_FIXED_EXPENSE = 'SET_OVERRIDE_FIXED_EXPENSE';
+const SET_OVERRIDDEN_FIXED_EXPENSE = 'SET_OVERRIDDEN_FIXED_EXPENSE';
 const SET_SPLIT_TRANSACTION = 'SET_SPLIT_TRANSACTION';
 
 // ------------------------------------
@@ -92,38 +92,38 @@ export const setOverrideCategoryId = (
   };
 };
 
-interface setOverrideTransactionsRequiredPayload {
+interface setOverrideFixedExpensePayload {
   transactionId: string;
-  overrideTransactionsRequired: boolean;
+  overrideFixedExpense: boolean;
 }
 
-export const setOverrideTransactionsRequired = (
+export const setOverrideFixedExpense = (
   transactionId: string,
-  overrideTransactionsRequired: boolean
+  overrideFixedExpense: boolean
 ): any => {
   return {
-    type: SET_OVERRIDE_TRANSACTIONS_REQUIRED,
+    type: SET_OVERRIDE_FIXED_EXPENSE,
     payload: {
       transactionId,
-      overrideTransactionsRequired,
+      overrideFixedExpense,
     },
   };
 };
 
-interface setOverriddenTransactionsRequiredPayload {
+interface setOverriddenFixedExpensePayload {
   transactionId: string;
-  overriddenTransactionsRequired: boolean;
+  overriddenFixedExpense: boolean;
 }
 
-export const setOverriddenTransactionsRequired = (
+export const setOverriddenFixedExpense = (
   transactionId: string,
-  overriddenTransactionsRequired: boolean
+  overriddenFixedExpense: boolean
 ): any => {
   return {
-    type: SET_OVERRIDDEN_TRANSACTIONS_REQUIRED,
+    type: SET_OVERRIDDEN_FIXED_EXPENSE,
     payload: {
       transactionId,
-      overriddenTransactionsRequired,
+      overriddenFixedExpense,
     },
   };
 };
@@ -156,7 +156,7 @@ const initialState: TransactionsState = {
 
 export const transactionsStateReducer = (
   state: TransactionsState = initialState,
-  action: TrackerModelBaseAction<AddTransactionsPayload & UpdateTransactionPayload & SetOverrideCategoryPayload & SetOverrideCategoryIdPayload & setOverrideTransactionsRequiredPayload & setOverriddenTransactionsRequiredPayload & SetSplitTransactionPayload>
+  action: TrackerModelBaseAction<AddTransactionsPayload & UpdateTransactionPayload & SetOverrideCategoryPayload & SetOverrideCategoryIdPayload & setOverrideFixedExpensePayload & setOverriddenFixedExpensePayload & SetSplitTransactionPayload>
 ): TransactionsState => {
   switch (action.type) {
     case CLEAR_TRANSACTIONS: {
@@ -194,6 +194,22 @@ export const transactionsStateReducer = (
       const id = action.payload.transactionId;
       if (newState.byId[id]) {
         newState.byId[id].overrideCategoryId = action.payload.overrideCategoryId;
+      }
+      return newState;
+    }
+    case SET_OVERRIDE_FIXED_EXPENSE: {
+      const newState = clone(state);
+      const id = action.payload.transactionId;
+      if (newState.byId[id]) {
+        newState.byId[id].overrideFixedExpense = action.payload.overrideCategory;
+      }
+      return newState;
+    }
+    case SET_OVERRIDDEN_FIXED_EXPENSE: {
+      const newState = clone(state);
+      const id = action.payload.transactionId;
+      if (newState.byId[id]) {
+        newState.byId[id].overriddenFixedExpense = action.payload.overriddenFixedExpense;
       }
       return newState;
     }

@@ -23,8 +23,8 @@ export interface Transaction {
   userDescription: string;
   overrideCategory: boolean;
   overrideCategoryId: string;
-  overrideTransactionsRequired: boolean;
-  overriddenTransactionRequired: boolean;
+  overrideFixedExpense: boolean;
+  overriddenFixedExpense: boolean;
 }
 
 export interface SplitTransaction {
