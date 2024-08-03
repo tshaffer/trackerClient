@@ -14,6 +14,7 @@ import { getUnidentifiedBankTransactionById, getCategories, getTransactionById }
 import { formatCurrency, formatDate } from '../utilities';
 import { isNil } from 'lodash';
 import SelectCategory from './SelectCategory';
+import EditTransactionMoreOptionsDialog from './EditTransactionMoreOptionsDialog';
 
 export interface EditCheckFromStatementDialogPropsFromParent {
   transactionId: string;
@@ -36,6 +37,10 @@ const EditCheckFromStatementDialog = (props: EditCheckFromStatementDialogProps) 
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
   const [overrideCategory, setOverrideCategory] = React.useState(props.check.overrideCategory);
   const [overrideCategoryId, setOverrideCategoryId] = React.useState(props.check.overrideCategoryId);
+  const [overrideFixedExpense, setOverrideFixedExpense] = useState(props.check.overrideFixedExpense);
+  const [overriddenFixedExpense, setOverriddenFixedExpense] = React.useState(props.check.overriddenFixedExpense);
+  const [excludeFromReportCalculations, setExcludeFromReportCalculations] = useState(props.check.excludeFromReportCalculations);
+  const [showEditTransactionMoreOptionsDialog, setShowEditTransactionMoreOptionsDialog] = React.useState(false);
 
   React.useEffect(() => {
     if (isCheckboxChecked) {
@@ -45,6 +50,22 @@ const EditCheckFromStatementDialog = (props: EditCheckFromStatementDialogProps) 
 
   if (!props.open) {
     return null;
+  }
+
+  const handleEditTransactionMoreOptions = () => {
+    setShowEditTransactionMoreOptionsDialog(true);
+  };
+
+  const handleSaveTransactionMoreOptions = (transaction: Transaction) => {
+    setOverriddenFixedExpense(transaction.overriddenFixedExpense);
+    setOverrideFixedExpense(transaction.overrideFixedExpense);
+    setExcludeFromReportCalculations(transaction.excludeFromReportCalculations);
+    console.log('handleSaveTransactionMoreOptions');
+    console.log(transaction);
+  };
+
+  const handleCloseEditTransactionMoreOptionsDialog = () => {
+    setShowEditTransactionMoreOptionsDialog(false);
   }
 
   const handleSave = () => {
@@ -59,6 +80,9 @@ const EditCheckFromStatementDialog = (props: EditCheckFromStatementDialogProps) 
       userDescription,
       overrideCategory,
       overrideCategoryId,
+      overrideFixedExpense,
+      overriddenFixedExpense,
+      excludeFromReportCalculations,
     };
     props.onSave(updatedCheck);
     props.onClose();
@@ -93,73 +117,82 @@ const EditCheckFromStatementDialog = (props: EditCheckFromStatementDialogProps) 
   }
 
   return (
-    <Dialog open={props.open} onClose={props.onClose}>
-      <DialogTitle>Edit Check</DialogTitle>
-      <DialogContent>
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '300px' }}>
-          <TextField
-            label="Transaction Date"
-            value={formatDate(props.check.transactionDate)}
-            InputProps={{
-              readOnly: true,
-            }}
-            fullWidth
-          />
-          <TextField
-            label="Amount"
-            value={formatCurrency(-props.check.amount)}
-            InputProps={{
-              readOnly: true,
-            }}
-            fullWidth
-          />
-          <TextField
-            label="Payee"
-            value={payee}
-            onChange={(e) => setPayee(e.target.value)}
-            fullWidth
-          />
-          <TextField
-            label="Check Number"
-            value={checkNumber}
-            onChange={(e) => setCheckNumber(e.target.value)}
-            onBlur={handleCheckNumberBlur}
-            error={!!checkNumberError}
-            helperText={checkNumberError}
-            fullWidth
-          />
-          <FormControlLabel
-            control={<Checkbox checked={isCheckboxChecked} onChange={handleCheckboxChange} />}
-            label="Derive description"
-          />
-          <TextField
-            label="Description"
-            value={userDescription}
-            onChange={(e) => setUserDescription(e.target.value)}
-            disabled={isCheckboxChecked}
-            fullWidth
-          />
-          <FormControlLabel
-            control={<Checkbox checked={overrideCategory} onChange={handleSetOverrideCategory} />}
-            label="Override category?"
-          />
-          {overrideCategory && (
-            <SelectCategory
-              selectedCategoryId={overrideCategoryId}
-              onSetCategoryId={handleSetOverrideCategoryId}
+    <React.Fragment>
+      <EditTransactionMoreOptionsDialog
+        open={showEditTransactionMoreOptionsDialog}
+        transactionId={props.transactionId}
+        onClose={handleCloseEditTransactionMoreOptionsDialog}
+        onSave={handleSaveTransactionMoreOptions}
+      />
+      <Dialog open={props.open} onClose={props.onClose}>
+        <DialogTitle>Edit Check</DialogTitle>
+        <DialogContent>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '300px' }}>
+            <TextField
+              label="Transaction Date"
+              value={formatDate(props.check.transactionDate)}
+              InputProps={{
+                readOnly: true,
+              }}
+              fullWidth
             />
-          )}
-        </Box>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={props.onClose} color="primary">
-          Cancel
-        </Button>
-        <Button onClick={handleSave} color="primary" variant="contained">
-          Save
-        </Button>
-      </DialogActions>
-    </Dialog>
+            <TextField
+              label="Amount"
+              value={formatCurrency(-props.check.amount)}
+              InputProps={{
+                readOnly: true,
+              }}
+              fullWidth
+            />
+            <TextField
+              label="Payee"
+              value={payee}
+              onChange={(e) => setPayee(e.target.value)}
+              fullWidth
+            />
+            <TextField
+              label="Check Number"
+              value={checkNumber}
+              onChange={(e) => setCheckNumber(e.target.value)}
+              onBlur={handleCheckNumberBlur}
+              error={!!checkNumberError}
+              helperText={checkNumberError}
+              fullWidth
+            />
+            <FormControlLabel
+              control={<Checkbox checked={isCheckboxChecked} onChange={handleCheckboxChange} />}
+              label="Derive description"
+            />
+            <TextField
+              label="Description"
+              value={userDescription}
+              onChange={(e) => setUserDescription(e.target.value)}
+              disabled={isCheckboxChecked}
+              fullWidth
+            />
+            <FormControlLabel
+              control={<Checkbox checked={overrideCategory} onChange={handleSetOverrideCategory} />}
+              label="Override category?"
+            />
+            {overrideCategory && (
+              <SelectCategory
+                selectedCategoryId={overrideCategoryId}
+                onSetCategoryId={handleSetOverrideCategoryId}
+              />
+            )}
+            <Button onClick={handleEditTransactionMoreOptions}>More options</Button>
+            </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={props.onClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleSave} color="primary" variant="contained">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </React.Fragment>
   );
 };
 
