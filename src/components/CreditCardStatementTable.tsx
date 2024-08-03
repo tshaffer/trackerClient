@@ -9,11 +9,12 @@ import { Button } from '@mui/material';
 
 import { isNil } from 'lodash';
 
-import { TrackerDispatch } from '../models';
+import { TrackerDispatch, updateCategoryTransactionsRedux } from '../models';
 import { CreditCardTransaction, CreditCardTransactionRowInStatementTableProperties } from '../types';
 import { getCreditCardTransactionRowInStatementTableProperties, getTransactionsByStatementId } from '../selectors';
 
 import CreditCardStatementTransactionRow from './CreditCardStatementTransactionRow';
+import OverrideTransactionCategoriesDialog from './OverrideTransactionCategoriesDialog';
 
 interface CreditCardStatementTablePropsFromParent {
   creditCardStatementId: string;
@@ -23,12 +24,15 @@ interface CreditCardStatementTablePropsFromParent {
 interface CreditCardStatementTableProps extends CreditCardStatementTablePropsFromParent {
   creditCardTransactions: CreditCardTransaction[];
   creditCardTransactionRows: CreditCardTransactionRowInStatementTableProperties[];
+  onUpdateCategoryTransactions: (categoryId: string, transactionIds: string[]) => any;
 }
 
 const CreditCardStatementTable: React.FC<CreditCardStatementTableProps> = (props: CreditCardStatementTableProps) => {
 
   const [sortColumn, setSortColumn] = useState<string>('transactionDate');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [selectedTransactionIds, setSelectedTransactionId] = useState<Set<string>>(new Set());
+  const [showOverrideTransactionCategoriesDialog, setShowOverrideTransactionCategoriesDialog] = React.useState(false);
 
   if (isNil(props.creditCardStatementId)) {
     return null;
@@ -42,6 +46,31 @@ const CreditCardStatementTable: React.FC<CreditCardStatementTableProps> = (props
       setSortOrder('asc');
     }
   };
+
+  const handleOverrideTransactionCategories = () => {
+    setShowOverrideTransactionCategoriesDialog(true);
+  };
+
+  const handleSaveOverrideTransactionCategories = (categoryId: string) => {
+    console.log('handleSaveOverrideTransactionCategories');
+    console.log('categoryId', categoryId);
+    console.log('selectedTransactionIds', selectedTransactionIds);
+    props.onUpdateCategoryTransactions(categoryId, Array.from(selectedTransactionIds));
+  };
+
+  const handleCloseOverrideTransactionCategoriesDialog = () => {
+    setShowOverrideTransactionCategoriesDialog(false);
+  }
+
+  function handleSetCreditCardTransactionSelected(transactionId: string, selected: boolean): any {
+    const newSelectedTransactionIds = new Set(selectedTransactionIds);
+    if (selected) {
+      newSelectedTransactionIds.add(transactionId);
+    } else {
+      newSelectedTransactionIds.delete(transactionId);
+    }
+    setSelectedTransactionId(newSelectedTransactionIds);
+  }
 
   const sortedTransactions = [...(props.creditCardTransactionRows)].sort((a: any, b: any) => {
     const aValue = a[sortColumn];
@@ -67,6 +96,18 @@ const CreditCardStatementTable: React.FC<CreditCardStatementTableProps> = (props
 
   return (
     <React.Fragment>
+      <OverrideTransactionCategoriesDialog
+        open={showOverrideTransactionCategoriesDialog}
+        onClose={handleCloseOverrideTransactionCategoriesDialog}
+        onSave={handleSaveOverrideTransactionCategories}
+      />
+
+      <Button
+        onClick={() => handleOverrideTransactionCategories()}
+        disabled={selectedTransactionIds.size === 0}
+      >
+        Override Selected
+      </Button>
       <Button onClick={() => navigate(-1)}>Back</Button>
       <div className="credit-card-statement-grid-table-container">
         <div className="grid-table-header">
@@ -86,7 +127,10 @@ const CreditCardStatementTable: React.FC<CreditCardStatementTableProps> = (props
         <div className="grid-table-body">
           {sortedTransactions.map((creditCardTransaction: CreditCardTransactionRowInStatementTableProperties) => (
             <div className="grid-table-row" key={creditCardTransaction.id}>
-              <CreditCardStatementTransactionRow creditCardTransactionId={creditCardTransaction.id} />
+              <CreditCardStatementTransactionRow
+                creditCardTransactionId={creditCardTransaction.id}
+                onSetCreditCardTransactionSelected={(transactionId: string, selected: boolean) => handleSetCreditCardTransactionSelected(transactionId, selected)}
+              />
             </div>
           ))}
         </div>
@@ -104,6 +148,7 @@ function mapStateToProps(state: any, ownProps: CreditCardStatementTablePropsFrom
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
+    onUpdateCategoryTransactions: updateCategoryTransactionsRedux,
   }, dispatch);
 };
 

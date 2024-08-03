@@ -13,16 +13,17 @@ import { getTransactionById, findMatchingRule, MatchingRuleAssignment, categoriz
 import { formatCurrency, formatDate } from '../utilities';
 
 import '../styles/Grid.css';
-import { Tooltip, IconButton } from '@mui/material';
+import { Tooltip, IconButton, Checkbox } from '@mui/material';
 import AddCategoryAssignmentRuleDialog from './AddCategoryAssignmentRuleDialog';
 import { addCategoryAssignmentRuleServerAndRedux, updateTransaction } from '../controllers';
 import EditTransactionDialog from './EditTransactionDialog';
 
 export interface CreditCardStatementPropsFromParent {
   creditCardTransactionId: string;
+  onSetCreditCardTransactionSelected: (creditCardTransactionId: string, selected: boolean) => any;
 }
 
-export interface CreditCardStatementProps {
+export interface CreditCardStatementProps extends CreditCardStatementPropsFromParent {
   creditCardTransaction: CreditCardTransaction;
   categoryNameFromCategoryAssignmentRule: string;
   patternFromCategoryAssignmentRule: string | null;
@@ -38,6 +39,8 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
   const [showAddCategoryAssignmentRuleDialog, setShowAddCategoryAssignmentRuleDialog] = React.useState(false);
   const [showEditTransactionDialog, setShowEditTransactionDialog] = React.useState(false);
 
+  const [checked, setChecked] = React.useState(false);
+
   const handleEditTransaction = () => {
     setShowEditTransactionDialog(true);
   };
@@ -49,7 +52,6 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
   const handleCloseEditTransactionDialog = () => {
     setShowEditTransactionDialog(false);
   }
-
 
   const handleEditRule = (transaction: CreditCardTransaction) => {
     setTransactionId(transaction.id);
@@ -83,6 +85,11 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
     );
   }
 
+  function handleChange(event: any, checked: boolean): void {
+    setChecked(checked);
+    props.onSetCreditCardTransactionSelected(props.creditCardTransaction.id, checked);
+  }
+
   return (
     <React.Fragment>
       <AddCategoryAssignmentRuleDialog
@@ -98,7 +105,12 @@ const CreditCardStatementTransactionRow: React.FC<CreditCardStatementProps> = (p
         onSave={handleSaveTransaction}
       />
 
-      <div className="grid-table-cell"></div>
+      <div className="grid-table-cell">
+        <Checkbox
+          checked={checked}
+          onChange={handleChange}
+        />
+      </div>
       <div className="grid-table-cell">{formatDate(props.creditCardTransaction.transactionDate)}</div>
       <div className="grid-table-cell">{formatCurrency(props.creditCardTransaction.amount)}</div>
       <div className="grid-table-cell">{props.creditCardTransaction.description}</div>

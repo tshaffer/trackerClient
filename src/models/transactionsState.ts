@@ -13,6 +13,7 @@ const SET_OVERRIDE_CATEGORY_ID = 'SET_OVERRIDE_CATEGORY_ID';
 const SET_OVERRIDE_FIXED_EXPENSE = 'SET_OVERRIDE_FIXED_EXPENSE';
 const SET_OVERRIDDEN_FIXED_EXPENSE = 'SET_OVERRIDDEN_FIXED_EXPENSE';
 const SET_SPLIT_TRANSACTION = 'SET_SPLIT_TRANSACTION';
+const UPDATE_CATEGORY_TRANSACTIONS = 'UPDATE_CATEGORY_TRANSACTIONS';
 
 // ------------------------------------
 // Actions
@@ -146,6 +147,24 @@ export const splitTransactionRedux = (
   };
 }
 
+interface UpdateCategoryTransactionsPayload {
+  categoryId: string;
+  transactionIds: string[];
+}
+
+export const updateCategoryTransactionsRedux = (
+  categoryId: string,
+  transactionIds: string[],
+): any => {
+  return {
+    type: UPDATE_CATEGORY_TRANSACTIONS,
+    payload: {
+      categoryId,
+      transactionIds,
+    },
+  };
+}
+
 // ------------------------------------
 // Reducer
 // ------------------------------------
@@ -156,7 +175,7 @@ const initialState: TransactionsState = {
 
 export const transactionsStateReducer = (
   state: TransactionsState = initialState,
-  action: TrackerModelBaseAction<AddTransactionsPayload & UpdateTransactionPayload & SetOverrideCategoryPayload & SetOverrideCategoryIdPayload & setOverrideFixedExpensePayload & setOverriddenFixedExpensePayload & SetSplitTransactionPayload>
+  action: TrackerModelBaseAction<AddTransactionsPayload & UpdateTransactionPayload & SetOverrideCategoryPayload & SetOverrideCategoryIdPayload & setOverrideFixedExpensePayload & setOverriddenFixedExpensePayload & SetSplitTransactionPayload & UpdateCategoryTransactionsPayload>
 ): TransactionsState => {
   switch (action.type) {
     case CLEAR_TRANSACTIONS: {
@@ -180,6 +199,18 @@ export const transactionsStateReducer = (
         newState.byId[id] = action.payload.transaction;
       }
       return newState;
+    }
+    case UPDATE_CATEGORY_TRANSACTIONS: {
+      const newState = clone(state);
+      const categoryId = action.payload.categoryId;
+      const transactionIds = action.payload.transactionIds;
+      transactionIds.forEach(transactionId => {
+        if (newState.byId[transactionId]) {
+          newState.byId[transactionId].overrideCategory = true;
+          newState.byId[transactionId].overrideCategoryId = categoryId;
+        }
+      });
+      return newState
     }
     case SET_OVERRIDE_CATEGORY: {
       const newState = clone(state);
