@@ -24,9 +24,9 @@ interface EditTransactionMoreOptionsDialogProps extends EditTransactionMoreOptio
 }
 
 const EditTransactionMoreOptionsDialog = (props: EditTransactionMoreOptionsDialogProps) => {
-  const [overrideFixedExpense, setOverrideFixedExpense] = useState(false);
+  const [overrideFixedExpense, setOverrideFixedExpense] = useState(props.transaction.overrideFixedExpense);
   const [overriddenFixedExpense, setOverriddenFixedExpense] = React.useState(props.transaction.overriddenFixedExpense);
-  const [excludeFromReportCalculations, setExcludeFromReportCalculations] = useState(false);
+  const [excludeFromReportCalculations, setExcludeFromReportCalculations] = useState(props.transaction.excludeFromReportCalculations);
 
   if (!props.open) {
     return null;
@@ -36,6 +36,7 @@ const EditTransactionMoreOptionsDialog = (props: EditTransactionMoreOptionsDialo
     const updatedTransaction = {
       ...props.transaction,
       overrideFixedExpense,
+      overriddenFixedExpense,
       excludeFromReportCalculations,
     };
     props.onSave(updatedTransaction);

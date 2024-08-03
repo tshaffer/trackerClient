@@ -38,8 +38,9 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
   const [userDescription, setUserDescription] = useState(props.transaction.userDescription);
   const [overrideCategory, setOverrideCategory] = React.useState(props.transaction.overrideCategory);
   const [overrideCategoryId, setOverrideCategoryId] = React.useState(props.transaction.overrideCategoryId);
-  // const [overrideTransactionsRequired, setOverrideTransactionsRequired] = React.useState(props.transaction.overrideTransactionsRequired);
-  // const [overriddenTransactionRequired, setOverriddenTransactionRequired] = React.useState(props.transaction.overriddenTransactionRequired);
+  const [overrideFixedExpense, setOverrideFixedExpense] = useState(props.transaction.overrideFixedExpense);
+  const [overriddenFixedExpense, setOverriddenFixedExpense] = React.useState(props.transaction.overriddenFixedExpense);
+  const [excludeFromReportCalculations, setExcludeFromReportCalculations] = useState(props.transaction.excludeFromReportCalculations);
   const [showEditTransactionMoreOptionsDialog, setShowEditTransactionMoreOptionsDialog] = React.useState(false);
 
   const handleEditTransactionMoreOptions = () => {
@@ -47,9 +48,11 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
   };
 
   const handleSaveTransactionMoreOptions = (transaction: Transaction) => {
+    setOverriddenFixedExpense(transaction.overriddenFixedExpense);
+    setOverrideFixedExpense(transaction.overrideFixedExpense);
+    setExcludeFromReportCalculations(transaction.excludeFromReportCalculations);
     console.log('handleSaveTransactionMoreOptions');
     console.log(transaction);
-    // props.onUpdateTransaction(transaction);
   };
 
   const handleCloseEditTransactionMoreOptionsDialog = () => {
@@ -62,9 +65,12 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
       userDescription,
       overrideCategory,
       overrideCategoryId,
-      // overrideTransactionsRequired,
-      // overriddenTransactionRequired,
+      overrideFixedExpense,
+      overriddenFixedExpense,
+      excludeFromReportCalculations,
     };
+    console.log('handleSave');
+    console.log(updatedTransaction);
     props.onSave(updatedTransaction);
     props.onClose();
   };
@@ -76,14 +82,6 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
   function handleSetOverrideCategoryId(categoryId: string): void {
     setOverrideCategoryId(categoryId);
   }
-
-  // function handleSetOverrideTransactionsRequired(event: ChangeEvent<HTMLInputElement>, checked: boolean): void {
-  //   setOverrideTransactionsRequired(event.target.checked);
-  // }
-
-  // function handleSetOverriddenTransactionRequired(event: ChangeEvent<HTMLInputElement>, checked: boolean): void {
-  //   setOverriddenTransactionRequired(event.target.checked);
-  // }
 
   return (
     <React.Fragment>
@@ -139,17 +137,6 @@ const EditTransactionDialog = (props: EditTransactionDialogProps) => {
               />
             )}
             <Button onClick={handleEditTransactionMoreOptions}>More options</Button>
-
-            {/* <FormControlLabel
-              control={<Checkbox checked={overrideTransactionsRequired} onChange={handleSetOverrideTransactionsRequired} />}
-              label="Override transactions required?"
-            />
-            {overrideTransactionsRequired && (
-              <FormControlLabel
-                control={<Checkbox checked={overriddenTransactionRequired} onChange={handleSetOverriddenTransactionRequired} />}
-                label="Transaction required?"
-              />
-            )} */}
           </Box>
         </DialogContent>
         <DialogActions>

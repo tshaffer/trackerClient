@@ -25,6 +25,7 @@ export interface Transaction {
   overrideCategoryId: string;
   overrideFixedExpense: boolean;
   overriddenFixedExpense: boolean;
+  excludeFromReportCalculations: boolean;
 }
 
 export interface SplitTransaction {
