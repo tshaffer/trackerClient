@@ -96,6 +96,8 @@ const AddCategoryAssignmentRuleDialog = (props: AddCategoryAssignmentRuleDialogP
         })
         .catch((error: any) => {
           throw(error);
+          console.log('Error adding category assignment rule: ', error);
+          alert('Error: ' + error);
         });
     }
   };

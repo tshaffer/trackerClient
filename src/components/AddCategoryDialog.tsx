@@ -8,6 +8,7 @@ import TextField from '@mui/material/TextField';
 import { Button, Checkbox, DialogActions, DialogContent, FormControl, FormControlLabel, InputLabel, ListItemText, Menu, MenuItem, Select, Tooltip } from '@mui/material';
 import { getAppInitialized, getCategories } from '../selectors';
 import { Category, CategoryMenuItem, StringToCategoryMenuItemLUT } from '../types';
+import SelectCategory from './SelectCategory';
 
 export interface AddCategoryDialogPropsFromParent {
   open: boolean;
@@ -33,7 +34,6 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
   const [areTransactionsRequired, setAreTransactionsRequired] = React.useState(false);
   const [isSubCategory, setIsSubCategory] = React.useState(false);
   const [parentCategoryId, setParentCategoryId] = React.useState('');
-  const [anchorEl, setAnchorEl] = React.useState(null);
 
   const textFieldRef = useRef(null);
 
@@ -84,60 +84,9 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
     }
   };
 
-  const handleSelectClick = (event: { currentTarget: any; }) => {
-    console.log('handleSelectClick:', event.currentTarget);
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleSelectClose = () => {
-    console.log('handleSelectClose');
-    setAnchorEl(null);
-  };
-
-
-  const handleMenuItemClick = (id: string) => {
-    console.log('handleMenuItemClick:', id);
-    setParentCategoryId(id);
-    handleSelectClose();
-  };
-
-  const renderCategoryMenuItem = (categoryMenuItem: CategoryMenuItem) => (
-    <MenuItem
-      key={categoryMenuItem.id}
-      onClick={() => handleMenuItemClick(categoryMenuItem.id)}
-      style={{ paddingLeft: `${(categoryMenuItem.level || 0) * 20}px` }}
-      value={categoryMenuItem.id}
-    >
-      <ListItemText primary={categoryMenuItem.name} />
-    </MenuItem>
-  );
-
-  const buildCategoryMenuItems = () => {
-    const map: StringToCategoryMenuItemLUT = {};
-    const roots: CategoryMenuItem[] = [];
-    props.categories.forEach(category => {
-      map[category.id] = { ...category, children: [], level: (category.parentId !== '') ? map[category.parentId]?.level + 1 : 0 };
-    });
-    props.categories.forEach(category => {
-      if (category.parentId === '') {
-        roots.push(map[category.id]);
-      } else {
-        map[category.parentId].children.push(map[category.id]);
-      }
-    });
-    const flattenTree = (categoryMenuItems: CategoryMenuItem[], result: CategoryMenuItem[] = []) => {
-      categoryMenuItems.forEach((categoryMenuItem: CategoryMenuItem) => {
-        result.push(categoryMenuItem);
-        if (categoryMenuItem.children.length > 0) {
-          flattenTree(categoryMenuItem.children, result);
-        }
-      });
-      return result;
-    };
-    return flattenTree(roots);
-  };
-
-  const categoryMenuItems = buildCategoryMenuItems();
+  function handleCategoryChange(categoryId: string): void {
+    setParentCategoryId(categoryId);
+  }
 
   return (
     <Dialog onClose={handleClose} open={open}>
@@ -167,37 +116,10 @@ const AddCategoryDialog = (props: AddCategoryDialogProps) => {
             label="Is this a subcategory?"
           />
           {isSubCategory && (
-            <FormControl fullWidth>
-              <InputLabel id="parent-category-label">Parent Category</InputLabel>
-              <Select
-                labelId="parent-category-label"
-                value={parentCategoryId}
-                onChange={handleSelectClick}
-                label="Parent Category"
-                renderValue={(selected) => {
-                  if (!selected) {
-                    return <em>Select Parent Category</em>;
-                  }
-                  const selectedCategory = props.categories.find(category => category.id === selected);
-                  return selectedCategory ? selectedCategory.name : '';
-                }}
-              >
-                {categoryMenuItems.map((item) => renderCategoryMenuItem(item))}
-              </Select>
-              <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleSelectClose}
-                PaperProps={{
-                  style: {
-                    maxHeight: 400,
-                    width: '20ch',
-                  },
-                }}
-              >
-                {categoryMenuItems.map((item) => renderCategoryMenuItem(item))}
-              </Menu>
-            </FormControl>
+              <SelectCategory
+                selectedCategoryId={parentCategoryId}
+                onSetCategoryId={handleCategoryChange}
+              />
           )}
         </Box>
       </DialogContent>
