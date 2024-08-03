@@ -138,12 +138,12 @@ const SelectCategory = (props: SelectCategoryProps) => {
   }
 
   const renderCategoryMenuItem = (categoryMenuItem: CategoryMenuItem) => {
-    const paddingLeft = getCategoryMenuItemPaddingLeft(categoryMenuItem);
+    const paddingLeft: string = getCategoryMenuItemPaddingLeft(categoryMenuItem);
     return (
       <MenuItem
         key={categoryMenuItem.id}
         onClick={() => handleMenuItemClick(categoryMenuItem.id)}
-        style={{ paddingLeft: `${paddingLeft}px` }}
+        style={{ paddingLeft }}
         value={categoryMenuItem.id}
       >
         <ListItemText primary={categoryMenuItem.name} />
