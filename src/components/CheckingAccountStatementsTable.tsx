@@ -35,6 +35,8 @@ const CheckingAccountStatementsTable: React.FC<CheckingAccountStatementsTablePro
       });
   }
 
+  const sortedStatements: CheckingAccountStatement[] = props.statements.sort((a, b) => b.endDate.localeCompare(a.endDate));
+
   return (
     <React.Fragment>
       <div className="table-container">
@@ -51,7 +53,7 @@ const CheckingAccountStatementsTable: React.FC<CheckingAccountStatementsTablePro
           </div>
         </div>
         <div className="table-body">
-          {props.statements.map((statement: CheckingAccountStatement) => (
+          {sortedStatements.map((statement: CheckingAccountStatement) => (
             <React.Fragment key={statement.id}>
               <div className="table-row">
                 <div className="table-cell"></div>

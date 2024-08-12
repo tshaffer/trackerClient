@@ -35,6 +35,8 @@ const CreditCardStatementsTable: React.FC<CreditCardStatementsTableProps> = (pro
       });
   }
 
+  const sortedStatements: CreditCardStatement[] = props.statements.sort((a, b) => b.endDate.localeCompare(a.endDate));
+
   return (
     <React.Fragment>
       <div className="grid-table-container">
@@ -47,7 +49,7 @@ const CreditCardStatementsTable: React.FC<CreditCardStatementsTableProps> = (pro
           <div className="grid-table-cell">Net Debits</div>
         </div>
         <div className="grid-table-body">
-          {props.statements.map((statement: CreditCardStatement) => (
+          {sortedStatements.map((statement: CreditCardStatement) => (
             <div className="grid-table-row" key={statement.id}>
               <div className="grid-table-cell"></div>
               <div
