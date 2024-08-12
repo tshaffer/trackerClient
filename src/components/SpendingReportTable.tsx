@@ -10,7 +10,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 
 import '../styles/Tracker.css';
-import { CategorizedTransaction, Category, CategoryAssignmentRule, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
+import { BankTransaction, CategorizedTransaction, Category, CategoryAssignmentRule, CategoryExpensesData, CategoryMenuItem, StringToCategoryLUT, StringToCategoryMenuItemLUT, StringToTransactionsLUT, Transaction } from '../types';
 import { formatCurrency, formatPercentage, formatDate, expensesPerMonth, roundTo } from '../utilities';
 import { TrackerDispatch } from '../models';
 import { getStartDate, getEndDate, getTransactionsByCategory, getGeneratedReportStartDate, getGeneratedReportEndDate, getCategories, getCategoryByCategoryNameLUT, getCategoryByName, getCategoryIdsToExclude } from '../selectors';
@@ -128,7 +128,7 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
       const transactions: CategorizedTransaction[] = props.transactionsByCategoryId[category.id] || [];
       return transactions.length > 0;
     });
-    
+
     // First pass to accumulate the total expenses for each category
     const accumulateExpenses = (category: CategoryMenuItem): number => {
       const transactions: CategorizedTransaction[] = props.transactionsByCategoryId[category.id] || [];
@@ -204,8 +204,13 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
     return flattenRows(sortedRows);
   };
 
+  const getSortedBankTransactions = (categorizedTransactions: CategorizedTransaction[]): CategorizedTransaction[] => {
+    const sortedCategorizedTransactions: CategorizedTransaction[] = categorizedTransactions.sort((a, b) => b.bankTransaction.transactionDate.localeCompare(a.bankTransaction.transactionDate));
+    return sortedCategorizedTransactions;
+  }
+
   let trimmedCategories = cloneDeep(props.categories);
-  trimmedCategories = props.categories.filter(category => 
+  trimmedCategories = props.categories.filter(category =>
     !props.categoryIdsToExclude.has(category.id) && category.id !== props.ignoreCategory?.id
   );
 
@@ -273,7 +278,7 @@ const SpendingReportTable: React.FC<SpendingReportTableProps> = (props: Spending
                     </div>
                   </div>
                   <div className="table-body">
-                    {categoryExpenses.transactions.map((transaction: { bankTransaction: Transaction }) => (
+                    {getSortedBankTransactions(categoryExpenses.transactions).map((transaction: { bankTransaction: Transaction }) => (
                       <div className="table-row" key={transaction.bankTransaction.id}>
                         <div className="table-cell">
                           <IconButton onClick={() => handleAssignCategory(transaction.bankTransaction)}>
