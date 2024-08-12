@@ -9,12 +9,13 @@ import { Button } from '@mui/material';
 
 import { isNil } from 'lodash';
 
-import { TrackerDispatch, updateCategoryInTransactionsRedux } from '../models';
+import { TrackerDispatch } from '../models';
 import { CreditCardTransaction, CreditCardTransactionRowInStatementTableProperties } from '../types';
 import { getCreditCardTransactionRowInStatementTableProperties, getTransactionsByStatementId } from '../selectors';
 
 import CreditCardStatementTransactionRow from './CreditCardStatementTransactionRow';
 import OverrideTransactionCategoriesDialog from './OverrideTransactionCategoriesDialog';
+import { updateCategoryInTransactions } from '../controllers';
 
 interface CreditCardStatementTablePropsFromParent {
   creditCardStatementId: string;
@@ -145,7 +146,7 @@ function mapStateToProps(state: any, ownProps: CreditCardStatementTablePropsFrom
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
-    onUpdateCategoryTransactions: updateCategoryInTransactionsRedux,
+    onUpdateCategoryTransactions: updateCategoryInTransactions,
   }, dispatch);
 };
 
