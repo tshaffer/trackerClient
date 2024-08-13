@@ -12,7 +12,7 @@ export * from './EditTransactionDialog';
 export * from './FixedExpensesReport';
 export * from './ReportsContent';
 export * from './SelectCategory';
-export * from './Sidebar';
+export * from './SideBar';
 export * from './SpendingReportTable';
 export * from './StatementsContent';
 export * from './UnidentifiedTransactionTable';

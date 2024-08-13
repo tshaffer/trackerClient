@@ -1,90 +1,123 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import MainContent from './MainContent';
+import ReactDOM from 'react-dom/client';
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Outlet,
+} from 'react-router-dom';
+import { connect, Provider } from 'react-redux';
 
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import SideBar from './SideBar';
+import CategoriesList from './CategoriesList';
+// import CategoryAssignmentRulesT from './CategoryAssignmentRulesT';
+import Statements from './Statements';
+import CreditCardStatementDetails from './CreditCardStatementDetails';
+// import CheckingAccountStatementDetails from './CheckingAccountStatementDetails';
+import Reports from './Reports';
+// import SpendingReport from './SpendingReport';
+import FixedExpensesReport from './FixedExpensesReport';
+import Layout from './Layout';
 
-import { loadCategories, loadCategoryAssignmentRules, loadCheckingAccountStatements, loadCreditCardStatements, loadMinMaxTransactionDates } from '../controllers';
-import { TrackerDispatch, setAppInitialized } from '../models';
-import { getAppInitialized } from '../selectors';
+import { createStore, applyMiddleware, bindActionCreators } from 'redux';
 
-import { initializeServer } from '../controllers/app';
-import { CreditCardStatementTableWrapper } from './CreditCardStatementsTable';
-import CreditCardStatementsTable from './CreditCardStatementsTable';
-import { CheckingAccountStatementTableWrapper } from './CheckingAccountStatementsTable';
-import CheckingAccountStatementsTable from './CheckingAccountStatementsTable';
+import thunkMiddleware from 'redux-thunk';
+import { rootReducer, TrackerDispatch } from '../models';
+
+
+import { composeWithDevTools } from 'redux-devtools-extension';
+
+export const store = createStore(
+  rootReducer,
+  composeWithDevTools(
+    applyMiddleware(thunkMiddleware)
+  ));
+
+// Define the Layout component that includes the sidebar
+// const Layout = () => (
+//   <div style={{ display: 'flex' }}>
+//     <SideBar />
+//     <div style={{ flexGrow: 1, padding: '16px' }}>
+//       <Outlet />
+//     </div>
+//   </div>
+// );
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Layout />,
+    children: [
+      {
+        path: 'categories',
+        element: <CategoriesList />,
+      },
+      // {
+      //   path: 'category-assignment-rules',
+      //   element: <CategoryAssignmentRulesT/>,
+      // },
+      {
+        path: 'statements',
+        element: <Statements />,
+        children: [
+          {
+            path: 'credit-card/:id',
+            element: <CreditCardStatementDetails />,
+          },
+          // {
+          //   path: 'checking-account/:id',
+          //   element: <CheckingAccountStatementDetails />,
+          // },
+        ],
+      },
+      {
+        path: 'reports',
+        element: <Reports />,
+        children: [
+          // {
+          //   path: 'spending',
+          //   element: <SpendingReport />,
+          // },
+          {
+            path: 'fixed-expenses',
+            element: <FixedExpensesReport />,
+          },
+        ],
+      },
+    ],
+  },
+]);
+
+// export const App = () => (
+//   <Provider store={store}>
+//     <RouterProvider router={router} />
+//   </Provider>
+// );
 
 export interface AppProps {
-  appInitialized: boolean;
-  onInitializeServer: () => any;
-  onLoadCategories: () => any;
-  onLoadCategoryAssignmentRules: () => any;
-  onLoadCreditCardStatements: () => any;
-  onLoadCheckingAccountStatements: () => any;
-  onLoadMinMaxTransactionDates: () => any;
-  onSetAppInitialized: () => any;
 }
 
 const App = (props: AppProps) => {
-
-  React.useEffect(() => {
-    if (!props.appInitialized) {
-      props.onInitializeServer()
-        .then(() => {
-          return props.onLoadCategories();
-        })
-        .then(() => {
-          return props.onLoadCategoryAssignmentRules();
-        })
-        .then(() => {
-          return props.onLoadCreditCardStatements();
-        })
-        .then(() => {
-          return props.onLoadCheckingAccountStatements();
-        })
-        .then(() => {
-          return props.onLoadMinMaxTransactionDates();
-        })
-        .then(() => {
-          console.log('invoke onSetAppInitialized');
-          return props.onSetAppInitialized();
-        })
-    }
-  }, [props.appInitialized]);
-
-  if (!props.appInitialized) {
-    return null;
-  }
-
   return (
-    <Routes>
-      <Route path="/" element={<MainContent />} />
-      <Route path="/creditCardStatementsTable" element={<CreditCardStatementsTable />} />
-      <Route path="/creditCardStatement/:id" element={<CreditCardStatementTableWrapper />}/>
-      <Route path="/checkingAccountStatementsTable" element={<CheckingAccountStatementsTable />} />
-      <Route path="/checkingAccountStatement/:id" element={<CheckingAccountStatementTableWrapper />}/>
-    </Routes>
+    // <div>
+    //   <h1>App</h1>
+    // </div>
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
   );
-
-};
+}
 
 function mapStateToProps(state: any) {
   return {
-    appInitialized: getAppInitialized(state),
   };
 }
 
 const mapDispatchToProps = (dispatch: TrackerDispatch) => {
   return bindActionCreators({
-    onSetAppInitialized: setAppInitialized,
-    onInitializeServer: initializeServer,
-    onLoadCategories: loadCategories,
-    onLoadCategoryAssignmentRules: loadCategoryAssignmentRules,
-    onLoadCreditCardStatements: loadCreditCardStatements,
-    onLoadCheckingAccountStatements: loadCheckingAccountStatements,
-    onLoadMinMaxTransactionDates: loadMinMaxTransactionDates
   }, dispatch);
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
+
+// const root = ReactDOM.createRoot(document.getElementById('root')!);
+// root.render(<App />);
